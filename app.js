@@ -1,32 +1,51 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded",()=>{
 
-    const scene = document.querySelector("a-scene");
-    const video = document.querySelector("#notebookVideo");
 
-    scene.addEventListener("arReady", () => {
-        console.log("AR READY");
-    });
+const scene=document.querySelector("a-scene");
 
-    scene.addEventListener("targetFound", async () => {
+const frontVideo=document.querySelector("#frontVideo");
 
-        console.log("TARGET FOUND");
 
-        video.currentTime = 0;
+scene.addEventListener("arReady",()=>{
+console.log("AR READY");
+});
 
-        try {
-            await video.play();
-        } catch (error) {
-            console.log("VIDEO PLAY ERROR:", error);
-        }
 
-    });
+scene.addEventListener("targetFound",async(e)=>{
 
-    scene.addEventListener("targetLost", () => {
 
-        console.log("TARGET LOST");
+console.log("TARGET FOUND");
 
-        video.pause();
 
-    });
+frontVideo.currentTime=0;
+
+frontVideo.muted=false;
+
+
+try{
+
+await frontVideo.play();
+
+}catch(err){
+
+console.log(err);
+
+}
+
+
+});
+
+
+scene.addEventListener("targetLost",()=>{
+
+
+console.log("TARGET LOST");
+
+
+frontVideo.pause();
+
+
+});
+
 
 });
