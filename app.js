@@ -1,290 +1,243 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-    const scene = document.querySelector("a-scene");
 
-    const frontVideo =
-        document.querySelector("#frontVideo");
+const scene =
+    document.querySelector("a-scene");
 
-    const video02 =
-        document.querySelector("#video02");
 
-    const frontARVideo =
-        document.querySelector("#frontARVideo");
+const frontVideo =
+    document.querySelector("#frontVideo");
 
-    const video02AR =
-        document.querySelector("#video02AR");
 
-    const target0 =
-        document.querySelector("#target0");
+const video02 =
+    document.querySelector("#video02");
 
-    const target1 =
-        document.querySelector("#target1");
 
+const frontARVideo =
+    document.querySelector("#frontARVideo");
 
-    console.log("APP VERSION 110");
 
+const video02AR =
+    document.querySelector("#video02AR");
 
-    /* =====================================
-       آماده‌سازی ویدیوی دوم
-    ===================================== */
 
-    video02.load();
+const target0 =
+    document.querySelector("#target0");
 
 
-    video02.addEventListener("loadeddata", () => {
+const target1 =
+    document.querySelector("#target1");
 
-        console.log("VIDEO 02 LOADEDDATA");
 
-    });
+console.log("APP VERSION 111");
 
 
-    video02.addEventListener("canplay", () => {
 
-        console.log("VIDEO 02 CAN PLAY");
+/* =====================================
+   AR READY
+===================================== */
 
-    });
+scene.addEventListener("arReady", () => {
 
+    console.log("AR READY");
 
-    video02.addEventListener("playing", () => {
+});
 
-        console.log("VIDEO 02 PLAYING");
 
-    });
 
+/* =====================================
+   TARGET 0
+   دفتر اول
+===================================== */
 
-    video02.addEventListener("error", () => {
+target0.addEventListener(
+    "targetFound",
+    async () => {
 
-        console.log(
-            "VIDEO 02 ERROR:",
-            video02.error
-        );
+        console.log("TARGET 0 FOUND");
 
-    });
 
+        /* توقف ویدیوی دوم */
 
+        video02.pause();
 
-    /* =====================================
-       AR READY
-    ===================================== */
 
-    scene.addEventListener("arReady", () => {
+        /* شروع ویدیوی اول */
 
-        console.log("AR READY");
+        frontVideo.currentTime = 0;
 
-    });
+        frontVideo.muted = false;
 
 
+        try {
 
-    /* =====================================
-       TARGET 0
-    ===================================== */
+            await frontVideo.play();
 
-    target0.addEventListener(
-        "targetFound",
-        async () => {
-
-            console.log("TARGET 0 FOUND");
-
-
-            video02.pause();
-
-
-            frontVideo.currentTime = 0;
-
-            frontVideo.muted = false;
-
-
-            try {
-
-                await frontVideo.play();
-
-                console.log(
-                    "FRONT VIDEO PLAYING"
-                );
-
-            }
-
-            catch(error) {
-
-                console.log(
-                    "FRONT VIDEO ERROR:",
-                    error
-                );
-
-            }
-
-        }
-    );
-
-
-    target0.addEventListener(
-        "targetLost",
-        () => {
-
-            console.log("TARGET 0 LOST");
-
-            frontVideo.pause();
-
-        }
-    );
-
-
-
-    /* =====================================
-       TARGET 1
-    ===================================== */
-
-    target1.addEventListener(
-        "targetFound",
-        async () => {
-
-            console.log("TARGET 1 FOUND");
-
-
-            /* توقف ویدیوی اول */
-
-            frontVideo.pause();
-
-
-            /* ویدیوی دوم */
-
-            video02.pause();
-
-            video02.currentTime = 0;
-
-            /*
-            اول muted
-            تا Chrome Android
-            اجازه پخش بدهد
-            */
-
-            video02.muted = true;
-
-
-            try {
-
-                await video02.play();
-
-                console.log(
-                    "VIDEO 02 STARTED MUTED"
-                );
-
-
-                /*
-                بعد از شروع واقعی،
-                صدا را باز می‌کنیم
-                */
-
-                video02.muted = false;
-
-
-            }
-
-            catch(error) {
-
-                console.log(
-                    "VIDEO 02 PLAY ERROR:",
-                    error
-                );
-
-            }
-
-        }
-    );
-
-
-    target1.addEventListener(
-        "targetLost",
-        () => {
-
-            console.log("TARGET 1 LOST");
-
-            video02.pause();
-
-        }
-    );
-
-
-
-    /* =====================================
-       VIDEO TEXTURE UPDATE
-    ===================================== */
-
-    scene.addEventListener(
-        "renderstart",
-        () => {
-
-
-            scene.addEventListener(
-                "tick",
-                () => {
-
-
-                    /* ---------- VIDEO 1 ---------- */
-
-                    const frontMesh =
-                        frontARVideo.getObject3D("mesh");
-
-
-                    if (
-                        frontMesh &&
-                        frontMesh.material &&
-                        frontMesh.material.map
-                    ) {
-
-                        frontMesh.material.map.needsUpdate =
-                            true;
-
-                    }
-
-
-
-                    /* ---------- VIDEO 2 ---------- */
-
-                    const video02Mesh =
-                        video02AR.getObject3D("mesh");
-
-
-                    if (
-                        video02Mesh &&
-                        video02Mesh.material &&
-                        video02Mesh.material.map
-                    ) {
-
-                        video02Mesh.material.map.needsUpdate =
-                            true;
-
-                    }
-
-
-                    /*
-                    اگر ویدیوی دوم در حال پخش است،
-                    Texture را در هر فریم تازه می‌کنیم.
-                    */
-
-                    if (!video02.paused) {
-
-                        const mesh =
-                            video02AR.getObject3D("mesh");
-
-
-                        if (
-                            mesh &&
-                            mesh.material &&
-                            mesh.material.map
-                        ) {
-
-                            mesh.material.map.needsUpdate =
-                                true;
-
-                        }
-
-                    }
-
-                }
+            console.log(
+                "VIDEO 1 PLAYING"
             );
 
         }
-    );
+
+        catch(error) {
+
+            console.log(
+                "VIDEO 1 ERROR:",
+                error
+            );
+
+        }
+
+    }
+);
+
+
+
+target0.addEventListener(
+    "targetLost",
+    () => {
+
+        console.log("TARGET 0 LOST");
+
+        frontVideo.pause();
+
+    }
+);
+
+
+
+/* =====================================
+   TARGET 1
+   دفتر دوم
+===================================== */
+
+target1.addEventListener(
+    "targetFound",
+    async () => {
+
+        console.log("TARGET 1 FOUND");
+
+
+        /* توقف ویدیوی اول */
+
+        frontVideo.pause();
+
+
+        /* آماده کردن ویدیوی دوم */
+
+        video02.currentTime = 0;
+
+        video02.muted = true;
+
+
+        try {
+
+            await video02.play();
+
+            console.log(
+                "VIDEO 2 PLAYING"
+            );
+
+
+            /*
+            بعد از شروع پخش،
+            صدا را باز می‌کنیم
+            */
+
+            video02.muted = false;
+
+        }
+
+        catch(error) {
+
+            console.log(
+                "VIDEO 2 ERROR:",
+                error
+            );
+
+        }
+
+    }
+);
+
+
+
+target1.addEventListener(
+    "targetLost",
+    () => {
+
+        console.log("TARGET 1 LOST");
+
+        video02.pause();
+
+    }
+);
+
+
+
+/* =====================================
+   VIDEO TEXTURE UPDATE
+===================================== */
+
+scene.addEventListener(
+    "renderstart",
+    () => {
+
+
+        scene.addEventListener(
+            "tick",
+            () => {
+
+
+                /* ======================
+                   VIDEO 1
+                ====================== */
+
+                const mesh1 =
+                    frontARVideo.getObject3D(
+                        "mesh"
+                    );
+
+
+                if (
+                    mesh1 &&
+                    mesh1.material &&
+                    mesh1.material.map
+                ) {
+
+                    mesh1.material.map.needsUpdate =
+                        true;
+
+                }
+
+
+
+                /* ======================
+                   VIDEO 2
+                ====================== */
+
+                const mesh2 =
+                    video02AR.getObject3D(
+                        "mesh"
+                    );
+
+
+                if (
+                    mesh2 &&
+                    mesh2.material &&
+                    mesh2.material.map
+                ) {
+
+                    mesh2.material.map.needsUpdate =
+                        true;
+
+                }
+
+            }
+        );
+
+    }
+);
+
 
 });
