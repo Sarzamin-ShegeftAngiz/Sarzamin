@@ -13,7 +13,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
-<script defer src="app.js?v=116"></script>
+<script defer src="app.js?v=117"></script>
 
 <style>
 
@@ -55,12 +55,6 @@ renderer="colorManagement:true;"
 
 <a-assets>
 
-
-<!-- ===================== -->
-<!-- TARGET 0 -->
-<!-- دفتر اول -->
-<!-- ===================== -->
-
 <video
 id="video0"
 src="./notebook/choromi.mp4"
@@ -70,12 +64,6 @@ muted
 playsinline
 webkit-playsinline>
 </video>
-
-
-<!-- ===================== -->
-<!-- TARGET 1 -->
-<!-- دفتر دوم -->
-<!-- ===================== -->
 
 <video
 id="video1"
@@ -87,9 +75,47 @@ playsinline
 webkit-playsinline>
 </video>
 
+<video
+id="video2"
+src="./notebook3/03.mp4"
+preload="auto"
+loop
+muted
+playsinline
+webkit-playsinline>
+</video>
+
+<video
+id="video3"
+src="./notebook4/04.mp4"
+preload="auto"
+loop
+muted
+playsinline
+webkit-playsinline>
+</video>
+
+<video
+id="video4"
+src="./notebook5/05.mp4"
+preload="auto"
+loop
+muted
+playsinline
+webkit-playsinline>
+</video>
+
+<video
+id="video5"
+src="./notebook6/06.mp4"
+preload="auto"
+loop
+muted
+playsinline
+webkit-playsinline>
+</video>
 
 </a-assets>
-
 
 
 <a-camera
@@ -98,43 +124,64 @@ look-controls="enabled:false">
 </a-camera>
 
 
-
-<!-- ===================== -->
-<!-- TARGET 0 -->
-<!-- ===================== -->
-
-<a-entity
-mindar-image-target="targetIndex:0">
-
+<a-entity mindar-image-target="targetIndex:0">
 <a-video
-id="video0AR"
 src="#video0"
 width="1"
 height="1.42"
 position="0 0 0">
 </a-video>
-
 </a-entity>
 
 
-
-<!-- ===================== -->
-<!-- TARGET 1 -->
-<!-- ===================== -->
-
-<a-entity
-mindar-image-target="targetIndex:1">
-
+<a-entity mindar-image-target="targetIndex:1">
 <a-video
-id="video1AR"
 src="#video1"
 width="1"
 height="1.42"
 position="0 0 0">
 </a-video>
-
 </a-entity>
 
+
+<a-entity mindar-image-target="targetIndex:2">
+<a-video
+src="#video2"
+width="1"
+height="1.42"
+position="0 0 0">
+</a-video>
+</a-entity>
+
+
+<a-entity mindar-image-target="targetIndex:3">
+<a-video
+src="#video3"
+width="1"
+height="1.42"
+position="0 0 0">
+</a-video>
+</a-entity>
+
+
+<a-entity mindar-image-target="targetIndex:4">
+<a-video
+src="#video4"
+width="1"
+height="1.42"
+position="0 0 0">
+</a-video>
+</a-entity>
+
+
+<a-entity mindar-image-target="targetIndex:5">
+<a-video
+src="#video5"
+width="1"
+height="1.42"
+position="0 0 0">
+</a-video>
+</a-entity>
 
 
 </a-scene>
