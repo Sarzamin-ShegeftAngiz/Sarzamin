@@ -1,13 +1,17 @@
 document.addEventListener("DOMContentLoaded",()=>{
 
 
-const scene=document.querySelector("a-scene");
+const scene =
+document.querySelector("a-scene");
 
-const frontVideo=
-document.querySelector("#frontVideo");
 
-const backVideo=
-document.querySelector("#backVideo");
+const video0 =
+document.querySelector("#video0");
+
+
+const video1 =
+document.querySelector("#video1");
+
 
 
 scene.addEventListener("arReady",()=>{
@@ -23,10 +27,10 @@ scene.addEventListener(
 async(e)=>{
 
 
-let target=e.target;
+let target = e.target;
 
 
-let index=
+let index =
 target.getAttribute(
 "mindar-image-target"
 ).targetIndex;
@@ -34,26 +38,25 @@ target.getAttribute(
 
 
 /* =====================
-   Target 0
-   دفتر اول
+   TARGET 0
 ===================== */
 
-if(index===0){
+if(index === 0){
 
 console.log("TARGET 0 FOUND");
 
 
-backVideo.pause();
+video1.pause();
 
 
-frontVideo.currentTime=0;
+video0.currentTime = 0;
 
-frontVideo.muted=false;
+video0.muted = false;
 
 
 try{
 
-await frontVideo.play();
+await video0.play();
 
 }catch(err){
 
@@ -66,26 +69,25 @@ console.log(err);
 
 
 /* =====================
-   Target 1
-   دفتر دوم
+   TARGET 1
 ===================== */
 
-if(index===1){
+if(index === 1){
 
 console.log("TARGET 1 FOUND");
 
 
-frontVideo.pause();
+video0.pause();
 
 
-backVideo.currentTime=0;
+video1.currentTime = 0;
 
-backVideo.muted=false;
+video1.muted = false;
 
 
 try{
 
-await backVideo.play();
+await video1.play();
 
 }catch(err){
 
@@ -105,23 +107,24 @@ scene.addEventListener(
 (e)=>{
 
 
-let index=
+let index =
 e.target.getAttribute(
 "mindar-image-target"
 ).targetIndex;
 
 
 
-if(index===0){
+if(index === 0){
 
-frontVideo.pause();
+video0.pause();
 
 }
 
 
-if(index===1){
 
-backVideo.pause();
+if(index === 1){
+
+video1.pause();
 
 }
 
