@@ -1,17 +1,15 @@
 document.addEventListener("DOMContentLoaded",()=>{
 
+const scene=document.querySelector("a-scene");
 
-const scene =
-document.querySelector("a-scene");
-
-
-const video0 =
-document.querySelector("#video0");
-
-
-const video1 =
-document.querySelector("#video1");
-
+const videos=[
+document.querySelector("#video0"),
+document.querySelector("#video1"),
+document.querySelector("#video2"),
+document.querySelector("#video3"),
+document.querySelector("#video4"),
+document.querySelector("#video5")
+];
 
 
 scene.addEventListener("arReady",()=>{
@@ -21,113 +19,87 @@ console.log("AR READY");
 });
 
 
-
 scene.addEventListener(
 "targetFound",
 async(e)=>{
 
-
-let target = e.target;
-
-
-let index =
-target.getAttribute(
+const index=
+e.target.getAttribute(
 "mindar-image-target"
 ).targetIndex;
 
+console.log("TARGET FOUND:",index);
 
 
-/* =====================
-   TARGET 0
-===================== */
+/* توقف همه ویدئوها */
 
-if(index === 0){
+videos.forEach((video,i)=>{
 
-console.log("TARGET 0 FOUND");
+if(i!==index){
 
-
-video1.pause();
-
-
-video0.currentTime = 0;
-
-video0.muted = false;
-
-
-try{
-
-await video0.play();
-
-}catch(err){
-
-console.log(err);
+video.pause();
 
 }
-
-}
-
-
-
-/* =====================
-   TARGET 1
-===================== */
-
-if(index === 1){
-
-console.log("TARGET 1 FOUND");
-
-
-video0.pause();
-
-
-video1.currentTime = 0;
-
-video1.muted = false;
-
-
-try{
-
-await video1.play();
-
-}catch(err){
-
-console.log(err);
-
-}
-
-}
-
 
 });
 
+
+/* پخش ویدیوی تارگت */
+
+const video=videos[index];
+
+if(!video) return;
+
+
+video.currentTime=0;
+
+video.muted=false;
+
+
+try{
+
+await video.play();
+
+console.log(
+"VIDEO PLAYING:",
+index
+);
+
+}catch(err){
+
+console.log(
+"VIDEO ERROR:",
+index,
+err
+);
+
+}
+
+});
 
 
 scene.addEventListener(
 "targetLost",
 (e)=>{
 
-
-let index =
+const index=
 e.target.getAttribute(
 "mindar-image-target"
 ).targetIndex;
 
+console.log(
+"TARGET LOST:",
+index
+);
 
 
-if(index === 0){
+const video=videos[index];
 
-video0.pause();
+if(video){
 
-}
-
-
-
-if(index === 1){
-
-video1.pause();
+video.pause();
 
 }
-
 
 });
 
