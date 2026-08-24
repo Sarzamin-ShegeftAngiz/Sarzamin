@@ -13,7 +13,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
-<script defer src="app.js?v=200"></script>
+<script defer src="app.js?v=120"></script>
 
 <style>
 
@@ -33,9 +33,7 @@ height:100%;
 
 </head>
 
-
 <body>
-
 
 <a-scene
 
@@ -53,7 +51,85 @@ renderer="colorManagement:true;"
 >
 
 
-<a-assets id="videoAssets">
+<a-assets>
+
+<!-- Target 0 -->
+
+<video
+id="video0"
+src="./notebook/choromi.mp4"
+preload="auto"
+loop
+muted
+playsinline
+webkit-playsinline>
+</video>
+
+
+<!-- Target 1 -->
+
+<video
+id="video1"
+src="./notebook2/02.mp4"
+preload="auto"
+loop
+muted
+playsinline
+webkit-playsinline>
+</video>
+
+
+<!-- Target 2 -->
+
+<video
+id="video2"
+src="./notebook3/03.mp4"
+preload="auto"
+loop
+muted
+playsinline
+webkit-playsinline>
+</video>
+
+
+<!-- Target 3 -->
+
+<video
+id="video3"
+src="./notebook4/04.mp4"
+preload="auto"
+loop
+muted
+playsinline
+webkit-playsinline>
+</video>
+
+
+<!-- Target 4 -->
+
+<video
+id="video4"
+src="./notebook5/05.mp4"
+preload="auto"
+loop
+muted
+playsinline
+webkit-playsinline>
+</video>
+
+
+<!-- Target 5 -->
+
+<video
+id="video5"
+src="./notebook6/06.mp4"
+preload="auto"
+loop
+muted
+playsinline
+webkit-playsinline>
+</video>
+
 
 </a-assets>
 
@@ -62,6 +138,96 @@ renderer="colorManagement:true;"
 position="0 0 0"
 look-controls="enabled:false">
 </a-camera>
+
+
+<!-- TARGET 0 -->
+
+<a-entity
+mindar-image-target="targetIndex:0">
+
+<a-video
+src="#video0"
+width="1"
+height="1.42"
+position="0 0 0">
+</a-video>
+
+</a-entity>
+
+
+<!-- TARGET 1 -->
+
+<a-entity
+mindar-image-target="targetIndex:1">
+
+<a-video
+src="#video1"
+width="1"
+height="1.42"
+position="0 0 0">
+</a-video>
+
+</a-entity>
+
+
+<!-- TARGET 2 -->
+
+<a-entity
+mindar-image-target="targetIndex:2">
+
+<a-video
+src="#video2"
+width="1"
+height="1.42"
+position="0 0 0">
+</a-video>
+
+</a-entity>
+
+
+<!-- TARGET 3 -->
+
+<a-entity
+mindar-image-target="targetIndex:3">
+
+<a-video
+src="#video3"
+width="1"
+height="1.42"
+position="0 0 0">
+</a-video>
+
+</a-entity>
+
+
+<!-- TARGET 4 -->
+
+<a-entity
+mindar-image-target="targetIndex:4">
+
+<a-video
+src="#video4"
+width="1"
+height="1.42"
+position="0 0 0">
+</a-video>
+
+</a-entity>
+
+
+<!-- TARGET 5 -->
+
+<a-entity
+mindar-image-target="targetIndex:5">
+
+<a-video
+src="#video5"
+width="1"
+height="1.42"
+position="0 0 0">
+</a-video>
+
+</a-entity>
 
 
 </a-scene>
