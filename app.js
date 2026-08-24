@@ -1,275 +1,211 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-    const scene = document.querySelector("a-scene");
-    const assets = document.querySelector("a-assets");
 
-    console.log("APP VERSION 106");
+const scene =
+document.querySelector("a-scene");
 
 
-    /*
-    ==========================================
-    تنظیمات
-    ==========================================
+const frontVideo =
+document.querySelector("#frontVideo");
 
-    Target 0:
-    notebook/choromi.mp4
 
-    Target 1:
-    02/02.mp4
+const video02 =
+document.querySelector("#video02");
 
-    Target 2:
-    03/03.mp4
 
-    Target 3:
-    04/04.mp4
+const frontARVideo =
+document.querySelector("#frontARVideo");
 
-    و به همین ترتیب...
-    */
 
-    const MAX_TARGETS = 100;
+const video02AR =
+document.querySelector("#video02AR");
 
 
-    /*
-    ==========================================
-    ساخت ویدئوها و Targetها
-    ==========================================
-    */
+const frontTarget =
+document.querySelector(
+'[mindar-image-target="targetIndex:0"]'
+);
 
-    for (let targetIndex = 0; targetIndex < MAX_TARGETS; targetIndex++) {
 
-        let videoId;
-        let videoPath;
+const target02 =
+document.querySelector(
+'[mindar-image-target="targetIndex:1"]'
+);
 
-        let folderNumber;
 
+console.log("APP VERSION 107");
 
-        // ==============================
-        // Target 0 = دفتر اول
-        // ==============================
 
-        if (targetIndex === 0) {
 
-            videoId = "video0";
-            videoPath = "./notebook/choromi.mp4";
+/* =====================================
+   AR READY
+===================================== */
 
-        }
+scene.addEventListener("arReady", () => {
 
+console.log("AR READY");
 
-        // ==============================
-        // Target 1 به بعد
-        // Target 1 = پوشه 02
-        // Target 2 = پوشه 03
-        // ==============================
+});
 
-        else {
 
-            folderNumber = String(targetIndex + 1).padStart(2, "0");
 
-            videoId = "video" + folderNumber;
+/* =====================================
+   TARGET 0
+   دفتر اول
+===================================== */
 
-            videoPath =
-                "./" +
-                folderNumber +
-                "/" +
-                folderNumber +
-                ".mp4";
+frontTarget.addEventListener(
+"targetFound",
+async () => {
 
-        }
+console.log("TARGET 0 FOUND");
 
 
-        // ==============================
-        // ساخت Video
-        // ==============================
+video02.pause();
 
-        const video = document.createElement("video");
 
-        video.id = videoId;
+frontVideo.currentTime = 0;
 
-        video.src = videoPath;
+frontVideo.muted = false;
 
-        video.preload = "auto";
 
-        video.loop = true;
+try {
 
-        video.muted = true;
+await frontVideo.play();
 
-        video.playsInline = true;
+console.log("FRONT PLAYING");
 
-        video.setAttribute("webkit-playsinline", "");
+}
 
-        assets.appendChild(video);
+catch(error) {
 
+console.log(
+"FRONT VIDEO ERROR",
+error
+);
 
-        // ==============================
-        // ساخت Target
-        // ==============================
+}
 
-        const target = document.createElement("a-entity");
+});
 
-        target.setAttribute(
-            "mindar-image-target",
-            "targetIndex:" + targetIndex
-        );
 
+frontTarget.addEventListener(
+"targetLost",
+() => {
 
-        // ==============================
-        // ساخت Video Plane
-        // ==============================
+console.log("TARGET 0 LOST");
 
-        const arVideo = document.createElement("a-video");
+frontVideo.pause();
 
-        arVideo.id = videoId + "AR";
+});
 
-        arVideo.setAttribute(
-            "src",
-            "#" + videoId
-        );
 
-        arVideo.setAttribute("width", "1");
 
-        arVideo.setAttribute("height", "1.42");
+/* =====================================
+   TARGET 1
+   دفتر دوم
+===================================== */
 
-        arVideo.setAttribute(
-            "position",
-            "0 0 0"
-        );
+target02.addEventListener(
+"targetFound",
+async () => {
 
+console.log("TARGET 1 FOUND");
 
-        target.appendChild(arVideo);
 
-        scene.appendChild(target);
+frontVideo.pause();
 
 
-        // ==============================
-        // Target Found
-        // ==============================
+video02.currentTime = 0;
 
-        target.addEventListener(
-            "targetFound",
-            async () => {
+video02.muted = false;
 
-                console.log(
-                    "TARGET FOUND:",
-                    targetIndex
-                );
 
+try {
 
-                // توقف تمام ویدئوهای دیگر
+await video02.play();
 
-                const allVideos =
-                    assets.querySelectorAll("video");
+console.log("VIDEO 02 PLAYING");
 
-                allVideos.forEach(otherVideo => {
+}
 
-                    if (otherVideo !== video) {
+catch(error) {
 
-                        otherVideo.pause();
+console.log(
+"VIDEO 02 ERROR",
+error
+);
 
-                    }
+}
 
-                });
+});
 
 
-                // شروع ویدئوی این Target
+target02.addEventListener(
+"targetLost",
+() => {
 
-                video.currentTime = 0;
+console.log("TARGET 1 LOST");
 
-                video.muted = false;
+video02.pause();
 
+});
 
-                try {
 
-                    await video.play();
 
-                    console.log(
-                        "VIDEO PLAYING:",
-                        videoPath
-                    );
+/* =====================================
+   VIDEO TEXTURE UPDATE
+===================================== */
 
-                }
+scene.addEventListener(
+"renderstart",
+() => {
 
-                catch (error) {
 
-                    console.log(
-                        "VIDEO ERROR:",
-                        error
-                    );
+scene.addEventListener(
+"tick",
+() => {
 
-                }
 
-            }
-        );
+/* ---------- VIDEO 1 ---------- */
 
+const frontMesh =
+frontARVideo.getObject3D("mesh");
 
-        // ==============================
-        // Target Lost
-        // ==============================
 
-        target.addEventListener(
-            "targetLost",
-            () => {
+if (
+frontMesh &&
+frontMesh.material &&
+frontMesh.material.map
+) {
 
-                console.log(
-                    "TARGET LOST:",
-                    targetIndex
-                );
+frontMesh.material.map.needsUpdate =
+true;
 
-                video.pause();
+}
 
-            }
-        );
 
 
-        // ==============================
-        // Video Texture Update
-        // ==============================
+/* ---------- VIDEO 2 ---------- */
 
-        scene.addEventListener(
-            "renderstart",
-            () => {
+const video02Mesh =
+video02AR.getObject3D("mesh");
 
-                scene.addEventListener(
-                    "tick",
-                    () => {
 
-                        const mesh =
-                            arVideo.getObject3D("mesh");
+if (
+video02Mesh &&
+video02Mesh.material &&
+video02Mesh.material.map
+) {
 
+video02Mesh.material.map.needsUpdate =
+true;
 
-                        if (
-                            mesh &&
-                            mesh.material &&
-                            mesh.material.map
-                        ) {
+}
 
-                            mesh.material.map.needsUpdate =
-                                true;
+});
 
-                        }
 
-                    }
-                );
-
-            },
-            { once: true }
-        );
-
-    }
-
-
-    /*
-    ==========================================
-    AR READY
-    ==========================================
-    */
-
-    scene.addEventListener(
-        "arReady",
-        () => {
-
-            console.log("AR READY");
-
-        }
-    );
+});
 
 });
