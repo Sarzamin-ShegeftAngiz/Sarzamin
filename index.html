@@ -13,7 +13,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
-<script defer src="app.js?v=106"></script>
+<script defer src="app.js?v=107"></script>
 
 <style>
 
@@ -55,10 +55,13 @@ renderer="colorManagement:true; alpha:true;"
 
 <a-assets>
 
-<!-- دفتر اول -->
+
+<!-- ===================== -->
+<!-- VIDEO 1 -->
+<!-- ===================== -->
 
 <video
-id="video0"
+id="frontVideo"
 src="./notebook/choromi.mp4"
 preload="auto"
 loop
@@ -67,7 +70,24 @@ playsinline
 webkit-playsinline>
 </video>
 
+
+<!-- ===================== -->
+<!-- VIDEO 2 -->
+<!-- ===================== -->
+
+<video
+id="video02"
+src="./02/02.mp4"
+preload="auto"
+loop
+muted
+playsinline
+webkit-playsinline>
+</video>
+
+
 </a-assets>
+
 
 
 <a-camera
@@ -76,10 +96,45 @@ look-controls="enabled:false">
 </a-camera>
 
 
-<!--
-Targetها به صورت خودکار
-از app.js ساخته می‌شوند
--->
+
+<!-- ===================== -->
+<!-- TARGET 0 -->
+<!-- دفتر اول -->
+<!-- ===================== -->
+
+<a-entity
+mindar-image-target="targetIndex:0">
+
+<a-video
+id="frontARVideo"
+src="#frontVideo"
+width="1"
+height="1.42"
+position="0 0 0">
+</a-video>
+
+</a-entity>
+
+
+
+<!-- ===================== -->
+<!-- TARGET 1 -->
+<!-- دفتر دوم -->
+<!-- ===================== -->
+
+<a-entity
+mindar-image-target="targetIndex:1">
+
+<a-video
+id="video02AR"
+src="#video02"
+width="1"
+height="1.42"
+position="0 0 0">
+</a-video>
+
+</a-entity>
+
 
 </a-scene>
 
