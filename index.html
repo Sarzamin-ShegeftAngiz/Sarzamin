@@ -5,20 +5,15 @@
 
 <meta charset="UTF-8">
 
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Sarzamin AR</title>
-
 
 <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
-<script defer src="app.js?v=114"></script>
-
+<script defer src="app.js?v=116"></script>
 
 <style>
 
@@ -62,11 +57,12 @@ renderer="colorManagement:true;"
 
 
 <!-- ===================== -->
+<!-- TARGET 0 -->
 <!-- دفتر اول -->
 <!-- ===================== -->
 
 <video
-id="frontVideo"
+id="video0"
 src="./notebook/choromi.mp4"
 preload="auto"
 loop
@@ -77,12 +73,13 @@ webkit-playsinline>
 
 
 <!-- ===================== -->
+<!-- TARGET 1 -->
 <!-- دفتر دوم -->
 <!-- ===================== -->
 
 <video
-id="backVideo"
-src="./02/02.mp4"
+id="video1"
+src="./notebook2/02.mp4"
 preload="auto"
 loop
 muted
@@ -103,16 +100,15 @@ look-controls="enabled:false">
 
 
 <!-- ===================== -->
-<!-- Target 0 -->
-<!-- دفتر اول -->
+<!-- TARGET 0 -->
 <!-- ===================== -->
 
 <a-entity
 mindar-image-target="targetIndex:0">
 
 <a-video
-id="frontARVideo"
-src="#frontVideo"
+id="video0AR"
+src="#video0"
 width="1"
 height="1.42"
 position="0 0 0">
@@ -123,16 +119,15 @@ position="0 0 0">
 
 
 <!-- ===================== -->
-<!-- Target 1 -->
-<!-- دفتر دوم -->
+<!-- TARGET 1 -->
 <!-- ===================== -->
 
 <a-entity
 mindar-image-target="targetIndex:1">
 
 <a-video
-id="backARVideo"
-src="#backVideo"
+id="video1AR"
+src="#video1"
 width="1"
 height="1.42"
 position="0 0 0">
