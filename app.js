@@ -1,36 +1,45 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-
 const scene =
-    document.querySelector("a-scene");
+document.querySelector("a-scene");
 
 
 const frontVideo =
-    document.querySelector("#frontVideo");
+document.querySelector("#frontVideo");
 
 
 const video02 =
-    document.querySelector("#video02");
+document.querySelector("#video02");
 
 
 const frontARVideo =
-    document.querySelector("#frontARVideo");
-
-
-const video02AR =
-    document.querySelector("#video02AR");
+document.querySelector("#frontARVideo");
 
 
 const target0 =
-    document.querySelector("#target0");
+document.querySelector("#target0");
 
 
 const target1 =
-    document.querySelector("#target1");
+document.querySelector("#target1");
 
 
-console.log("APP VERSION 111");
+const canvas =
+document.querySelector("#video02Canvas");
 
+
+const ctx =
+canvas.getContext("2d");
+
+
+const video02Plane =
+document.querySelector("#video02Plane");
+
+
+let video02Active = false;
+
+
+console.log("APP VERSION 112");
 
 
 /* =====================================
@@ -39,205 +48,213 @@ console.log("APP VERSION 111");
 
 scene.addEventListener("arReady", () => {
 
-    console.log("AR READY");
+console.log("AR READY");
 
 });
 
 
-
 /* =====================================
    TARGET 0
-   دفتر اول
 ===================================== */
 
 target0.addEventListener(
-    "targetFound",
-    async () => {
+"targetFound",
+async () => {
 
-        console.log("TARGET 0 FOUND");
-
-
-        /* توقف ویدیوی دوم */
-
-        video02.pause();
+console.log("TARGET 0 FOUND");
 
 
-        /* شروع ویدیوی اول */
+video02Active = false;
 
-        frontVideo.currentTime = 0;
-
-        frontVideo.muted = false;
+video02.pause();
 
 
-        try {
+frontVideo.currentTime = 0;
 
-            await frontVideo.play();
+frontVideo.muted = false;
 
-            console.log(
-                "VIDEO 1 PLAYING"
-            );
 
-        }
+try {
 
-        catch(error) {
+await frontVideo.play();
 
-            console.log(
-                "VIDEO 1 ERROR:",
-                error
-            );
+console.log("VIDEO 1 PLAYING");
 
-        }
+}
 
-    }
+catch(error) {
+
+console.log(
+"VIDEO 1 ERROR:",
+error
 );
 
+}
+
+});
 
 
 target0.addEventListener(
-    "targetLost",
-    () => {
+"targetLost",
+() => {
 
-        console.log("TARGET 0 LOST");
+console.log("TARGET 0 LOST");
 
-        frontVideo.pause();
+frontVideo.pause();
 
-    }
-);
-
+});
 
 
 /* =====================================
    TARGET 1
-   دفتر دوم
 ===================================== */
 
 target1.addEventListener(
-    "targetFound",
-    async () => {
+"targetFound",
+async () => {
 
-        console.log("TARGET 1 FOUND");
-
-
-        /* توقف ویدیوی اول */
-
-        frontVideo.pause();
+console.log("TARGET 1 FOUND");
 
 
-        /* آماده کردن ویدیوی دوم */
+/* ویدیوی اول متوقف شود */
 
-        video02.currentTime = 0;
-
-        video02.muted = true;
+frontVideo.pause();
 
 
-        try {
+/* فعال کردن Canvas */
 
-            await video02.play();
-
-            console.log(
-                "VIDEO 2 PLAYING"
-            );
+video02Active = true;
 
 
-            /*
-            بعد از شروع پخش،
-            صدا را باز می‌کنیم
-            */
+/* ویدیوی دوم از اول */
 
-            video02.muted = false;
+video02.currentTime = 0;
 
-        }
 
-        catch(error) {
+/*
+اول بدون صدا پخش می‌کنیم
+تا Chrome اجازه بدهد
+*/
 
-            console.log(
-                "VIDEO 2 ERROR:",
-                error
-            );
+video02.muted = true;
 
-        }
 
-    }
+try {
+
+await video02.play();
+
+console.log("VIDEO 2 PLAYING");
+
+}
+
+catch(error) {
+
+console.log(
+"VIDEO 2 ERROR:",
+error
 );
 
+}
+
+});
 
 
 target1.addEventListener(
-    "targetLost",
-    () => {
+"targetLost",
+() => {
 
-        console.log("TARGET 1 LOST");
+console.log("TARGET 1 LOST");
 
-        video02.pause();
+video02Active = false;
 
-    }
-);
+video02.pause();
 
+});
 
 
 /* =====================================
-   VIDEO TEXTURE UPDATE
+   CANVAS VIDEO TEXTURE
+===================================== */
+
+function updateVideo02Canvas() {
+
+if (
+video02Active &&
+video02.readyState >= 2
+) {
+
+ctx.drawImage(
+video02,
+0,
+0,
+canvas.width,
+canvas.height
+);
+
+
+/*
+Texture مربوط به Canvas
+را مجبور به آپدیت می‌کنیم
+*/
+
+const mesh =
+video02Plane.getObject3D("mesh");
+
+
+if (
+mesh &&
+mesh.material &&
+mesh.material.map
+) {
+
+mesh.material.map.needsUpdate =
+true;
+
+}
+
+}
+
+
+requestAnimationFrame(
+updateVideo02Canvas
+);
+
+}
+
+
+updateVideo02Canvas();
+
+
+/* =====================================
+   VIDEO 1 TEXTURE
 ===================================== */
 
 scene.addEventListener(
-    "renderstart",
-    () => {
+"renderstart",
+() => {
+
+scene.addEventListener(
+"tick",
+() => {
 
 
-        scene.addEventListener(
-            "tick",
-            () => {
+const mesh =
+frontARVideo.getObject3D("mesh");
 
 
-                /* ======================
-                   VIDEO 1
-                ====================== */
+if (
+mesh &&
+mesh.material &&
+mesh.material.map
+) {
 
-                const mesh1 =
-                    frontARVideo.getObject3D(
-                        "mesh"
-                    );
+mesh.material.map.needsUpdate =
+true;
 
+}
 
-                if (
-                    mesh1 &&
-                    mesh1.material &&
-                    mesh1.material.map
-                ) {
+});
 
-                    mesh1.material.map.needsUpdate =
-                        true;
-
-                }
-
-
-
-                /* ======================
-                   VIDEO 2
-                ====================== */
-
-                const mesh2 =
-                    video02AR.getObject3D(
-                        "mesh"
-                    );
-
-
-                if (
-                    mesh2 &&
-                    mesh2.material &&
-                    mesh2.material.map
-                ) {
-
-                    mesh2.material.map.needsUpdate =
-                        true;
-
-                }
-
-            }
-        );
-
-    }
-);
-
+});
 
 });
