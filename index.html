@@ -5,15 +5,20 @@
 
 <meta charset="UTF-8">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
 
 <title>Sarzamin AR</title>
+
 
 <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
-<script defer src="app.js?v=112"></script>
+<script defer src="app.js?v=114"></script>
+
 
 <style>
 
@@ -33,7 +38,9 @@ height:100%;
 
 </head>
 
+
 <body>
+
 
 <a-scene
 
@@ -53,7 +60,10 @@ renderer="colorManagement:true;"
 
 <a-assets>
 
-<!-- ویدیوی اول -->
+
+<!-- ===================== -->
+<!-- دفتر اول -->
+<!-- ===================== -->
 
 <video
 id="frontVideo"
@@ -66,10 +76,12 @@ webkit-playsinline>
 </video>
 
 
-<!-- ویدیوی دوم -->
+<!-- ===================== -->
+<!-- دفتر دوم -->
+<!-- ===================== -->
 
 <video
-id="video02"
+id="backVideo"
 src="./02/02.mp4"
 preload="auto"
 loop
@@ -79,15 +91,8 @@ webkit-playsinline>
 </video>
 
 
-<!-- Canvas مخصوص ویدیوی دوم -->
-
-<canvas
-id="video02Canvas"
-width="1000"
-height="1420">
-</canvas>
-
 </a-assets>
+
 
 
 <a-camera
@@ -96,12 +101,13 @@ look-controls="enabled:false">
 </a-camera>
 
 
-<!-- ========================= -->
-<!-- TARGET 0 -->
-<!-- ========================= -->
+
+<!-- ===================== -->
+<!-- Target 0 -->
+<!-- دفتر اول -->
+<!-- ===================== -->
 
 <a-entity
-id="target0"
 mindar-image-target="targetIndex:0">
 
 <a-video
@@ -115,23 +121,25 @@ position="0 0 0">
 </a-entity>
 
 
-<!-- ========================= -->
-<!-- TARGET 1 -->
-<!-- ========================= -->
+
+<!-- ===================== -->
+<!-- Target 1 -->
+<!-- دفتر دوم -->
+<!-- ===================== -->
 
 <a-entity
-id="target1"
 mindar-image-target="targetIndex:1">
 
-<a-plane
-id="video02Plane"
+<a-video
+id="backARVideo"
+src="#backVideo"
 width="1"
 height="1.42"
-position="0 0 0"
-material="shader:flat; src:#video02Canvas;">
-</a-plane>
+position="0 0 0">
+</a-video>
 
 </a-entity>
+
 
 
 </a-scene>
