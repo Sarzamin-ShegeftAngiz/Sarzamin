@@ -1,259 +1,130 @@
-document.addEventListener("DOMContentLoaded", () => {
-
-const scene =
-document.querySelector("a-scene");
+document.addEventListener("DOMContentLoaded",()=>{
 
 
-const frontVideo =
+const scene=document.querySelector("a-scene");
+
+const frontVideo=
 document.querySelector("#frontVideo");
 
-
-const video02 =
-document.querySelector("#video02");
-
-
-const frontARVideo =
-document.querySelector("#frontARVideo");
+const backVideo=
+document.querySelector("#backVideo");
 
 
-const target0 =
-document.querySelector("#target0");
-
-
-const target1 =
-document.querySelector("#target1");
-
-
-const canvas =
-document.querySelector("#video02Canvas");
-
-
-const ctx =
-canvas.getContext("2d");
-
-
-const video02Plane =
-document.querySelector("#video02Plane");
-
-
-let video02Active = false;
-
-
-console.log("APP VERSION 112");
-
-
-/* =====================================
-   AR READY
-===================================== */
-
-scene.addEventListener("arReady", () => {
+scene.addEventListener("arReady",()=>{
 
 console.log("AR READY");
 
 });
 
 
-/* =====================================
-   TARGET 0
-===================================== */
 
-target0.addEventListener(
+scene.addEventListener(
 "targetFound",
-async () => {
+async(e)=>{
+
+
+let target=e.target;
+
+
+let index=
+target.getAttribute(
+"mindar-image-target"
+).targetIndex;
+
+
+
+/* =====================
+   Target 0
+   دفتر اول
+===================== */
+
+if(index===0){
 
 console.log("TARGET 0 FOUND");
 
 
-video02Active = false;
-
-video02.pause();
+backVideo.pause();
 
 
-frontVideo.currentTime = 0;
+frontVideo.currentTime=0;
 
-frontVideo.muted = false;
+frontVideo.muted=false;
 
 
-try {
+try{
 
 await frontVideo.play();
 
-console.log("VIDEO 1 PLAYING");
+}catch(err){
+
+console.log(err);
 
 }
 
-catch(error) {
-
-console.log(
-"VIDEO 1 ERROR:",
-error
-);
-
 }
 
-});
 
 
-target0.addEventListener(
-"targetLost",
-() => {
+/* =====================
+   Target 1
+   دفتر دوم
+===================== */
 
-console.log("TARGET 0 LOST");
-
-frontVideo.pause();
-
-});
-
-
-/* =====================================
-   TARGET 1
-===================================== */
-
-target1.addEventListener(
-"targetFound",
-async () => {
+if(index===1){
 
 console.log("TARGET 1 FOUND");
 
 
-/* ویدیوی اول متوقف شود */
-
 frontVideo.pause();
 
 
-/* فعال کردن Canvas */
+backVideo.currentTime=0;
 
-video02Active = true;
-
-
-/* ویدیوی دوم از اول */
-
-video02.currentTime = 0;
+backVideo.muted=false;
 
 
-/*
-اول بدون صدا پخش می‌کنیم
-تا Chrome اجازه بدهد
-*/
+try{
 
-video02.muted = true;
+await backVideo.play();
 
+}catch(err){
 
-try {
-
-await video02.play();
-
-console.log("VIDEO 2 PLAYING");
+console.log(err);
 
 }
 
-catch(error) {
-
-console.log(
-"VIDEO 2 ERROR:",
-error
-);
-
 }
+
 
 });
 
 
-target1.addEventListener(
+
+scene.addEventListener(
 "targetLost",
-() => {
-
-console.log("TARGET 1 LOST");
-
-video02Active = false;
-
-video02.pause();
-
-});
+(e)=>{
 
 
-/* =====================================
-   CANVAS VIDEO TEXTURE
-===================================== */
-
-function updateVideo02Canvas() {
-
-if (
-video02Active &&
-video02.readyState >= 2
-) {
-
-ctx.drawImage(
-video02,
-0,
-0,
-canvas.width,
-canvas.height
-);
+let index=
+e.target.getAttribute(
+"mindar-image-target"
+).targetIndex;
 
 
-/*
-Texture مربوط به Canvas
-را مجبور به آپدیت می‌کنیم
-*/
 
-const mesh =
-video02Plane.getObject3D("mesh");
+if(index===0){
 
-
-if (
-mesh &&
-mesh.material &&
-mesh.material.map
-) {
-
-mesh.material.map.needsUpdate =
-true;
-
-}
+frontVideo.pause();
 
 }
 
 
-requestAnimationFrame(
-updateVideo02Canvas
-);
+if(index===1){
+
+backVideo.pause();
 
 }
 
-
-updateVideo02Canvas();
-
-
-/* =====================================
-   VIDEO 1 TEXTURE
-===================================== */
-
-scene.addEventListener(
-"renderstart",
-() => {
-
-scene.addEventListener(
-"tick",
-() => {
-
-
-const mesh =
-frontARVideo.getObject3D("mesh");
-
-
-if (
-mesh &&
-mesh.material &&
-mesh.material.map
-) {
-
-mesh.material.map.needsUpdate =
-true;
-
-}
-
-});
 
 });
 
