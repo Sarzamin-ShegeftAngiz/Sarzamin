@@ -5,189 +5,133 @@
 
 <meta charset="UTF-8">
 
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Sarzamin AR</title>
-
 
 <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
-<script defer src="app.js?v=111"></script>
-
+<script defer src="app.js?v=112"></script>
 
 <style>
 
-html,
-body{
-    margin:0;
-    width:100%;
-    height:100%;
-    overflow:hidden;
+html,body{
+margin:0;
+width:100%;
+height:100%;
+overflow:hidden;
 }
 
 a-scene{
-    width:100%;
-    height:100%;
+width:100%;
+height:100%;
 }
 
 </style>
 
 </head>
 
-
 <body>
-
 
 <a-scene
 
-    mindar-image="
-        imageTargetSrc: ./targets.mind;
-    "
+mindar-image="
+imageTargetSrc: ./targets.mind;
+"
 
-    embedded
+embedded
 
-    vr-mode-ui="enabled:false"
+vr-mode-ui="enabled:false"
 
-    device-orientation-permission-ui="enabled:false"
+device-orientation-permission-ui="enabled:false"
 
-    renderer="colorManagement:true;"
+renderer="colorManagement:true;"
 >
 
 
 <a-assets>
 
-
-<!-- ========================= -->
-<!-- VIDEO 1 -->
-<!-- ========================= -->
+<!-- ویدیوی اول -->
 
 <video
-
-    id="frontVideo"
-
-    src="./notebook/choromi.mp4"
-
-    preload="auto"
-
-    loop
-
-    muted
-
-    playsinline
-
-    webkit-playsinline>
-
+id="frontVideo"
+src="./notebook/choromi.mp4"
+preload="auto"
+loop
+muted
+playsinline
+webkit-playsinline>
 </video>
 
 
-<!-- ========================= -->
-<!-- VIDEO 2 -->
-<!-- ========================= -->
+<!-- ویدیوی دوم -->
 
 <video
-
-    id="video02"
-
-    src="./02/02.mp4"
-
-    preload="auto"
-
-    loop
-
-    muted
-
-    playsinline
-
-    webkit-playsinline>
-
+id="video02"
+src="./02/02.mp4"
+preload="auto"
+loop
+muted
+playsinline
+webkit-playsinline>
 </video>
 
+
+<!-- Canvas مخصوص ویدیوی دوم -->
+
+<canvas
+id="video02Canvas"
+width="1000"
+height="1420">
+</canvas>
 
 </a-assets>
 
 
-
-<!-- ========================= -->
-<!-- CAMERA -->
-<!-- ========================= -->
-
 <a-camera
-
-    position="0 0 0"
-
-    look-controls="enabled:false">
-
+position="0 0 0"
+look-controls="enabled:false">
 </a-camera>
-
 
 
 <!-- ========================= -->
 <!-- TARGET 0 -->
-<!-- دفتر اول -->
 <!-- ========================= -->
 
 <a-entity
-
-    id="target0"
-
-    mindar-image-target="targetIndex:0"
->
-
+id="target0"
+mindar-image-target="targetIndex:0">
 
 <a-video
-
-    id="frontARVideo"
-
-    src="#frontVideo"
-
-    width="1"
-
-    height="1.42"
-
-    position="0 0 0">
-
+id="frontARVideo"
+src="#frontVideo"
+width="1"
+height="1.42"
+position="0 0 0">
 </a-video>
 
-
 </a-entity>
-
 
 
 <!-- ========================= -->
 <!-- TARGET 1 -->
-<!-- دفتر دوم -->
 <!-- ========================= -->
 
 <a-entity
-
-    id="target1"
-
-    mindar-image-target="targetIndex:1"
->
-
+id="target1"
+mindar-image-target="targetIndex:1">
 
 <a-plane
-
-    id="video02AR"
-
-    width="1"
-
-    height="1.42"
-
-    position="0 0 0"
-
-    material="shader:flat; src:#video02;">
-
+id="video02Plane"
+width="1"
+height="1.42"
+position="0 0 0"
+material="shader:flat; src:#video02Canvas;">
 </a-plane>
 
-
 </a-entity>
-
 
 
 </a-scene>
