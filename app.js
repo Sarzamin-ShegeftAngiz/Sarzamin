@@ -1,199 +1,206 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-    const scene = document.querySelector("a-scene");
 
-    const frontVideo =
-        document.querySelector("#frontVideo");
+const scene =
+document.querySelector("a-scene");
 
-    const video02 =
-        document.querySelector("#video02");
 
-    const frontARVideo =
-        document.querySelector("#frontARVideo");
+const frontVideo =
+document.querySelector("#frontVideo");
 
-    const video02AR =
-        document.querySelector("#video02AR");
 
-    const frontTarget =
-        document.querySelector(
-            '[mindar-image-target="targetIndex:0"]'
-        );
+const video02 =
+document.querySelector("#video02");
 
-    const target02 =
-        document.querySelector(
-            '[mindar-image-target="targetIndex:1"]'
-        );
 
+const frontARVideo =
+document.querySelector("#frontARVideo");
 
-    console.log("APP VERSION 108");
 
+const video02AR =
+document.querySelector("#video02AR");
 
-    /* =====================================
-       AR READY
-    ===================================== */
 
-    scene.addEventListener("arReady", () => {
+const frontTarget =
+document.querySelector(
+'[mindar-image-target="targetIndex:0"]'
+);
 
-        console.log("AR READY");
 
-    });
+const target02 =
+document.querySelector(
+'[mindar-image-target="targetIndex:1"]'
+);
 
 
-    /* =====================================
-       TARGET 0
-       دفتر اول
-    ===================================== */
+console.log("APP VERSION 109");
 
-    frontTarget.addEventListener(
-        "targetFound",
-        async () => {
 
-            console.log("TARGET 0 FOUND");
 
-            video02.pause();
+/* =========================
+   AR READY
+========================= */
 
-            frontVideo.currentTime = 0;
-            frontVideo.muted = false;
+scene.addEventListener("arReady", () => {
 
-            try {
+console.log("AR READY");
 
-                await frontVideo.play();
+});
 
-                console.log("FRONT PLAYING");
 
-            } catch (error) {
 
-                console.log(
-                    "FRONT VIDEO ERROR",
-                    error
-                );
+/* =========================
+   TARGET 0
+   دفتر اول
+========================= */
 
-            }
+frontTarget.addEventListener(
+"targetFound",
+async () => {
 
-        }
-    );
+console.log("TARGET 0 FOUND");
 
 
-    frontTarget.addEventListener(
-        "targetLost",
-        () => {
+video02.pause();
 
-            console.log("TARGET 0 LOST");
 
-            frontVideo.pause();
+frontVideo.muted = false;
 
-        }
-    );
+frontVideo.currentTime = 0;
 
 
-    /* =====================================
-       TARGET 1
-       دفتر دوم
-    ===================================== */
+try {
 
-    target02.addEventListener(
-        "targetFound",
-        async () => {
+await frontVideo.play();
 
-            console.log("TARGET 1 FOUND");
+console.log("FRONT PLAYING");
 
-            frontVideo.pause();
+} catch(error) {
 
-            /*
-            ویدیوی دوم را دوباره بارگذاری می‌کنیم
-            */
+console.log(
+"FRONT ERROR",
+error
+);
 
-            video02.pause();
+}
 
-            video02.currentTime = 0;
+});
 
-            video02.muted = true;
 
-            video02.load();
+frontTarget.addEventListener(
+"targetLost",
+() => {
 
+console.log("TARGET 0 LOST");
 
-            try {
+frontVideo.pause();
 
-                await video02.play();
+});
 
-                console.log("VIDEO 02 PLAYING");
 
-            } catch (error) {
 
-                console.log(
-                    "VIDEO 02 ERROR",
-                    error
-                );
+/* =========================
+   TARGET 1
+   دفتر دوم
+========================= */
 
-            }
+target02.addEventListener(
+"targetFound",
+async () => {
 
-        }
-    );
+console.log("TARGET 1 FOUND");
 
 
-    target02.addEventListener(
-        "targetLost",
-        () => {
+frontVideo.pause();
 
-            console.log("TARGET 1 LOST");
 
-            video02.pause();
+video02.muted = false;
 
-        }
-    );
+video02.currentTime = 0;
 
 
-    /* =====================================
-       VIDEO TEXTURE UPDATE
-    ===================================== */
+try {
 
-    scene.addEventListener(
-        "renderstart",
-        () => {
+await video02.play();
 
-            scene.addEventListener(
-                "tick",
-                () => {
+console.log("VIDEO 02 PLAYING");
 
-                    /* VIDEO 1 */
+} catch(error) {
 
-                    const frontMesh =
-                        frontARVideo.getObject3D("mesh");
+console.log(
+"VIDEO 02 ERROR",
+error
+);
 
+}
 
-                    if (
-                        frontMesh &&
-                        frontMesh.material &&
-                        frontMesh.material.map
-                    ) {
+});
 
-                        frontMesh.material.map.needsUpdate =
-                            true;
 
-                    }
+target02.addEventListener(
+"targetLost",
+() => {
 
+console.log("TARGET 1 LOST");
 
-                    /* VIDEO 2 */
+video02.pause();
 
-                    const video02Mesh =
-                        video02AR.getObject3D("mesh");
+});
 
 
-                    if (
-                        video02Mesh &&
-                        video02Mesh.material &&
-                        video02Mesh.material.map
-                    ) {
 
-                        video02Mesh.material.map.needsUpdate =
-                            true;
+/* =========================
+   VIDEO TEXTURE
+========================= */
 
-                    }
+scene.addEventListener(
+"renderstart",
+() => {
 
-                }
-            );
 
-        }
-    );
+scene.addEventListener(
+"tick",
+() => {
+
+
+/* -------- VIDEO 1 -------- */
+
+const frontMesh =
+frontARVideo.getObject3D("mesh");
+
+
+if(
+frontMesh &&
+frontMesh.material &&
+frontMesh.material.map
+){
+
+frontMesh.material.map.needsUpdate =
+true;
+
+}
+
+
+
+/* -------- VIDEO 2 -------- */
+
+const video02Mesh =
+video02AR.getObject3D("mesh");
+
+
+if(
+video02Mesh &&
+video02Mesh.material &&
+video02Mesh.material.map
+){
+
+video02Mesh.material.map.needsUpdate =
+true;
+
+}
+
+});
+
+});
 
 });
