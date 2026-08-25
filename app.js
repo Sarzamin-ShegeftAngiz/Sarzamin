@@ -12,104 +12,95 @@ document.addEventListener("DOMContentLoaded", () => {
     ];
 
 
-    /*
-    =================================
-    دکمه تست اینستاگرام
-    =================================
-    */
+    /* =========================
+       دکمه نامرئی اینستاگرام
+       ========================= */
 
     const instagramButton =
         document.createElement("button");
 
-    instagramButton.innerText =
-        "INSTAGRAM TEST";
+    instagramButton.setAttribute(
+        "aria-label",
+        "Instagram"
+    );
 
-    instagramButton.style.position =
-        "fixed";
+    instagramButton.style.position = "fixed";
 
-    instagramButton.style.top =
-        "80px";
+    /*
+    محل آیدی روی صفحه
+    */
 
-    instagramButton.style.left =
-        "20px";
+    instagramButton.style.top = "8%";
+    instagramButton.style.left = "8%";
 
-    instagramButton.style.zIndex =
-        "99999999";
+    instagramButton.style.width = "145px";
+    instagramButton.style.height = "45px";
 
-    instagramButton.style.width =
-        "180px";
+    instagramButton.style.zIndex = "99999999";
 
-    instagramButton.style.height =
-        "60px";
+    /*
+    کاملاً نامرئی
+    */
 
-    instagramButton.style.background =
-        "red";
+    instagramButton.style.background = "transparent";
+    instagramButton.style.border = "none";
+    instagramButton.style.outline = "none";
 
-    instagramButton.style.color =
-        "white";
+    /*
+    لمس فعال
+    */
 
-    instagramButton.style.border =
-        "3px solid white";
+    instagramButton.style.pointerEvents = "auto";
+    instagramButton.style.touchAction = "manipulation";
 
-    instagramButton.style.borderRadius =
-        "15px";
+    /*
+    مخفی از ظاهر
+    */
 
-    instagramButton.style.fontSize =
-        "18px";
-
-    instagramButton.style.fontWeight =
-        "bold";
-
-    instagramButton.style.pointerEvents =
-        "auto";
-
-    instagramButton.style.touchAction =
-        "manipulation";
-
+    instagramButton.style.color = "transparent";
 
     document.body.appendChild(
         instagramButton
     );
 
 
-    /*
-    =================================
-    لمس دکمه
-    =================================
-    */
+    /* =========================
+       Instagram
+       ========================= */
+
+    function openInstagram(event) {
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        /*
+        اول تلاش برای باز کردن اپ
+        */
+
+        window.location.href =
+            "instagram://user?username=SarzaminAr";
+
+    }
+
 
     instagramButton.addEventListener(
         "click",
-        () => {
-
-            window.location.href =
-                "https://www.instagram.com/SarzaminAr/";
-
-        }
+        openInstagram
     );
 
 
     instagramButton.addEventListener(
         "touchend",
-        (e) => {
-
-            e.preventDefault();
-
-            window.location.href =
-                "https://www.instagram.com/SarzaminAr/";
-
-        },
+        openInstagram,
         {
             passive: false
         }
     );
 
 
-    /*
-    =================================
-    AR
-    =================================
-    */
+    /* =========================
+       AR READY
+       ========================= */
 
     scene.addEventListener(
         "arReady",
@@ -120,6 +111,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     );
 
+
+    /* =========================
+       TARGET FOUND
+       ========================= */
 
     scene.addEventListener(
         "targetFound",
@@ -146,6 +141,10 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!video) return;
 
 
+            /*
+            توقف ویدئوهای دیگر
+            */
+
             videos.forEach(
                 (v, i) => {
 
@@ -161,6 +160,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             );
 
+
+            /*
+            اجرای ویدئو
+            */
 
             video.currentTime = 0;
 
@@ -185,6 +188,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     );
 
+
+    /* =========================
+       TARGET LOST
+       ========================= */
 
     scene.addEventListener(
         "targetLost",
