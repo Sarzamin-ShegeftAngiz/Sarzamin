@@ -13,7 +13,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
-<script defer src="app.js?v=120"></script>
+<script defer src="app.js?v=121"></script>
 
 <style>
 
@@ -33,7 +33,9 @@ height:100%;
 
 </head>
 
+
 <body>
+
 
 <a-scene
 
@@ -48,12 +50,17 @@ vr-mode-ui="enabled:false"
 device-orientation-permission-ui="enabled:false"
 
 renderer="colorManagement:true;"
+
+cursor="rayOrigin: mouse"
 >
 
 
 <a-assets>
 
-<!-- Target 0 -->
+
+<!-- ===================== -->
+<!-- VIDEO 0 -->
+<!-- ===================== -->
 
 <video
 id="video0"
@@ -66,7 +73,9 @@ webkit-playsinline>
 </video>
 
 
-<!-- Target 1 -->
+<!-- ===================== -->
+<!-- VIDEO 1 -->
+<!-- ===================== -->
 
 <video
 id="video1"
@@ -79,7 +88,9 @@ webkit-playsinline>
 </video>
 
 
-<!-- Target 2 -->
+<!-- ===================== -->
+<!-- VIDEO 2 -->
+<!-- ===================== -->
 
 <video
 id="video2"
@@ -92,7 +103,9 @@ webkit-playsinline>
 </video>
 
 
-<!-- Target 3 -->
+<!-- ===================== -->
+<!-- VIDEO 3 -->
+<!-- ===================== -->
 
 <video
 id="video3"
@@ -105,7 +118,9 @@ webkit-playsinline>
 </video>
 
 
-<!-- Target 4 -->
+<!-- ===================== -->
+<!-- VIDEO 4 -->
+<!-- ===================== -->
 
 <video
 id="video4"
@@ -118,7 +133,9 @@ webkit-playsinline>
 </video>
 
 
-<!-- Target 5 -->
+<!-- ===================== -->
+<!-- VIDEO 5 -->
+<!-- ===================== -->
 
 <video
 id="video5"
@@ -136,11 +153,15 @@ webkit-playsinline>
 
 <a-camera
 position="0 0 0"
-look-controls="enabled:false">
+look-controls="enabled:false"
+cursor="rayOrigin: mouse"
+raycaster="objects: .instagram-button">
 </a-camera>
 
 
+<!-- ===================== -->
 <!-- TARGET 0 -->
+<!-- ===================== -->
 
 <a-entity
 mindar-image-target="targetIndex:0">
@@ -152,10 +173,24 @@ height="1.42"
 position="0 0 0">
 </a-video>
 
+
+<!-- دکمه نامرئی اینستاگرام -->
+
+<a-plane
+class="instagram-button"
+width="0.55"
+height="0.16"
+position="-0.22 0.63 0.02"
+material="transparent:true; opacity:0; shader:flat;"
+instagram-link>
+</a-plane>
+
 </a-entity>
 
 
+<!-- ===================== -->
 <!-- TARGET 1 -->
+<!-- ===================== -->
 
 <a-entity
 mindar-image-target="targetIndex:1">
@@ -167,10 +202,21 @@ height="1.42"
 position="0 0 0">
 </a-video>
 
+<a-plane
+class="instagram-button"
+width="0.55"
+height="0.16"
+position="-0.22 0.63 0.02"
+material="transparent:true; opacity:0; shader:flat;"
+instagram-link>
+</a-plane>
+
 </a-entity>
 
 
+<!-- ===================== -->
 <!-- TARGET 2 -->
+<!-- ===================== -->
 
 <a-entity
 mindar-image-target="targetIndex:2">
@@ -182,10 +228,21 @@ height="1.42"
 position="0 0 0">
 </a-video>
 
+<a-plane
+class="instagram-button"
+width="0.55"
+height="0.16"
+position="-0.22 0.63 0.02"
+material="transparent:true; opacity:0; shader:flat;"
+instagram-link>
+</a-plane>
+
 </a-entity>
 
 
+<!-- ===================== -->
 <!-- TARGET 3 -->
+<!-- ===================== -->
 
 <a-entity
 mindar-image-target="targetIndex:3">
@@ -197,10 +254,21 @@ height="1.42"
 position="0 0 0">
 </a-video>
 
+<a-plane
+class="instagram-button"
+width="0.55"
+height="0.16"
+position="-0.22 0.63 0.02"
+material="transparent:true; opacity:0; shader:flat;"
+instagram-link>
+</a-plane>
+
 </a-entity>
 
 
+<!-- ===================== -->
 <!-- TARGET 4 -->
+<!-- ===================== -->
 
 <a-entity
 mindar-image-target="targetIndex:4">
@@ -212,10 +280,21 @@ height="1.42"
 position="0 0 0">
 </a-video>
 
+<a-plane
+class="instagram-button"
+width="0.55"
+height="0.16"
+position="-0.22 0.63 0.02"
+material="transparent:true; opacity:0; shader:flat;"
+instagram-link>
+</a-plane>
+
 </a-entity>
 
 
+<!-- ===================== -->
 <!-- TARGET 5 -->
+<!-- ===================== -->
 
 <a-entity
 mindar-image-target="targetIndex:5">
@@ -226,6 +305,15 @@ width="1"
 height="1.42"
 position="0 0 0">
 </a-video>
+
+<a-plane
+class="instagram-button"
+width="0.55"
+height="0.16"
+position="-0.22 0.63 0.02"
+material="transparent:true; opacity:0; shader:flat;"
+instagram-link>
+</a-plane>
 
 </a-entity>
 
