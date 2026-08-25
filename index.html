@@ -5,35 +5,55 @@
 
 <meta charset="UTF-8">
 
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
 
-<title>Instagram Test</title>
+<title>Sarzamin AR</title>
+
+
+<!-- A-Frame -->
+
+<script
+    src="https://aframe.io/releases/1.4.2/aframe.min.js">
+</script>
+
+
+<!-- MindAR -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js">
+</script>
+
+
+<!-- App JS -->
+
+<script
+    defer
+    src="app.js?v=125">
+</script>
+
 
 <style>
 
-body{
-margin:0;
-height:100vh;
-display:flex;
-align-items:center;
-justify-content:center;
-background:#111;
+html,
+body {
+
+    margin: 0;
+
+    width: 100%;
+    height: 100%;
+
+    overflow: hidden;
+
 }
 
-button{
 
-width:250px;
-height:80px;
+a-scene {
 
-font-size:22px;
-font-weight:bold;
-
-border:0;
-border-radius:20px;
-
-background:#e1306c;
-color:white;
+    width: 100%;
+    height: 100%;
 
 }
 
@@ -41,26 +61,342 @@ color:white;
 
 </head>
 
+
 <body>
 
 
-<button id="instagram">
-باز کردن Instagram
-</button>
+<a-scene
+
+    mindar-image="
+        imageTargetSrc: ./targets.mind;
+    "
+
+    embedded
+
+    vr-mode-ui="enabled:false"
+
+    device-orientation-permission-ui="enabled:false"
+
+    renderer="colorManagement:true;"
+>
 
 
-<script>
+<a-assets>
 
-document
-.getElementById("instagram")
-.addEventListener("click", function(){
 
-    window.location.href =
-        "instagram://user?username=SarzaminAr";
+<!-- ========================= -->
+<!-- VIDEO 0 -->
+<!-- ========================= -->
 
-});
+<video
 
-</script>
+    id="video0"
+
+    src="./notebook/choromi.mp4"
+
+    preload="auto"
+
+    loop
+
+    muted
+
+    playsinline
+
+    webkit-playsinline>
+
+</video>
+
+
+<!-- ========================= -->
+<!-- VIDEO 1 -->
+<!-- ========================= -->
+
+<video
+
+    id="video1"
+
+    src="./notebook2/02.mp4"
+
+    preload="auto"
+
+    loop
+
+    muted
+
+    playsinline
+
+    webkit-playsinline>
+
+</video>
+
+
+<!-- ========================= -->
+<!-- VIDEO 2 -->
+<!-- ========================= -->
+
+<video
+
+    id="video2"
+
+    src="./notebook3/03.mp4"
+
+    preload="auto"
+
+    loop
+
+    muted
+
+    playsinline
+
+    webkit-playsinline>
+
+</video>
+
+
+<!-- ========================= -->
+<!-- VIDEO 3 -->
+<!-- ========================= -->
+
+<video
+
+    id="video3"
+
+    src="./notebook4/04.mp4"
+
+    preload="auto"
+
+    loop
+
+    muted
+
+    playsinline
+
+    webkit-playsinline>
+
+</video>
+
+
+<!-- ========================= -->
+<!-- VIDEO 4 -->
+<!-- ========================= -->
+
+<video
+
+    id="video4"
+
+    src="./notebook5/05.mp4"
+
+    preload="auto"
+
+    loop
+
+    muted
+
+    playsinline
+
+    webkit-playsinline>
+
+</video>
+
+
+<!-- ========================= -->
+<!-- VIDEO 5 -->
+<!-- ========================= -->
+
+<video
+
+    id="video5"
+
+    src="./notebook6/06.mp4"
+
+    preload="auto"
+
+    loop
+
+    muted
+
+    playsinline
+
+    webkit-playsinline>
+
+</video>
+
+
+</a-assets>
+
+
+
+<!-- ========================= -->
+<!-- CAMERA -->
+<!-- ========================= -->
+
+<a-camera
+
+    position="0 0 0"
+
+    look-controls="enabled:false">
+
+</a-camera>
+
+
+
+<!-- ========================= -->
+<!-- TARGET 0 -->
+<!-- ========================= -->
+
+<a-entity
+
+    mindar-image-target="
+        targetIndex:0
+    ">
+
+    <a-video
+
+        src="#video0"
+
+        width="1"
+
+        height="1.42"
+
+        position="0 0 0">
+
+    </a-video>
+
+</a-entity>
+
+
+
+<!-- ========================= -->
+<!-- TARGET 1 -->
+<!-- ========================= -->
+
+<a-entity
+
+    mindar-image-target="
+        targetIndex:1
+    ">
+
+    <a-video
+
+        src="#video1"
+
+        width="1"
+
+        height="1.42"
+
+        position="0 0 0">
+
+    </a-video>
+
+</a-entity>
+
+
+
+<!-- ========================= -->
+<!-- TARGET 2 -->
+<!-- ========================= -->
+
+<a-entity
+
+    mindar-image-target="
+        targetIndex:2
+    ">
+
+    <a-video
+
+        src="#video2"
+
+        width="1"
+
+        height="1.42"
+
+        position="0 0 0">
+
+    </a-video>
+
+</a-entity>
+
+
+
+<!-- ========================= -->
+<!-- TARGET 3 -->
+<!-- ========================= -->
+
+<a-entity
+
+    mindar-image-target="
+        targetIndex:3
+    ">
+
+    <a-video
+
+        src="#video3"
+
+        width="1"
+
+        height="1.42"
+
+        position="0 0 0">
+
+    </a-video>
+
+</a-entity>
+
+
+
+<!-- ========================= -->
+<!-- TARGET 4 -->
+<!-- ========================= -->
+
+<a-entity
+
+    mindar-image-target="
+        targetIndex:4
+    ">
+
+    <a-video
+
+        src="#video4"
+
+        width="1"
+
+        height="1.42"
+
+        position="0 0 0">
+
+    </a-video>
+
+</a-entity>
+
+
+
+<!-- ========================= -->
+<!-- TARGET 5 -->
+<!-- ========================= -->
+
+<a-entity
+
+    mindar-image-target="
+        targetIndex:5
+    ">
+
+    <a-video
+
+        src="#video5"
+
+        width="1"
+
+        height="1.42"
+
+        position="0 0 0">
+
+    </a-video>
+
+</a-entity>
+
+
+
+</a-scene>
 
 
 </body>
