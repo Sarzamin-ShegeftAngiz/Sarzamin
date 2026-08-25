@@ -3,17 +3,19 @@ document.addEventListener("DOMContentLoaded", () => {
     const scene =
         document.querySelector("a-scene");
 
-    const assets =
-        document.querySelector("a-assets");
+    const videos = [
+
+        document.querySelector("#video0"),
+        document.querySelector("#video1"),
+        document.querySelector("#video2"),
+        document.querySelector("#video3"),
+        document.querySelector("#video4"),
+        document.querySelector("#video5")
+
+    ];
 
 
-    /*
-    =========================================
-    تنظیمات
-    =========================================
-    */
-
-    const MAX_TARGETS = 100;
+    let activeTarget = null;
 
 
     const instagramURL =
@@ -21,233 +23,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /*
-    =========================================
-    ساخت Target ها و ویدئوها
-    =========================================
-    */
-
-    for (
-        let i = 0;
-        i < MAX_TARGETS;
-        i++
-    ) {
-
-        /*
-        شماره پوشه
-        Target 0 = notebook
-        Target 1 = notebook2
-        Target 2 = notebook3
-        */
-
-        const folder =
-            i === 0
-                ? "notebook"
-                : "notebook" + (i + 1);
-
-
-        /*
-        نام ویدئو
-        Target 0 = choromi.mp4
-        Target 1 = 02.mp4
-        Target 2 = 03.mp4
-        */
-
-        const videoName =
-            i === 0
-                ? "choromi.mp4"
-                : String(i + 1).padStart(2, "0") + ".mp4";
-
-
-        /*
-        =================================
-        Video
-        =================================
-        */
-
-        const video =
-            document.createElement("video");
-
-
-        video.id =
-            "video" + i;
-
-
-        video.src =
-            "./" +
-            folder +
-            "/" +
-            videoName;
-
-
-        video.preload =
-            "none";
-
-
-        video.loop =
-            true;
-
-
-        video.muted =
-            true;
-
-
-        video.playsInline =
-            true;
-
-
-        video.setAttribute(
-            "webkit-playsinline",
-            ""
-        );
-
-
-        assets.appendChild(
-            video
-        );
-
-
-        /*
-        =================================
-        Target
-        =================================
-        */
-
-        const target =
-            document.createElement("a-entity");
-
-
-        target.setAttribute(
-            "mindar-image-target",
-            "targetIndex:" + i
-        );
-
-
-        /*
-        =================================
-        Video روی دفتر
-        =================================
-        */
-
-        const arVideo =
-            document.createElement("a-video");
-
-
-        arVideo.setAttribute(
-            "src",
-            "#video" + i
-        );
-
-
-        arVideo.setAttribute(
-            "width",
-            "1"
-        );
-
-
-        arVideo.setAttribute(
-            "height",
-            "1.42"
-        );
-
-
-        arVideo.setAttribute(
-            "position",
-            "0 0 0"
-        );
-
-
-        target.appendChild(
-            arVideo
-        );
-
-
-        /*
-        =================================
-        Instagram Zone
-        کاملاً نامرئی
-        =================================
-        */
-
-        const instagramZone =
-            document.createElement("a-plane");
-
-
-        instagramZone.classList.add(
-            "instagram-zone"
-        );
-
-
-        instagramZone.setAttribute(
-            "width",
-            "0.70"
-        );
-
-
-        instagramZone.setAttribute(
-            "height",
-            "0.16"
-        );
-
-
-        instagramZone.setAttribute(
-            "position",
-            "-0.31 0.62 0.02"
-        );
-
-
-        instagramZone.setAttribute(
-            "material",
-            "shader:flat;color:red;opacity:0;transparent:true"
-        );
-
-
-        target.appendChild(
-            instagramZone
-        );
-
-
-        /*
-        اضافه کردن Target
-        */
-
-        scene.appendChild(
-            target
-        );
-
-    }
-
-
-    /*
-    =========================================
-    وضعیت Target فعال
-    =========================================
-    */
-
-    let activeTarget = null;
-
-
-    /*
-    =========================================
+    ==============================
     AR READY
-    =========================================
+    ==============================
     */
 
     scene.addEventListener(
         "arReady",
         () => {
 
-            console.log(
-                "AR READY"
-            );
+            console.log("AR READY");
 
         }
     );
 
 
     /*
-    =========================================
+    ==============================
     TARGET FOUND
-    =========================================
+    ==============================
     */
 
     scene.addEventListener(
@@ -257,12 +51,10 @@ document.addEventListener("DOMContentLoaded", () => {
             const target =
                 event.target;
 
-
             const data =
                 target.getAttribute(
                     "mindar-image-target"
                 );
-
 
             const index =
                 data.targetIndex;
@@ -279,20 +71,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             const video =
-                document.querySelector(
-                    "#video" + index
-                );
+                videos[index];
 
 
             if (!video) {
-
-                console.log(
-                    "VIDEO NOT FOUND:",
-                    index
-                );
-
                 return;
-
             }
 
 
@@ -300,39 +83,30 @@ document.addEventListener("DOMContentLoaded", () => {
             توقف ویدئوهای دیگر
             */
 
-            document
-                .querySelectorAll("video")
-                .forEach(
-                    (v) => {
+            videos.forEach(
+                (v, i) => {
 
-                        if (
-                            v !== video
-                        ) {
+                    if (
+                        v &&
+                        i !== index
+                    ) {
 
-                            v.pause();
-
-                        }
+                        v.pause();
 
                     }
-                );
+
+                }
+            );
 
 
-            /*
-            شروع ویدئوی Target
-            */
+            video.currentTime = 0;
 
-            video.currentTime =
-                0;
-
-
-            video.muted =
-                false;
+            video.muted = false;
 
 
             try {
 
                 await video.play();
-
 
                 console.log(
                     "VIDEO PLAYING:",
@@ -341,7 +115,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             }
 
-            catch (error) {
+            catch(error) {
 
                 console.log(
                     "VIDEO ERROR:",
@@ -355,9 +129,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /*
-    =========================================
+    ==============================
     TARGET LOST
-    =========================================
+    ==============================
     */
 
     scene.addEventListener(
@@ -367,21 +141,17 @@ document.addEventListener("DOMContentLoaded", () => {
             const target =
                 event.target;
 
-
             const data =
                 target.getAttribute(
                     "mindar-image-target"
                 );
-
 
             const index =
                 data.targetIndex;
 
 
             const video =
-                document.querySelector(
-                    "#video" + index
-                );
+                videos[index];
 
 
             if (video) {
@@ -395,25 +165,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 activeTarget === target
             ) {
 
-                activeTarget =
-                    null;
+                activeTarget = null;
 
             }
-
-
-            console.log(
-                "TARGET LOST:",
-                index
-            );
 
         }
     );
 
 
     /*
-    =========================================
-    لمس Instagram
-    =========================================
+    ==============================
+    لمس ناحیه Instagram
+    ==============================
     */
 
     document.addEventListener(
@@ -421,9 +184,7 @@ document.addEventListener("DOMContentLoaded", () => {
         (event) => {
 
             if (!activeTarget) {
-
                 return;
-
             }
 
 
@@ -432,18 +193,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             if (!touch) {
-
                 return;
-
             }
-
-
-            const x =
-                touch.clientX;
-
-
-            const y =
-                touch.clientY;
 
 
             const zone =
@@ -453,36 +204,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             if (!zone) {
-
                 return;
-
             }
 
 
             const mesh =
-                zone.getObject3D(
-                    "mesh"
-                );
+                zone.getObject3D("mesh");
 
 
             if (!mesh) {
-
                 return;
-
             }
 
 
             const box =
-                getScreenBox(
-                    mesh
-                );
+                getScreenBox(mesh);
 
 
             if (!box) {
-
                 return;
-
             }
+
+
+            const x =
+                touch.clientX;
+
+            const y =
+                touch.clientY;
 
 
             if (
@@ -507,17 +255,17 @@ document.addEventListener("DOMContentLoaded", () => {
         },
 
         {
-            passive: true
+            passive:true
         }
 
     );
 
 
     /*
-    =========================================
-    تبدیل مختصات Target
-    به مختصات صفحه
-    =========================================
+    ==============================
+    تبدیل مختصات سه‌بعدی
+    به صفحه گوشی
+    ==============================
     */
 
     function getScreenBox(mesh) {
@@ -537,9 +285,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         if (!geometry) {
-
             return null;
-
         }
 
 
@@ -585,10 +331,7 @@ document.addEventListener("DOMContentLoaded", () => {
         points.forEach(
             (point) => {
 
-                mesh.localToWorld(
-                    point
-                );
-
+                mesh.localToWorld(point);
 
                 point.project(
                     scene.camera
@@ -606,14 +349,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     x:
                         rect.left +
                         (point.x + 1) *
-                        rect.width /
-                        2,
+                        rect.width / 2,
 
                     y:
                         rect.top +
                         (1 - point.y) *
-                        rect.height /
-                        2
+                        rect.height / 2
 
                 });
 
