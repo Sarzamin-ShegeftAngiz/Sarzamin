@@ -1,25 +1,29 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-    const scene =
-        document.querySelector("a-scene");
+    const scene = document.querySelector("a-scene");
+
+
+    const targets = [
+        document.querySelector('[mindar-image-target="targetIndex:0"]'),
+        document.querySelector('[mindar-image-target="targetIndex:1"]'),
+        document.querySelector('[mindar-image-target="targetIndex:2"]'),
+        document.querySelector('[mindar-image-target="targetIndex:3"]'),
+        document.querySelector('[mindar-image-target="targetIndex:4"]'),
+        document.querySelector('[mindar-image-target="targetIndex:5"]')
+    ];
+
 
     const videos = [
-
         document.querySelector("#video0"),
         document.querySelector("#video1"),
         document.querySelector("#video2"),
         document.querySelector("#video3"),
         document.querySelector("#video4"),
         document.querySelector("#video5")
-
     ];
 
 
-    let activeTarget = null;
-
-
-    const instagramURL =
-        "instagram://user?username=SarzaminAr";
+    let activeIndex = -1;
 
 
     /*
@@ -28,11 +32,188 @@ document.addEventListener("DOMContentLoaded", () => {
     ==============================
     */
 
-    scene.addEventListener(
-        "arReady",
+    scene.addEventListener("arReady", () => {
+
+        console.log("AR READY");
+
+    });
+
+
+    /*
+    ==============================
+    هر Target جداگانه
+    ==============================
+    */
+
+    targets.forEach((target, index) => {
+
+        if (!target) {
+
+            console.log(
+                "TARGET ELEMENT NOT FOUND:",
+                index
+            );
+
+            return;
+
+        }
+
+
+        /*
+        TARGET FOUND
+        */
+
+        target.addEventListener(
+            "targetFound",
+            async () => {
+
+                console.log(
+                    "TARGET FOUND:",
+                    index
+                );
+
+
+                activeIndex = index;
+
+
+                /*
+                همه ویدئوهای دیگر متوقف شوند
+                */
+
+                videos.forEach(
+                    (video, i) => {
+
+                        if (
+                            video &&
+                            i !== index
+                        ) {
+
+                            video.pause();
+                            video.currentTime = 0;
+
+                        }
+
+                    }
+                );
+
+
+                const video =
+                    videos[index];
+
+
+                if (!video) {
+
+                    console.log(
+                        "VIDEO NOT FOUND:",
+                        index
+                    );
+
+                    return;
+
+                }
+
+
+                video.currentTime = 0;
+
+                video.muted = false;
+
+
+                try {
+
+                    await video.play();
+
+
+                    console.log(
+                        "PLAYING:",
+                        index
+                    );
+
+                }
+
+                catch (error) {
+
+                    console.log(
+                        "PLAY ERROR:",
+                        error
+                    );
+
+                }
+
+            }
+        );
+
+
+        /*
+        TARGET LOST
+        */
+
+        target.addEventListener(
+            "targetLost",
+            () => {
+
+                console.log(
+                    "TARGET LOST:",
+                    index
+                );
+
+
+                const video =
+                    videos[index];
+
+
+                if (video) {
+
+                    video.pause();
+
+                    video.currentTime = 0;
+
+                }
+
+
+                if (
+                    activeIndex === index
+                ) {
+
+                    activeIndex = -1;
+
+                }
+
+            }
+        );
+
+    });
+
+
+    /*
+    ==============================
+    اگر صفحه از دست رفت
+    همه ویدئوها قطع شوند
+    ==============================
+    */
+
+    document.addEventListener(
+        "visibilitychange",
         () => {
 
-            console.log("AR READY");
+            if (
+                document.hidden
+            ) {
+
+                videos.forEach(
+                    video => {
+
+                        if (video) {
+
+                            video.pause();
+
+                        }
+
+                    }
+                );
+
+                activeIndex = -1;
+
+            }
 
         }
     );
@@ -40,356 +221,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /*
     ==============================
-    TARGET FOUND
+    هنگام خارج شدن از صفحه
     ==============================
     */
 
-    scene.addEventListener(
-        "targetFound",
-        async (event) => {
-
-            const target =
-                event.target;
-
-            const data =
-                target.getAttribute(
-                    "mindar-image-target"
-                );
-
-            const index =
-                data.targetIndex;
-
-
-            activeTarget =
-                target;
-
-
-            console.log(
-                "TARGET FOUND:",
-                index
-            );
-
-
-            const video =
-                videos[index];
-
-
-            if (!video) {
-                return;
-            }
-
-
-            /*
-            توقف ویدئوهای دیگر
-            */
+    window.addEventListener(
+        "pagehide",
+        () => {
 
             videos.forEach(
-                (v, i) => {
+                video => {
 
-                    if (
-                        v &&
-                        i !== index
-                    ) {
+                    if (video) {
 
-                        v.pause();
+                        video.pause();
 
                     }
 
                 }
             );
 
-
-            video.currentTime = 0;
-
-            video.muted = false;
-
-
-            try {
-
-                await video.play();
-
-                console.log(
-                    "VIDEO PLAYING:",
-                    index
-                );
-
-            }
-
-            catch(error) {
-
-                console.log(
-                    "VIDEO ERROR:",
-                    error
-                );
-
-            }
-
         }
     );
-
-
-    /*
-    ==============================
-    TARGET LOST
-    ==============================
-    */
-
-    scene.addEventListener(
-        "targetLost",
-        (event) => {
-
-            const target =
-                event.target;
-
-            const data =
-                target.getAttribute(
-                    "mindar-image-target"
-                );
-
-            const index =
-                data.targetIndex;
-
-
-            const video =
-                videos[index];
-
-
-            if (video) {
-
-                video.pause();
-
-            }
-
-
-            if (
-                activeTarget === target
-            ) {
-
-                activeTarget = null;
-
-            }
-
-        }
-    );
-
-
-    /*
-    ==============================
-    لمس ناحیه Instagram
-    ==============================
-    */
-
-    document.addEventListener(
-        "touchend",
-        (event) => {
-
-            if (!activeTarget) {
-                return;
-            }
-
-
-            const touch =
-                event.changedTouches[0];
-
-
-            if (!touch) {
-                return;
-            }
-
-
-            const zone =
-                activeTarget.querySelector(
-                    ".instagram-zone"
-                );
-
-
-            if (!zone) {
-                return;
-            }
-
-
-            const mesh =
-                zone.getObject3D("mesh");
-
-
-            if (!mesh) {
-                return;
-            }
-
-
-            const box =
-                getScreenBox(mesh);
-
-
-            if (!box) {
-                return;
-            }
-
-
-            const x =
-                touch.clientX;
-
-            const y =
-                touch.clientY;
-
-
-            if (
-
-                x >= box.left &&
-                x <= box.right &&
-                y >= box.top &&
-                y <= box.bottom
-
-            ) {
-
-                console.log(
-                    "INSTAGRAM PRESSED"
-                );
-
-
-                window.location.href =
-                    instagramURL;
-
-            }
-
-        },
-
-        {
-            passive:true
-        }
-
-    );
-
-
-    /*
-    ==============================
-    تبدیل مختصات سه‌بعدی
-    به صفحه گوشی
-    ==============================
-    */
-
-    function getScreenBox(mesh) {
-
-        if (
-            !scene.camera ||
-            !scene.renderer
-        ) {
-
-            return null;
-
-        }
-
-
-        const geometry =
-            mesh.geometry;
-
-
-        if (!geometry) {
-            return null;
-        }
-
-
-        geometry.computeBoundingBox();
-
-
-        const box =
-            geometry.boundingBox;
-
-
-        const points = [
-
-            new THREE.Vector3(
-                box.min.x,
-                box.min.y,
-                0
-            ),
-
-            new THREE.Vector3(
-                box.min.x,
-                box.max.y,
-                0
-            ),
-
-            new THREE.Vector3(
-                box.max.x,
-                box.min.y,
-                0
-            ),
-
-            new THREE.Vector3(
-                box.max.x,
-                box.max.y,
-                0
-            )
-
-        ];
-
-
-        const screenPoints = [];
-
-
-        points.forEach(
-            (point) => {
-
-                mesh.localToWorld(point);
-
-                point.project(
-                    scene.camera
-                );
-
-
-                const rect =
-                    scene.renderer
-                        .domElement
-                        .getBoundingClientRect();
-
-
-                screenPoints.push({
-
-                    x:
-                        rect.left +
-                        (point.x + 1) *
-                        rect.width / 2,
-
-                    y:
-                        rect.top +
-                        (1 - point.y) *
-                        rect.height / 2
-
-                });
-
-            }
-        );
-
-
-        const xs =
-            screenPoints.map(
-                p => p.x
-            );
-
-
-        const ys =
-            screenPoints.map(
-                p => p.y
-            );
-
-
-        return {
-
-            left:
-                Math.min(...xs),
-
-            right:
-                Math.max(...xs),
-
-            top:
-                Math.min(...ys),
-
-            bottom:
-                Math.max(...ys)
-
-        };
-
-    }
 
 });
