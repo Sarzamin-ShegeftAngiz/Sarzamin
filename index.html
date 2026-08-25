@@ -5,15 +5,18 @@
 
 <meta charset="UTF-8">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
 
 <title>Sarzamin AR</title>
+
 
 <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
-<script defer src="app.js?v=202"></script>
+<script defer src="app.js?v=118"></script>
+
 
 <style>
 
@@ -33,15 +36,16 @@ height:100%;
 
 </head>
 
+
 <body>
 
 
 <a-scene
 
 mindar-image="
-    imageTargetSrc: ./targets.mind;
-    warmupTolerance: 2;
-    missTolerance: 1;
+imageTargetSrc: ./targets.mind;
+warmupTolerance: 2;
+missTolerance: 1;
 "
 
 embedded
@@ -54,8 +58,8 @@ renderer="colorManagement:true;"
 >
 
 
-
 <a-assets>
+
 
 <video
 id="video0"
@@ -122,7 +126,9 @@ playsinline
 webkit-playsinline>
 </video>
 
+
 </a-assets>
+
 
 
 <a-camera
@@ -131,7 +137,10 @@ look-controls="enabled:false">
 </a-camera>
 
 
+
+<!-- ===================== -->
 <!-- TARGET 0 -->
+<!-- ===================== -->
 
 <a-entity
 mindar-image-target="targetIndex:0">
@@ -143,6 +152,7 @@ height="1.42"
 position="0 0 0">
 </a-video>
 
+
 <a-plane
 class="instagram-zone"
 width="0.70"
@@ -159,7 +169,10 @@ transparent:true;
 </a-entity>
 
 
+
+<!-- ===================== -->
 <!-- TARGET 1 -->
+<!-- ===================== -->
 
 <a-entity
 mindar-image-target="targetIndex:1">
@@ -171,6 +184,7 @@ height="1.42"
 position="0 0 0">
 </a-video>
 
+
 <a-plane
 class="instagram-zone"
 width="0.70"
@@ -187,7 +201,10 @@ transparent:true;
 </a-entity>
 
 
+
+<!-- ===================== -->
 <!-- TARGET 2 -->
+<!-- ===================== -->
 
 <a-entity
 mindar-image-target="targetIndex:2">
@@ -199,6 +216,7 @@ height="1.42"
 position="0 0 0">
 </a-video>
 
+
 <a-plane
 class="instagram-zone"
 width="0.70"
@@ -215,7 +233,10 @@ transparent:true;
 </a-entity>
 
 
+
+<!-- ===================== -->
 <!-- TARGET 3 -->
+<!-- ===================== -->
 
 <a-entity
 mindar-image-target="targetIndex:3">
@@ -227,6 +248,7 @@ height="1.42"
 position="0 0 0">
 </a-video>
 
+
 <a-plane
 class="instagram-zone"
 width="0.70"
@@ -243,7 +265,10 @@ transparent:true;
 </a-entity>
 
 
+
+<!-- ===================== -->
 <!-- TARGET 4 -->
+<!-- ===================== -->
 
 <a-entity
 mindar-image-target="targetIndex:4">
@@ -255,6 +280,7 @@ height="1.42"
 position="0 0 0">
 </a-video>
 
+
 <a-plane
 class="instagram-zone"
 width="0.70"
@@ -271,7 +297,10 @@ transparent:true;
 </a-entity>
 
 
+
+<!-- ===================== -->
 <!-- TARGET 5 -->
+<!-- ===================== -->
 
 <a-entity
 mindar-image-target="targetIndex:5">
@@ -283,6 +312,7 @@ height="1.42"
 position="0 0 0">
 </a-video>
 
+
 <a-plane
 class="instagram-zone"
 width="0.70"
@@ -297,6 +327,7 @@ transparent:true;
 </a-plane>
 
 </a-entity>
+
 
 
 </a-scene>
