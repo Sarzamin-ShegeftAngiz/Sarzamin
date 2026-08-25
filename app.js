@@ -14,12 +14,72 @@ document.addEventListener("DOMContentLoaded", () => {
     ];
 
 
-    scene.addEventListener("arReady", () => {
+    /*
+    ========================================
+    لینک اینستاگرام
+    ========================================
+    */
 
-        console.log("AR READY");
+    const instagramURL =
+        "https://www.instagram.com/SarzaminAr/";
+
+
+    /*
+    ========================================
+    دکمه‌های اینستاگرام
+    ========================================
+    */
+
+    const instagramButtons =
+        document.querySelectorAll(
+            "[instagram-link]"
+        );
+
+
+    instagramButtons.forEach((button) => {
+
+        button.addEventListener(
+            "click",
+            (event) => {
+
+                event.stopPropagation();
+
+                console.log(
+                    "INSTAGRAM CLICKED"
+                );
+
+                window.open(
+                    instagramURL,
+                    "_blank"
+                );
+
+            }
+        );
 
     });
 
+
+    /*
+    ========================================
+    AR READY
+    ========================================
+    */
+
+    scene.addEventListener(
+        "arReady",
+        () => {
+
+            console.log("AR READY");
+
+        }
+    );
+
+
+    /*
+    ========================================
+    TARGET FOUND
+    ========================================
+    */
 
     scene.addEventListener(
         "targetFound",
@@ -27,7 +87,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const index =
                 e.target
-                    .getAttribute("mindar-image-target")
+                    .getAttribute(
+                        "mindar-image-target"
+                    )
                     .targetIndex;
 
 
@@ -42,11 +104,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             if (!currentVideo) {
-
-                console.log(
-                    "VIDEO NOT FOUND:",
-                    index
-                );
 
                 return;
 
@@ -74,7 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             /*
-            ویدیوی تارگت فعلی
+            شروع ویدئوی فعلی
             */
 
             currentVideo.currentTime = 0;
@@ -107,14 +164,21 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 
+    /*
+    ========================================
+    TARGET LOST
+    ========================================
+    */
+
     scene.addEventListener(
         "targetLost",
         (e) => {
 
-
             const index =
                 e.target
-                    .getAttribute("mindar-image-target")
+                    .getAttribute(
+                        "mindar-image-target"
+                    )
                     .targetIndex;
 
 
