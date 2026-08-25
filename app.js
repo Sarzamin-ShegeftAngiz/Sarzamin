@@ -15,9 +15,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /*
-    ========================================
-    لینک اینستاگرام
-    ========================================
+    ==============================
+    INSTAGRAM
+    ==============================
     */
 
     const instagramURL =
@@ -25,44 +25,60 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /*
-    ========================================
-    دکمه‌های اینستاگرام
-    ========================================
+    ==============================
+    کلیک روی آیدی اینستاگرام
+    ==============================
     */
 
-    const instagramButtons =
-        document.querySelectorAll(
-            "[instagram-link]"
-        );
+    document
+        .querySelectorAll(".instagram-button")
+        .forEach((button) => {
 
 
-    instagramButtons.forEach((button) => {
+            button.addEventListener(
+                "click",
+                (event) => {
 
-        button.addEventListener(
-            "click",
-            (event) => {
+                    event.stopPropagation();
 
-                event.stopPropagation();
+                    console.log(
+                        "INSTAGRAM CLICK"
+                    );
 
-                console.log(
-                    "INSTAGRAM CLICKED"
-                );
+                    window.location.href =
+                        instagramURL;
 
-                window.open(
-                    instagramURL,
-                    "_blank"
-                );
+                }
+            );
 
-            }
-        );
 
-    });
+            button.addEventListener(
+                "touchend",
+                (event) => {
+
+                    event.preventDefault();
+
+                    event.stopPropagation();
+
+                    console.log(
+                        "INSTAGRAM TOUCH"
+                    );
+
+                    window.location.href =
+                        instagramURL;
+
+                },
+                { passive:false }
+            );
+
+
+        });
 
 
     /*
-    ========================================
+    ==============================
     AR READY
-    ========================================
+    ==============================
     */
 
     scene.addEventListener(
@@ -76,21 +92,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /*
-    ========================================
+    ==============================
     TARGET FOUND
-    ========================================
+    ==============================
     */
 
     scene.addEventListener(
         "targetFound",
         async (e) => {
 
+
             const index =
                 e.target
-                    .getAttribute(
-                        "mindar-image-target"
-                    )
-                    .targetIndex;
+                .getAttribute(
+                    "mindar-image-target"
+                )
+                .targetIndex;
 
 
             console.log(
@@ -99,11 +116,11 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
 
-            const currentVideo =
+            const video =
                 videos[index];
 
 
-            if (!currentVideo) {
+            if (!video) {
 
                 return;
 
@@ -111,18 +128,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             /*
-            توقف همه ویدئوهای دیگر
+            توقف بقیه ویدئوها
             */
 
             videos.forEach(
-                (video, i) => {
+                (v, i) => {
 
                     if (
-                        video &&
+                        v &&
                         i !== index
                     ) {
 
-                        video.pause();
+                        v.pause();
 
                     }
 
@@ -131,30 +148,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             /*
-            شروع ویدئوی فعلی
+            اجرای ویدئوی فعلی
             */
 
-            currentVideo.currentTime = 0;
+            video.currentTime = 0;
 
-            currentVideo.muted = false;
+            video.muted = false;
 
 
             try {
 
-                await currentVideo.play();
-
+                await video.play();
 
                 console.log(
                     "VIDEO PLAYING:",
                     index
                 );
 
+            }
 
-            } catch (error) {
+            catch(error) {
 
                 console.log(
                     "VIDEO ERROR:",
-                    index,
                     error
                 );
 
@@ -165,27 +181,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /*
-    ========================================
+    ==============================
     TARGET LOST
-    ========================================
+    ==============================
     */
 
     scene.addEventListener(
         "targetLost",
         (e) => {
 
+
             const index =
                 e.target
-                    .getAttribute(
-                        "mindar-image-target"
-                    )
-                    .targetIndex;
-
-
-            console.log(
-                "TARGET LOST:",
-                index
-            );
+                .getAttribute(
+                    "mindar-image-target"
+                )
+                .targetIndex;
 
 
             const video =
