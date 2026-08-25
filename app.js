@@ -3,64 +3,256 @@ document.addEventListener("DOMContentLoaded", () => {
     const scene =
         document.querySelector("a-scene");
 
-
-    const videos = [
-
-        document.querySelector("#video0"),
-        document.querySelector("#video1"),
-        document.querySelector("#video2"),
-        document.querySelector("#video3"),
-        document.querySelector("#video4"),
-        document.querySelector("#video5")
-
-    ];
+    const assets =
+        document.querySelector("a-assets");
 
 
     /*
-    ====================================
-    Instagram
-    ====================================
+    =========================================
+    تنظیمات
+    =========================================
     */
+
+    const MAX_TARGETS = 100;
+
 
     const instagramURL =
         "instagram://user?username=SarzaminAr";
 
 
     /*
-    ====================================
-    Target فعال
-    ====================================
+    =========================================
+    ساخت Target ها و ویدئوها
+    =========================================
+    */
+
+    for (
+        let i = 0;
+        i < MAX_TARGETS;
+        i++
+    ) {
+
+        /*
+        شماره پوشه
+        Target 0 = notebook
+        Target 1 = notebook2
+        Target 2 = notebook3
+        */
+
+        const folder =
+            i === 0
+                ? "notebook"
+                : "notebook" + (i + 1);
+
+
+        /*
+        نام ویدئو
+        Target 0 = choromi.mp4
+        Target 1 = 02.mp4
+        Target 2 = 03.mp4
+        */
+
+        const videoName =
+            i === 0
+                ? "choromi.mp4"
+                : String(i + 1).padStart(2, "0") + ".mp4";
+
+
+        /*
+        =================================
+        Video
+        =================================
+        */
+
+        const video =
+            document.createElement("video");
+
+
+        video.id =
+            "video" + i;
+
+
+        video.src =
+            "./" +
+            folder +
+            "/" +
+            videoName;
+
+
+        video.preload =
+            "none";
+
+
+        video.loop =
+            true;
+
+
+        video.muted =
+            true;
+
+
+        video.playsInline =
+            true;
+
+
+        video.setAttribute(
+            "webkit-playsinline",
+            ""
+        );
+
+
+        assets.appendChild(
+            video
+        );
+
+
+        /*
+        =================================
+        Target
+        =================================
+        */
+
+        const target =
+            document.createElement("a-entity");
+
+
+        target.setAttribute(
+            "mindar-image-target",
+            "targetIndex:" + i
+        );
+
+
+        /*
+        =================================
+        Video روی دفتر
+        =================================
+        */
+
+        const arVideo =
+            document.createElement("a-video");
+
+
+        arVideo.setAttribute(
+            "src",
+            "#video" + i
+        );
+
+
+        arVideo.setAttribute(
+            "width",
+            "1"
+        );
+
+
+        arVideo.setAttribute(
+            "height",
+            "1.42"
+        );
+
+
+        arVideo.setAttribute(
+            "position",
+            "0 0 0"
+        );
+
+
+        target.appendChild(
+            arVideo
+        );
+
+
+        /*
+        =================================
+        Instagram Zone
+        کاملاً نامرئی
+        =================================
+        */
+
+        const instagramZone =
+            document.createElement("a-plane");
+
+
+        instagramZone.classList.add(
+            "instagram-zone"
+        );
+
+
+        instagramZone.setAttribute(
+            "width",
+            "0.70"
+        );
+
+
+        instagramZone.setAttribute(
+            "height",
+            "0.16"
+        );
+
+
+        instagramZone.setAttribute(
+            "position",
+            "-0.31 0.62 0.02"
+        );
+
+
+        instagramZone.setAttribute(
+            "material",
+            "shader:flat;color:red;opacity:0;transparent:true"
+        );
+
+
+        target.appendChild(
+            instagramZone
+        );
+
+
+        /*
+        اضافه کردن Target
+        */
+
+        scene.appendChild(
+            target
+        );
+
+    }
+
+
+    /*
+    =========================================
+    وضعیت Target فعال
+    =========================================
     */
 
     let activeTarget = null;
 
 
     /*
-    ====================================
+    =========================================
     AR READY
-    ====================================
+    =========================================
     */
 
     scene.addEventListener(
         "arReady",
         () => {
 
-            console.log("AR READY");
+            console.log(
+                "AR READY"
+            );
 
         }
     );
 
 
     /*
-    ====================================
+    =========================================
     TARGET FOUND
-    ====================================
+    =========================================
     */
 
     scene.addEventListener(
         "targetFound",
         async (event) => {
-
 
             const target =
                 event.target;
@@ -87,10 +279,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             const video =
-                videos[index];
+                document.querySelector(
+                    "#video" + index
+                );
 
 
             if (!video) {
+
+                console.log(
+                    "VIDEO NOT FOUND:",
+                    index
+                );
 
                 return;
 
@@ -98,37 +297,42 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             /*
-            توقف همه ویدئوهای دیگر
+            توقف ویدئوهای دیگر
             */
 
-            videos.forEach(
-                (v, i) => {
+            document
+                .querySelectorAll("video")
+                .forEach(
+                    (v) => {
 
-                    if (
-                        v &&
-                        i !== index
-                    ) {
+                        if (
+                            v !== video
+                        ) {
 
-                        v.pause();
+                            v.pause();
+
+                        }
 
                     }
-
-                }
-            );
+                );
 
 
             /*
-            اجرای ویدئوی مربوطه
+            شروع ویدئوی Target
             */
 
-            video.currentTime = 0;
+            video.currentTime =
+                0;
 
-            video.muted = false;
+
+            video.muted =
+                false;
 
 
             try {
 
                 await video.play();
+
 
                 console.log(
                     "VIDEO PLAYING:",
@@ -137,7 +341,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             }
 
-            catch(error) {
+            catch (error) {
 
                 console.log(
                     "VIDEO ERROR:",
@@ -151,15 +355,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /*
-    ====================================
+    =========================================
     TARGET LOST
-    ====================================
+    =========================================
     */
 
     scene.addEventListener(
         "targetLost",
         (event) => {
-
 
             const target =
                 event.target;
@@ -175,22 +378,25 @@ document.addEventListener("DOMContentLoaded", () => {
                 data.targetIndex;
 
 
-            if (
-                activeTarget === target
-            ) {
-
-                activeTarget = null;
-
-            }
-
-
             const video =
-                videos[index];
+                document.querySelector(
+                    "#video" + index
+                );
 
 
             if (video) {
 
                 video.pause();
+
+            }
+
+
+            if (
+                activeTarget === target
+            ) {
+
+                activeTarget =
+                    null;
 
             }
 
@@ -205,15 +411,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /*
-    ====================================
-    لمس صفحه
-    ====================================
+    =========================================
+    لمس Instagram
+    =========================================
     */
 
     document.addEventListener(
         "touchend",
         (event) => {
-
 
             if (!activeTarget) {
 
@@ -233,10 +438,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
 
-            /*
-            مختصات لمس گوشی
-            */
-
             const x =
                 touch.clientX;
 
@@ -245,103 +446,81 @@ document.addEventListener("DOMContentLoaded", () => {
                 touch.clientY;
 
 
-            /*
-            پیدا کردن ناحیه قرمز
-            */
-
-            const zones =
-                activeTarget.querySelectorAll(
+            const zone =
+                activeTarget.querySelector(
                     ".instagram-zone"
                 );
 
 
-            for (
-                const zone of zones
+            if (!zone) {
+
+                return;
+
+            }
+
+
+            const mesh =
+                zone.getObject3D(
+                    "mesh"
+                );
+
+
+            if (!mesh) {
+
+                return;
+
+            }
+
+
+            const box =
+                getScreenBox(
+                    mesh
+                );
+
+
+            if (!box) {
+
+                return;
+
+            }
+
+
+            if (
+
+                x >= box.left &&
+                x <= box.right &&
+                y >= box.top &&
+                y <= box.bottom
+
             ) {
 
-
-                const mesh =
-                    zone.getObject3D(
-                        "mesh"
-                    );
+                console.log(
+                    "INSTAGRAM PRESSED"
+                );
 
 
-                if (!mesh) {
-
-                    continue;
-
-                }
-
-
-                /*
-                گرفتن مختصات صفحه
-                */
-
-                const box =
-                    getScreenBox(
-                        mesh
-                    );
-
-
-                if (!box) {
-
-                    continue;
-
-                }
-
-
-                /*
-                آیا انگشت داخل
-                ناحیه قرمز است؟
-                */
-
-                if (
-
-                    x >= box.left &&
-                    x <= box.right &&
-                    y >= box.top &&
-                    y <= box.bottom
-
-                ) {
-
-
-                    console.log(
-                        "INSTAGRAM PRESSED"
-                    );
-
-
-                    /*
-                    باز کردن اپ
-                    */
-
-                    window.location.href =
-                        instagramURL;
-
-
-                    return;
-
-                }
+                window.location.href =
+                    instagramURL;
 
             }
 
         },
+
         {
             passive: true
         }
+
     );
 
 
     /*
-    ====================================
-    تبدیل ناحیه Target
-    به مختصات واقعی صفحه
-    ====================================
+    =========================================
+    تبدیل مختصات Target
+    به مختصات صفحه
+    =========================================
     */
 
-    function getScreenBox(
-        mesh
-    ) {
-
+    function getScreenBox(mesh) {
 
         if (
             !scene.camera ||
@@ -406,7 +585,6 @@ document.addEventListener("DOMContentLoaded", () => {
         points.forEach(
             (point) => {
 
-
                 mesh.localToWorld(
                     point
                 );
@@ -427,17 +605,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     x:
                         rect.left +
-                        (
-                            point.x + 1
-                        ) *
+                        (point.x + 1) *
                         rect.width /
                         2,
 
                     y:
                         rect.top +
-                        (
-                            1 - point.y
-                        ) *
+                        (1 - point.y) *
                         rect.height /
                         2
 
