@@ -5,7 +5,8 @@
 
 <meta charset="UTF-8">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
 <title>Sarzamin AR</title>
 
@@ -13,7 +14,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
-<script defer src="app.js?v=121"></script>
+<script defer src="app.js?v=122"></script>
 
 <style>
 
@@ -51,16 +52,14 @@ device-orientation-permission-ui="enabled:false"
 
 renderer="colorManagement:true;"
 
-cursor="rayOrigin: mouse"
+cursor="rayOrigin: mouse; fuse: false;"
+
+raycaster="objects: .instagram-button;"
 >
 
 
 <a-assets>
 
-
-<!-- ===================== -->
-<!-- VIDEO 0 -->
-<!-- ===================== -->
 
 <video
 id="video0"
@@ -73,10 +72,6 @@ webkit-playsinline>
 </video>
 
 
-<!-- ===================== -->
-<!-- VIDEO 1 -->
-<!-- ===================== -->
-
 <video
 id="video1"
 src="./notebook2/02.mp4"
@@ -87,10 +82,6 @@ playsinline
 webkit-playsinline>
 </video>
 
-
-<!-- ===================== -->
-<!-- VIDEO 2 -->
-<!-- ===================== -->
 
 <video
 id="video2"
@@ -103,10 +94,6 @@ webkit-playsinline>
 </video>
 
 
-<!-- ===================== -->
-<!-- VIDEO 3 -->
-<!-- ===================== -->
-
 <video
 id="video3"
 src="./notebook4/04.mp4"
@@ -118,10 +105,6 @@ webkit-playsinline>
 </video>
 
 
-<!-- ===================== -->
-<!-- VIDEO 4 -->
-<!-- ===================== -->
-
 <video
 id="video4"
 src="./notebook5/05.mp4"
@@ -132,10 +115,6 @@ playsinline
 webkit-playsinline>
 </video>
 
-
-<!-- ===================== -->
-<!-- VIDEO 5 -->
-<!-- ===================== -->
 
 <video
 id="video5"
@@ -153,15 +132,12 @@ webkit-playsinline>
 
 <a-camera
 position="0 0 0"
-look-controls="enabled:false"
-cursor="rayOrigin: mouse"
-raycaster="objects: .instagram-button">
+look-controls="enabled:false">
+
 </a-camera>
 
 
-<!-- ===================== -->
 <!-- TARGET 0 -->
-<!-- ===================== -->
 
 <a-entity
 mindar-image-target="targetIndex:0">
@@ -173,24 +149,23 @@ height="1.42"
 position="0 0 0">
 </a-video>
 
-
-<!-- دکمه نامرئی اینستاگرام -->
-
 <a-plane
 class="instagram-button"
 width="0.55"
 height="0.16"
-position="-0.22 0.63 0.02"
-material="transparent:true; opacity:0; shader:flat;"
-instagram-link>
+position="-0.22 0.63 0.05"
+material="
+shader:flat;
+transparent:true;
+opacity:0.01;
+side:double;
+">
 </a-plane>
 
 </a-entity>
 
 
-<!-- ===================== -->
 <!-- TARGET 1 -->
-<!-- ===================== -->
 
 <a-entity
 mindar-image-target="targetIndex:1">
@@ -206,17 +181,19 @@ position="0 0 0">
 class="instagram-button"
 width="0.55"
 height="0.16"
-position="-0.22 0.63 0.02"
-material="transparent:true; opacity:0; shader:flat;"
-instagram-link>
+position="-0.22 0.63 0.05"
+material="
+shader:flat;
+transparent:true;
+opacity:0.01;
+side:double;
+">
 </a-plane>
 
 </a-entity>
 
 
-<!-- ===================== -->
 <!-- TARGET 2 -->
-<!-- ===================== -->
 
 <a-entity
 mindar-image-target="targetIndex:2">
@@ -232,17 +209,19 @@ position="0 0 0">
 class="instagram-button"
 width="0.55"
 height="0.16"
-position="-0.22 0.63 0.02"
-material="transparent:true; opacity:0; shader:flat;"
-instagram-link>
+position="-0.22 0.63 0.05"
+material="
+shader:flat;
+transparent:true;
+opacity:0.01;
+side:double;
+">
 </a-plane>
 
 </a-entity>
 
 
-<!-- ===================== -->
 <!-- TARGET 3 -->
-<!-- ===================== -->
 
 <a-entity
 mindar-image-target="targetIndex:3">
@@ -258,17 +237,19 @@ position="0 0 0">
 class="instagram-button"
 width="0.55"
 height="0.16"
-position="-0.22 0.63 0.02"
-material="transparent:true; opacity:0; shader:flat;"
-instagram-link>
+position="-0.22 0.63 0.05"
+material="
+shader:flat;
+transparent:true;
+opacity:0.01;
+side:double;
+">
 </a-plane>
 
 </a-entity>
 
 
-<!-- ===================== -->
 <!-- TARGET 4 -->
-<!-- ===================== -->
 
 <a-entity
 mindar-image-target="targetIndex:4">
@@ -284,17 +265,19 @@ position="0 0 0">
 class="instagram-button"
 width="0.55"
 height="0.16"
-position="-0.22 0.63 0.02"
-material="transparent:true; opacity:0; shader:flat;"
-instagram-link>
+position="-0.22 0.63 0.05"
+material="
+shader:flat;
+transparent:true;
+opacity:0.01;
+side:double;
+">
 </a-plane>
 
 </a-entity>
 
 
-<!-- ===================== -->
 <!-- TARGET 5 -->
-<!-- ===================== -->
 
 <a-entity
 mindar-image-target="targetIndex:5">
@@ -310,9 +293,13 @@ position="0 0 0">
 class="instagram-button"
 width="0.55"
 height="0.16"
-position="-0.22 0.63 0.02"
-material="transparent:true; opacity:0; shader:flat;"
-instagram-link>
+position="-0.22 0.63 0.05"
+material="
+shader:flat;
+transparent:true;
+opacity:0.01;
+side:double;
+">
 </a-plane>
 
 </a-entity>
