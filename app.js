@@ -1,4 +1,5 @@
 ```javascript
+console.log("APP JS LOADED");
 document.addEventListener("DOMContentLoaded", () => {
 
     const scene =
