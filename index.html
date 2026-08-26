@@ -15,6 +15,25 @@
 
 <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
+      <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-auth-compat.js"></script>
+<script>
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAZ_uTW6l-wDqmADxb-So260cx25n5xbM",
+  authDomain: "sarzamingame-2c220.firebaseapp.com",
+  projectId: "sarzamingame-2c220",
+  storageBucket: "sarzamingame-2c220.firebasestorage.app",
+  messagingSenderId: "612768786041",
+  appId: "1:612768786041:web:6197174e927ea9cb98d6a8"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const auth = firebase.auth();
+
+</script>
+      
 <script defer src="app.js?v=118"></script>
 
 
