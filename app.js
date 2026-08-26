@@ -1,115 +1,92 @@
 console.log("APP JS START");
 
-
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", () => {
 
     console.log("DOM READY");
 
+    const scene = document.querySelector("a-scene");
 
-    /*
-    ==========================================
-    FIREBASE
-    ==========================================
-    */
+    /* =================================
+       FIREBASE
+    ================================= */
 
     const auth = firebase.auth();
-
     const db = firebase.firestore();
-
 
     let currentUser = null;
 
+    /* ساخت حساب ناشناس */
+    auth.onAuthStateChanged((user) => {
 
-    /*
-    ==========================================
-    ساخت کاربر Anonymous
-    ==========================================
-    */
+        if (user) {
 
-    try {
+            currentUser = user;
 
-        const result = await auth.signInAnonymously();
+            console.log(
+                "FIREBASE USER READY:",
+                user.uid
+            );
 
-        currentUser = result.user;
+        }
 
-        console.log(
-            "ANONYMOUS USER READY:",
-            currentUser.uid
-        );
+    });
 
-    }
+    auth.signInAnonymously()
+        .then((result) => {
 
-    catch (error) {
+            currentUser = result.user;
 
-        console.error(
-            "ANONYMOUS LOGIN ERROR:",
-            error
-        );
+            console.log(
+                "ANONYMOUS LOGIN OK:",
+                currentUser.uid
+            );
 
-    }
+        })
+        .catch((error) => {
 
+            console.error(
+                "ANONYMOUS LOGIN ERROR:",
+                error
+            );
 
-    /*
-    ==========================================
-    AR SCENE
-    ==========================================
-    */
-
-    const scene =
-        document.querySelector("a-scene");
+        });
 
 
-    /*
-    ==========================================
-    VIDEOS
-    ==========================================
-    */
+    /* =================================
+       VIDEOS
+    ================================= */
 
     const videos = [
 
         document.querySelector("#video0"),
-
         document.querySelector("#video1"),
-
         document.querySelector("#video2"),
-
         document.querySelector("#video3"),
-
         document.querySelector("#video4"),
-
         document.querySelector("#video5")
 
     ];
 
 
-    /*
-    ==========================================
-    نام کارت‌ها
-    ==========================================
-    */
+    /* =================================
+       شخصیت‌ها
+    ================================= */
 
     const characters = [
 
         "choromi",
-
         "character2",
-
         "character3",
-
         "character4",
-
         "character5",
-
         "character6"
 
     ];
 
 
-    /*
-    ==========================================
-    متغیرهای اصلی
-    ==========================================
-    */
+    /* =================================
+       VARIABLES
+    ================================= */
 
     let currentTargetIndex = null;
 
@@ -117,48 +94,26 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     let activeTarget = null;
 
-    let animationFinished = false;
+    let animationFinishedOnce = false;
 
 
-    /*
-    ==========================================
-    RECEIVE BOX
-    ==========================================
-    */
+    /* =================================
+       RECEIVE UI
+    ================================= */
 
     const receiveBox =
         document.querySelector("#receiveBox");
 
-
     const receiveButton =
         document.querySelector("#receiveButton");
-
 
     const receiveMessage =
         document.querySelector("#receiveMessage");
 
 
-    /*
-    ==========================================
-    AR READY
-    ==========================================
-    */
-
-    scene.addEventListener(
-        "arReady",
-        () => {
-
-            console.log("AR READY");
-
-        }
-    );
-
-
-    /*
-    ==========================================
-    TARGET FOUND
-    ==========================================
-    */
+    /* =================================
+       TARGET FOUND
+    ================================= */
 
     scene.addEventListener(
         "targetFound",
@@ -167,12 +122,10 @@ document.addEventListener("DOMContentLoaded", async () => {
             const target =
                 event.target;
 
-
             const data =
                 target.getAttribute(
                     "mindar-image-target"
                 );
-
 
             const index =
                 data.targetIndex;
@@ -187,46 +140,34 @@ document.addEventListener("DOMContentLoaded", async () => {
             activeTarget =
                 target;
 
-
             currentTargetIndex =
                 index;
-
 
             currentCharacter =
                 characters[index];
 
-
-            animationFinished =
+            animationFinishedOnce =
                 false;
 
 
-            /*
-            ------------------------------------------
-            مخفی کردن دکمه قبلی
-            ------------------------------------------
-            */
+            /* دکمه مخفی شود */
 
             receiveBox.style.display =
                 "none";
 
-
             receiveMessage.innerText =
                 "";
 
-
             receiveButton.disabled =
                 false;
-
 
             receiveButton.innerText =
                 "🎁 دریافت این شخصیت";
 
 
-            /*
-            ------------------------------------------
-            توقف همه ویدئوهای دیگر
-            ------------------------------------------
-            */
+            /* =================================
+               توقف ویدئوهای دیگر
+            ================================= */
 
             videos.forEach(
                 (video, i) => {
@@ -262,156 +203,150 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
 
 
-            /*
-            ==========================================
-            دو بار اجرای کامل انیمیشن
-            ==========================================
-            */
+            /* =================================
+               ویدئو باید همیشه Loop باشد
+            ================================= */
 
-            video.loop =
-                false;
+            video.loop = true;
 
-
-            video.currentTime =
-                0;
+            video.muted = false;
 
 
             /*
-            تعداد دفعات اجرا
+            فقط برای اینکه بفهمیم
+            اولین دور تمام شده
             */
 
-            let playCount =
-                0;
+            video.onended = null;
+
+
+            let firstPlayFinished = false;
+
+
+            const firstLoopFinished = () => {
+
+                if (firstPlayFinished) {
+
+                    return;
+
+                }
+
+
+                firstPlayFinished = true;
+
+                animationFinishedOnce = true;
+
+
+                console.log(
+                    "FIRST ANIMATION FINISHED"
+                );
+
+
+                /*
+                دکمه را نشان بده
+                */
+
+                receiveBox.style.display =
+                    "block";
+
+
+                receiveMessage.innerText =
+                    "برای دریافت این شخصیت کلیک کنید 🎁";
+
+
+                /*
+                از اینجا به بعد
+                ویدئو همچنان Loop می‌شود
+                */
+
+            };
 
 
             /*
-            ------------------------------------------
-            وقتی ویدئو تمام شد
-            ------------------------------------------
+            چون loop فعال است،
+            ended همیشه اجرا نمی‌شود.
+            بنابراین timeupdate را بررسی می‌کنیم.
             */
 
-            const playAnimation =
-                async () => {
+            const checkVideoEnd = () => {
 
-                    playCount++;
+                if (
+                    !firstPlayFinished &&
+                    video.duration &&
+                    video.currentTime >=
+                    video.duration - 0.15
+                ) {
 
+                    firstLoopFinished();
+
+                }
+
+            };
+
+
+            video.addEventListener(
+                "timeupdate",
+                checkVideoEnd
+            );
+
+
+            /*
+            شروع ویدئو
+            */
+
+            video.currentTime = 0;
+
+
+            try {
+
+                await video.play();
+
+                console.log(
+                    "VIDEO PLAYING:",
+                    index
+                );
+
+            }
+
+            catch (error) {
+
+                console.log(
+                    "VIDEO PLAY ERROR:",
+                    error
+                );
+
+
+                /*
+                اگر صدا اجازه نداد
+                */
+
+                video.muted = true;
+
+
+                try {
+
+                    await video.play();
+
+                }
+
+                catch (error2) {
 
                     console.log(
-                        "ANIMATION PLAY:",
-                        playCount,
-                        "OF 2"
+                        "VIDEO SECOND ERROR:",
+                        error2
                     );
 
+                }
 
-                    video.currentTime =
-                        0;
-
-
-                    try {
-
-                        await video.play();
-
-                    }
-
-                    catch (error) {
-
-                        console.log(
-                            "VIDEO PLAY ERROR:",
-                            error
-                        );
-
-
-                        /*
-                        تلاش دوباره بدون صدا
-                        */
-
-                        video.muted =
-                            true;
-
-
-                        try {
-
-                            await video.play();
-
-                        }
-
-                        catch (error2) {
-
-                            console.log(
-                                "VIDEO SECOND ERROR:",
-                                error2
-                            );
-
-                        }
-
-                    }
-
-                };
-
-
-            video.onended =
-                async () => {
-
-                    console.log(
-                        "ANIMATION ENDED:",
-                        playCount
-                    );
-
-
-                    /*
-                    اگر بار اول تمام شده،
-                    بار دوم اجرا شود
-                    */
-
-                    if (playCount < 2) {
-
-                        await playAnimation();
-
-                        return;
-
-                    }
-
-
-                    /*
-                    ==================================
-                    دو بار کامل تمام شد
-                    ==================================
-                    */
-
-                    animationFinished =
-                        true;
-
-
-                    console.log(
-                        "ANIMATION COMPLETELY FINISHED"
-                    );
-
-
-                    receiveBox.style.display =
-                        "block";
-
-
-                    receiveMessage.innerText =
-                        "برای دریافت این شخصیت کلیک کنید 🎁";
-
-                };
-
-
-            /*
-            شروع اجرای اول
-            */
-
-            await playAnimation();
+            }
 
         }
     );
 
 
-    /*
-    ==========================================
-    TARGET LOST
-    ==========================================
-    */
+    /* =================================
+       TARGET LOST
+    ================================= */
 
     scene.addEventListener(
         "targetLost",
@@ -420,12 +355,10 @@ document.addEventListener("DOMContentLoaded", async () => {
             const target =
                 event.target;
 
-
             const data =
                 target.getAttribute(
                     "mindar-image-target"
                 );
-
 
             const index =
                 data.targetIndex;
@@ -449,29 +382,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
             /*
-            اگر انیمیشن هنوز تمام نشده،
-            دکمه را مخفی کن.
-
-            ولی اگر انیمیشن تمام شده،
-            دکمه را نگه دار.
+            فقط اگر هنوز دور اول تمام نشده
+            دکمه را مخفی کن
             */
 
-            if (!animationFinished) {
+            if (!animationFinishedOnce) {
 
                 receiveBox.style.display =
                     "none";
-
-            }
-
-
-            if (
-                activeTarget === target
-            ) {
-
-                /*
-                فعلاً activeTarget را پاک نمی‌کنیم
-                تا Instagram و دکمه دریافت کار کنند.
-                */
 
             }
 
@@ -479,11 +397,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     );
 
 
-    /*
-    ==========================================
-    RECEIVE CHARACTER
-    ==========================================
-    */
+    /* =================================
+       RECEIVE CHARACTER
+    ================================= */
 
     receiveButton.addEventListener(
         "click",
@@ -494,14 +410,10 @@ document.addEventListener("DOMContentLoaded", async () => {
             );
 
 
-            /*
-            بررسی انیمیشن
-            */
-
-            if (!animationFinished) {
+            if (!currentCharacter) {
 
                 receiveMessage.innerText =
-                    "لطفاً صبر کنید تا انیمیشن تمام شود";
+                    "شخصیت پیدا نشد";
 
                 return;
 
@@ -509,7 +421,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
             /*
-            بررسی کاربر
+            حساب Firebase هنوز آماده نشده؟
             */
 
             if (!currentUser) {
@@ -526,12 +438,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                     currentUser =
                         result.user;
 
-
-                    console.log(
-                        "USER READY:",
-                        currentUser.uid
-                    );
-
                 }
 
                 catch (error) {
@@ -543,25 +449,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
                     receiveMessage.innerText =
-                        "خطا در ساخت حساب";
+                        "❌ خطا در ساخت حساب";
 
                     return;
 
                 }
-
-            }
-
-
-            /*
-            بررسی شخصیت
-            */
-
-            if (!currentCharacter) {
-
-                receiveMessage.innerText =
-                    "شخصیت پیدا نشد";
-
-                return;
 
             }
 
@@ -577,16 +469,18 @@ document.addEventListener("DOMContentLoaded", async () => {
             try {
 
                 /*
-                ======================================
-                مسیر کارت در Firestore
-                ======================================
+                =================================
+                مسیر کارت
+                =================================
 
                 users
-                  └── UID
-                       └── cards
-                            └── choromi
+                   ↓
+                 UID
+                   ↓
+                 cards
+                   ↓
+               character
                 */
-
 
                 const cardRef =
                     db
@@ -597,7 +491,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
                 /*
-                بررسی اینکه قبلاً گرفته یا نه
+                بررسی کارت قبلی
                 */
 
                 const existingCard =
@@ -620,9 +514,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
                 /*
-                ======================================
                 ذخیره کارت
-                ======================================
                 */
 
                 await cardRef.set({
@@ -647,19 +539,30 @@ document.addEventListener("DOMContentLoaded", async () => {
                 );
 
 
-                /*
-                ======================================
-                موفقیت
-                ======================================
-                */
-
                 receiveMessage.innerText =
-                    "🎉 شخصیت با موفقیت به پروفایل اضافه شد";
+                    "🎉 شخصیت به پروفایل شما اضافه شد";
 
 
                 receiveButton.innerText =
                     "✅ دریافت شد";
 
+
+                /*
+                ویدئو نباید متوقف شود
+                */
+
+                const video =
+                    videos[currentTargetIndex];
+
+
+                if (
+                    video &&
+                    video.paused
+                ) {
+
+                    video.play();
+
+                }
 
             }
 
@@ -684,19 +587,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     );
 
 
-    /*
-    ==========================================
-    INSTAGRAM
-    ==========================================
-    */
+    /* =================================
+       INSTAGRAM
+    ================================= */
 
     document.addEventListener(
         "touchend",
         (event) => {
-
-            /*
-            اگر Target نداریم
-            */
 
             if (!activeTarget) {
 
@@ -704,10 +601,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             }
 
-
-            /*
-            بررسی Scene
-            */
 
             if (
                 !scene.camera ||
@@ -738,10 +631,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                 canvas.getBoundingClientRect();
 
 
-            /*
-            مختصات لمس
-            */
-
             const mouse =
                 new THREE.Vector2();
 
@@ -762,10 +651,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                 ) * 2 + 1;
 
 
-            /*
-            Raycaster
-            */
-
             const raycaster =
                 new THREE.Raycaster();
 
@@ -775,10 +660,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                 scene.camera
             );
 
-
-            /*
-            Instagram Zone
-            */
 
             const zone =
                 activeTarget.querySelector(
@@ -806,10 +687,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
 
 
-            /*
-            بررسی برخورد لمس
-            */
-
             const hits =
                 raycaster.intersectObject(
                     mesh,
@@ -826,10 +703,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                 );
 
 
-                /*
-                باز کردن Instagram
-                */
-
                 const instagramURL =
                     "https://www.instagram.com/SarzaminAr/";
 
@@ -842,12 +715,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
 
         },
-
         {
             passive: true
         }
-
     );
-
 
 });
