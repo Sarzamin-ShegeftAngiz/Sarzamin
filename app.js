@@ -1,5 +1,6 @@
 ```javascript
 console.log("APP JS LOADED");
+
 document.addEventListener("DOMContentLoaded", () => {
 
     const scene =
@@ -8,9 +9,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /*
     =================================
-    FIREBASE PHONE LOGIN
+    LOGIN ELEMENTS
     =================================
     */
+
+    const loginScreen =
+        document.querySelector("#loginScreen");
 
     const phoneInput =
         document.querySelector("#phoneNumber");
@@ -30,121 +34,244 @@ document.addEventListener("DOMContentLoaded", () => {
     const loginMessage =
         document.querySelector("#loginMessage");
 
-    const loginScreen =
-        document.querySelector("#loginScreen");
-
 
     let confirmationResult = null;
 
 
     /*
     =================================
-    FIREBASE AUTH STATE
+    FIREBASE AUTH
     =================================
     */
 
-    firebase.auth().onAuthStateChanged((user) => {
-
-        if (user) {
-
-            console.log(
-                "USER LOGGED IN:",
-                user.uid
-            );
-
-
-            /*
-            کاربر قبلاً وارد شده
-            */
-
-            if (loginScreen) {
-
-                loginScreen.style.display =
-                    "none";
-
-            }
-
-        }
-
-    });
+    const auth =
+        firebase.auth();
 
 
     /*
     =================================
-    RECAPTCHA
+    STOP AR UNTIL LOGIN
     =================================
     */
 
-    if (
-        sendCodeButton &&
-        phoneInput
-    ) {
+    if (scene) {
 
-        window.recaptchaVerifier =
-    new firebase.auth.RecaptchaVerifier(
-        "recaptcha-container",
-        {
-            size: "normal",
+        scene.setAttribute(
+            "mindar-image",
+            "autoStart: false; imageTargetSrc: ./targets.mind; warmupTolerance: 2; missTolerance: 1;"
+        );
 
-            callback: function () {
+    }
 
-                console.log("RECAPTCHA OK");
 
-                loginMessage.innerText =
-                    "تأیید امنیتی انجام شد";
+    /*
+    =================================
+    CHECK LOGIN STATUS
+    =================================
+    */
 
-            },
+    auth.onAuthStateChanged(
+        (user) => {
 
-            "expired-callback": function () {
+            if (user) {
 
-                loginMessage.innerText =
-                    "تأیید امنیتی منقضی شد";
+                console.log(
+                    "USER LOGGED IN:",
+                    user.uid
+                );
+
+
+                window.currentUser =
+                    user;
+
+
+                /*
+                مخفی کردن صفحه ورود
+                */
+
+                if (loginScreen) {
+
+                    loginScreen.style.display =
+                        "none";
+
+                }
+
+
+                /*
+                شروع AR
+                */
+
+                if (
+                    scene &&
+                    scene.systems &&
+                    scene.systems["mindar-image-system"]
+                ) {
+
+                    try {
+
+                        scene.systems[
+                            "mindar-image-system"
+                        ].start();
+
+                    }
+
+                    catch (error) {
+
+                        console.log(
+                            "AR START ERROR:",
+                            error
+                        );
+
+                    }
+
+                }
+
+            }
+
+            else {
+
+                console.log(
+                    "NO USER"
+                );
+
+
+                window.currentUser =
+                    null;
+
+
+                if (loginScreen) {
+
+                    loginScreen.style.display =
+                        "flex";
+
+                }
 
             }
 
         }
     );
 
-window.recaptchaVerifier
-    .render()
-    .then(function (widgetId) {
 
-        window.recaptchaWidgetId =
-            widgetId;
+    /*
+    =================================
+    CREATE RECAPTCHA
+    =================================
+    */
 
-        console.log(
-            "RECAPTCHA RENDERED"
-        );
+    try {
 
-    })
-    .catch(function (error) {
+        auth.languageCode = "fa";
+
+
+        window.recaptchaVerifier =
+            new firebase.auth.RecaptchaVerifier(
+                "recaptcha-container",
+                {
+                    size: "normal",
+
+                    callback: () => {
+
+                        console.log(
+                            "RECAPTCHA OK"
+                        );
+
+                        if (loginMessage) {
+
+                            loginMessage.innerText =
+                                "تأیید امنیتی انجام شد";
+
+                        }
+
+                    },
+
+                    "expired-callback": () => {
+
+                        console.log(
+                            "RECAPTCHA EXPIRED"
+                        );
+
+                        if (loginMessage) {
+
+                            loginMessage.innerText =
+                                "تأیید امنیتی منقضی شد";
+
+                        }
+
+                    }
+
+                }
+            );
+
+
+        window.recaptchaVerifier
+            .render()
+            .then(
+                (widgetId) => {
+
+                    window.recaptchaWidgetId =
+                        widgetId;
+
+
+                    console.log(
+                        "RECAPTCHA RENDERED"
+                    );
+
+                }
+            )
+            .catch(
+                (error) => {
+
+                    console.error(
+                        "RECAPTCHA ERROR:",
+                        error
+                    );
+
+
+                    if (loginMessage) {
+
+                        loginMessage.innerText =
+                            "خطا در فعال شدن تأیید امنیتی";
+
+                    }
+
+                }
+            );
+
+    }
+
+    catch (error) {
 
         console.error(
-            "RECAPTCHA ERROR:",
+            "RECAPTCHA CREATE ERROR:",
             error
         );
 
-        loginMessage.innerText =
-            "خطا در فعال شدن تأیید امنیتی";
+    }
 
-    });
 
-        /*
-        =================================
-        SEND SMS CODE
-        =================================
-        */
+    /*
+    =================================
+    SEND SMS
+    =================================
+    */
+
+    if (sendCodeButton) {
 
         sendCodeButton.addEventListener(
             "click",
             async () => {
+
+                console.log(
+                    "SEND CODE CLICKED"
+                );
+
 
                 let phone =
                     phoneInput.value.trim();
 
 
                 /*
-                تبدیل 0912 به +98912
+                تبدیل 09 به +98
                 */
 
                 if (
@@ -158,16 +285,18 @@ window.recaptchaVerifier
                 }
 
 
-                /*
-                بررسی شماره
-                */
+                console.log(
+                    "PHONE:",
+                    phone
+                );
+
 
                 if (
-                    !phone.startsWith("+98")
+                    !/^\+989\d{9}$/.test(phone)
                 ) {
 
                     loginMessage.innerText =
-                        "شماره موبایل را با 09 وارد کنید";
+                        "شماره را به شکل 09123456789 وارد کنید";
 
                     return;
 
@@ -178,19 +307,21 @@ window.recaptchaVerifier
                     "در حال ارسال کد...";
 
 
+                sendCodeButton.disabled =
+                    true;
+
+
                 try {
 
                     confirmationResult =
-                        await firebase
-                            .auth()
-                            .signInWithPhoneNumber(
-                                phone,
-                                window.recaptchaVerifier
-                            );
+                        await auth.signInWithPhoneNumber(
+                            phone,
+                            window.recaptchaVerifier
+                        );
 
 
                     console.log(
-                        "SMS SENT"
+                        "SMS SENT SUCCESSFULLY"
                     );
 
 
@@ -207,35 +338,32 @@ window.recaptchaVerifier
                 catch (error) {
 
                     console.error(
-                        "SMS ERROR:",
+                        "SEND SMS ERROR:",
                         error
                     );
 
 
                     loginMessage.innerText =
-                        "ارسال کد انجام نشد";
+                        "خطا: " +
+                        error.code;
+
+
+                    sendCodeButton.disabled =
+                        false;
 
 
                     /*
-                    اگر reCAPTCHA خراب شد
-                    دوباره ساخته شود
+                    Reset reCAPTCHA
                     */
 
-                    try {
+                    if (
+                        window.recaptchaWidgetId !==
+                        undefined
+                    ) {
 
-                        window.recaptchaVerifier =
-                            new firebase.auth.RecaptchaVerifier(
-                                "recaptcha-container",
-                                {
-                                    size: "normal"
-                                }
-                            );
-
-                    }
-
-                    catch (e) {
-
-                        console.log(e);
+                        grecaptcha.reset(
+                            window.recaptchaWidgetId
+                        );
 
                     }
 
@@ -249,13 +377,11 @@ window.recaptchaVerifier
 
     /*
     =================================
-    VERIFY CODE
+    VERIFY SMS CODE
     =================================
     */
 
-    if (
-        verifyCodeButton
-    ) {
+    if (verifyCodeButton) {
 
         verifyCodeButton.addEventListener(
             "click",
@@ -267,31 +393,42 @@ window.recaptchaVerifier
                         .trim();
 
 
-                if (!code) {
-
-                    loginMessage.innerText =
-                        "کد تایید را وارد کنید";
-
-                    return;
-
-                }
-
-
                 if (!confirmationResult) {
 
                     loginMessage.innerText =
-                        "ابتدا کد را درخواست کنید";
+                        "ابتدا روی ارسال کد بزنید";
 
                     return;
 
                 }
+
+
+                if (
+                    !/^\d{6}$/.test(code)
+                ) {
+
+                    loginMessage.innerText =
+                        "کد ۶ رقمی را وارد کنید";
+
+                    return;
+
+                }
+
+
+                verifyCodeButton.disabled =
+                    true;
+
+
+                loginMessage.innerText =
+                    "در حال بررسی کد...";
 
 
                 try {
 
                     const result =
-                        await confirmationResult
-                            .confirm(code);
+                        await confirmationResult.confirm(
+                            code
+                        );
 
 
                     const user =
@@ -315,24 +452,59 @@ window.recaptchaVerifier
                     );
 
 
+                    window.currentUser =
+                        user;
+
+
                     loginMessage.innerText =
-                        "ورود موفق بود";
+                        "ورود موفق شد";
 
-
-                    /*
-                    بستن صفحه ورود
-                    */
 
                     setTimeout(
                         () => {
 
-                            loginScreen.style.display =
-                                "none";
+                            if (loginScreen) {
+
+                                loginScreen.style.display =
+                                    "none";
+
+                            }
+
+
+                            /*
+                            شروع AR
+                            */
+
+                            if (
+                                scene &&
+                                scene.systems &&
+                                scene.systems[
+                                    "mindar-image-system"
+                                ]
+                            ) {
+
+                                try {
+
+                                    scene.systems[
+                                        "mindar-image-system"
+                                    ].start();
+
+                                }
+
+                                catch (error) {
+
+                                    console.log(
+                                        "AR START ERROR:",
+                                        error
+                                    );
+
+                                }
+
+                            }
 
                         },
-                        500
+                        700
                     );
-
 
                 }
 
@@ -345,7 +517,11 @@ window.recaptchaVerifier
 
 
                     loginMessage.innerText =
-                        "کد وارد شده صحیح نیست";
+                        "کد اشتباه است یا منقضی شده";
+
+
+                    verifyCodeButton.disabled =
+                        false;
 
                 }
 
@@ -369,35 +545,6 @@ window.recaptchaVerifier
         document.querySelector("#video3"),
         document.querySelector("#video4"),
         document.querySelector("#video5")
-
-    ];
-
-
-    const targets = [
-
-        document.querySelector(
-            '[mindar-image-target="targetIndex:0"]'
-        ),
-
-        document.querySelector(
-            '[mindar-image-target="targetIndex:1"]'
-        ),
-
-        document.querySelector(
-            '[mindar-image-target="targetIndex:2"]'
-        ),
-
-        document.querySelector(
-            '[mindar-image-target="targetIndex:3"]'
-        ),
-
-        document.querySelector(
-            '[mindar-image-target="targetIndex:4"]'
-        ),
-
-        document.querySelector(
-            '[mindar-image-target="targetIndex:5"]'
-        )
 
     ];
 
@@ -458,7 +605,28 @@ window.recaptchaVerifier
 
 
             /*
-            توقف همه ویدئوهای دیگر
+            =================================
+            اینجا بعداً کارت را ثبت می‌کنیم
+            =================================
+            */
+
+            if (window.currentUser) {
+
+                console.log(
+                    "CARD OWNER UID:",
+                    window.currentUser.uid
+                );
+
+                console.log(
+                    "CARD TARGET:",
+                    index
+                );
+
+            }
+
+
+            /*
+            توقف ویدئوهای دیگر
             */
 
             videos.forEach(
@@ -477,10 +645,6 @@ window.recaptchaVerifier
             );
 
 
-            /*
-            ویدئوی تارگت فعلی
-            */
-
             const video =
                 videos[index];
 
@@ -492,9 +656,12 @@ window.recaptchaVerifier
             }
 
 
-            video.currentTime = 0;
+            video.currentTime =
+                0;
 
-            video.muted = false;
+
+            video.muted =
+                false;
 
 
             try {
@@ -568,7 +735,8 @@ window.recaptchaVerifier
                 activeTarget === target
             ) {
 
-                activeTarget = null;
+                activeTarget =
+                    null;
 
             }
 
@@ -666,7 +834,9 @@ window.recaptchaVerifier
 
 
             const mesh =
-                zone.getObject3D("mesh");
+                zone.getObject3D(
+                    "mesh"
+                );
 
 
             if (!mesh) {
