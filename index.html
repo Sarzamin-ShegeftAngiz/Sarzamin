@@ -123,18 +123,15 @@ a-scene{
 
 
 /* ========================= */
-/* RECEIVE BOX */
-/* ========================= */
-
 #receiveBox{
 
     position:fixed;
 
-    left:0;
+    left:50%;
 
-    right:0;
+    top:50%;
 
-    bottom:40px;
+    transform:translate(-50%, -50%);
 
     z-index:10000;
 
@@ -142,12 +139,12 @@ a-scene{
 
     text-align:center;
 
+    width:100%;
+
+    pointer-events:none;
+
 }
 
-
-/* ========================= */
-/* RECEIVE BUTTON */
-/* ========================= */
 
 #receiveButton{
 
@@ -171,12 +168,10 @@ a-scene{
         0 4px 15px
         rgba(0,0,0,0.3);
 
+    pointer-events:auto;
+
 }
 
-
-/* ========================= */
-/* MESSAGE */
-/* ========================= */
 
 #receiveMessage{
 
@@ -189,10 +184,11 @@ a-scene{
     color:white;
 
     text-shadow:
-        0 1px 4px
-        black;
+        0 1px 4px black;
 
 }
+
+
 
 </style>
 
