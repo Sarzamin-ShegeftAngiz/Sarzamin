@@ -81,13 +81,53 @@ document.addEventListener("DOMContentLoaded", () => {
     ) {
 
         window.recaptchaVerifier =
-            new firebase.auth.RecaptchaVerifier(
-                "recaptcha-container",
-                {
-                    size: "normal"
-                }
-            );
+    new firebase.auth.RecaptchaVerifier(
+        "recaptcha-container",
+        {
+            size: "normal",
 
+            callback: function () {
+
+                console.log("RECAPTCHA OK");
+
+                loginMessage.innerText =
+                    "تأیید امنیتی انجام شد";
+
+            },
+
+            "expired-callback": function () {
+
+                loginMessage.innerText =
+                    "تأیید امنیتی منقضی شد";
+
+            }
+
+        }
+    );
+
+window.recaptchaVerifier
+    .render()
+    .then(function (widgetId) {
+
+        window.recaptchaWidgetId =
+            widgetId;
+
+        console.log(
+            "RECAPTCHA RENDERED"
+        );
+
+    })
+    .catch(function (error) {
+
+        console.error(
+            "RECAPTCHA ERROR:",
+            error
+        );
+
+        loginMessage.innerText =
+            "خطا در فعال شدن تأیید امنیتی";
+
+    });
 
         /*
         =================================
