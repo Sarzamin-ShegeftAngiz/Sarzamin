@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="fa">
 
@@ -11,21 +12,38 @@
 <title>Sarzamin AR</title>
 
 
+<!-- A-FRAME -->
 <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
 
+
+<!-- MINDAR -->
 <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
-      <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js"></script>
+
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js"></script>
+
 <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-auth-compat.js"></script>
+
+
+<!-- FIREBASE CONFIG -->
+
 <script>
 
 const firebaseConfig = {
+
   apiKey: "AIzaSyAZ_uTW6l-wDqmADxb-So260cx25n5xbM",
+
   authDomain: "sarzamingame-2c220.firebaseapp.com",
+
   projectId: "sarzamingame-2c220",
+
   storageBucket: "sarzamingame-2c220.firebasestorage.app",
+
   messagingSenderId: "612768786041",
+
   appId: "1:612768786041:web:6197174e927ea9cb98d6a8"
+
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -33,23 +51,146 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 
 </script>
-      
-<script defer src="app.js?v=118"></script>
+
+
+<!-- APP JS -->
+
+<script defer src="app.js?v=119"></script>
 
 
 <style>
 
-html,body{
+html,
+body{
+
 margin:0;
+
 width:100%;
+
 height:100%;
+
 overflow:hidden;
+
+font-family:Arial,sans-serif;
+
 }
 
+
 a-scene{
+
 width:100%;
+
 height:100%;
+
 }
+
+
+/* ========================= */
+/* LOGIN SCREEN */
+/* ========================= */
+
+#loginScreen{
+
+position:fixed;
+
+top:0;
+
+left:0;
+
+width:100%;
+
+height:100%;
+
+background:white;
+
+z-index:9999;
+
+display:flex;
+
+flex-direction:column;
+
+justify-content:center;
+
+align-items:center;
+
+gap:15px;
+
+}
+
+
+#loginScreen h2{
+
+font-size:24px;
+
+margin-bottom:20px;
+
+}
+
+
+#phoneNumber,
+#verificationCode{
+
+width:260px;
+
+padding:14px;
+
+font-size:18px;
+
+box-sizing:border-box;
+
+text-align:center;
+
+}
+
+
+#sendCode,
+#verifyCode{
+
+width:260px;
+
+padding:14px;
+
+font-size:18px;
+
+border:none;
+
+border-radius:8px;
+
+cursor:pointer;
+
+}
+
+
+#recaptcha-container{
+
+margin-top:10px;
+
+}
+
+
+#codeSection{
+
+display:none;
+
+flex-direction:column;
+
+align-items:center;
+
+gap:15px;
+
+}
+
+
+#loginMessage{
+
+font-size:16px;
+
+text-align:center;
+
+max-width:300px;
+
+}
+
 
 </style>
 
@@ -58,6 +199,61 @@ height:100%;
 
 <body>
 
+
+<!-- ========================= -->
+<!-- LOGIN -->
+<!-- ========================= -->
+
+<div id="loginScreen">
+
+<h2>
+ورود به سرزمین شگفت انگیز
+</h2>
+
+
+<input
+id="phoneNumber"
+type="tel"
+placeholder="شماره موبایل"
+dir="ltr"
+autocomplete="tel"
+>
+
+
+<button id="sendCode">
+ارسال کد
+</button>
+
+
+<div id="recaptcha-container"></div>
+
+
+<div id="codeSection">
+
+<input
+id="verificationCode"
+type="number"
+placeholder="کد پیامک"
+dir="ltr"
+autocomplete="one-time-code"
+>
+
+
+<button id="verifyCode">
+ورود
+</button>
+
+</div>
+
+
+<p id="loginMessage"></p>
+
+</div>
+
+
+<!-- ========================= -->
+<!-- AR SCENE -->
+<!-- ========================= -->
 
 <a-scene
 
@@ -149,17 +345,13 @@ webkit-playsinline>
 </a-assets>
 
 
-
 <a-camera
 position="0 0 0"
 look-controls="enabled:false">
 </a-camera>
 
 
-
-<!-- ===================== -->
 <!-- TARGET 0 -->
-<!-- ===================== -->
 
 <a-entity
 mindar-image-target="targetIndex:0">
@@ -188,10 +380,7 @@ transparent:true;
 </a-entity>
 
 
-
-<!-- ===================== -->
 <!-- TARGET 1 -->
-<!-- ===================== -->
 
 <a-entity
 mindar-image-target="targetIndex:1">
@@ -220,10 +409,7 @@ transparent:true;
 </a-entity>
 
 
-
-<!-- ===================== -->
 <!-- TARGET 2 -->
-<!-- ===================== -->
 
 <a-entity
 mindar-image-target="targetIndex:2">
@@ -252,10 +438,7 @@ transparent:true;
 </a-entity>
 
 
-
-<!-- ===================== -->
 <!-- TARGET 3 -->
-<!-- ===================== -->
 
 <a-entity
 mindar-image-target="targetIndex:3">
@@ -284,10 +467,7 @@ transparent:true;
 </a-entity>
 
 
-
-<!-- ===================== -->
 <!-- TARGET 4 -->
-<!-- ===================== -->
 
 <a-entity
 mindar-image-target="targetIndex:4">
@@ -316,10 +496,7 @@ transparent:true;
 </a-entity>
 
 
-
-<!-- ===================== -->
 <!-- TARGET 5 -->
-<!-- ===================== -->
 
 <a-entity
 mindar-image-target="targetIndex:5">
@@ -348,9 +525,10 @@ transparent:true;
 </a-entity>
 
 
-
 </a-scene>
+
 
 </body>
 
 </html>
+```
