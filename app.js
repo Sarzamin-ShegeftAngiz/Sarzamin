@@ -1,8 +1,324 @@
+```javascript
 document.addEventListener("DOMContentLoaded", () => {
 
     const scene =
         document.querySelector("a-scene");
 
+
+    /*
+    =================================
+    FIREBASE PHONE LOGIN
+    =================================
+    */
+
+    const phoneInput =
+        document.querySelector("#phoneNumber");
+
+    const sendCodeButton =
+        document.querySelector("#sendCode");
+
+    const verificationCodeInput =
+        document.querySelector("#verificationCode");
+
+    const verifyCodeButton =
+        document.querySelector("#verifyCode");
+
+    const codeSection =
+        document.querySelector("#codeSection");
+
+    const loginMessage =
+        document.querySelector("#loginMessage");
+
+    const loginScreen =
+        document.querySelector("#loginScreen");
+
+
+    let confirmationResult = null;
+
+
+    /*
+    =================================
+    FIREBASE AUTH STATE
+    =================================
+    */
+
+    firebase.auth().onAuthStateChanged((user) => {
+
+        if (user) {
+
+            console.log(
+                "USER LOGGED IN:",
+                user.uid
+            );
+
+
+            /*
+            کاربر قبلاً وارد شده
+            */
+
+            if (loginScreen) {
+
+                loginScreen.style.display =
+                    "none";
+
+            }
+
+        }
+
+    });
+
+
+    /*
+    =================================
+    RECAPTCHA
+    =================================
+    */
+
+    if (
+        sendCodeButton &&
+        phoneInput
+    ) {
+
+        window.recaptchaVerifier =
+            new firebase.auth.RecaptchaVerifier(
+                "recaptcha-container",
+                {
+                    size: "normal"
+                }
+            );
+
+
+        /*
+        =================================
+        SEND SMS CODE
+        =================================
+        */
+
+        sendCodeButton.addEventListener(
+            "click",
+            async () => {
+
+                let phone =
+                    phoneInput.value.trim();
+
+
+                /*
+                تبدیل 0912 به +98912
+                */
+
+                if (
+                    phone.startsWith("0")
+                ) {
+
+                    phone =
+                        "+98" +
+                        phone.substring(1);
+
+                }
+
+
+                /*
+                بررسی شماره
+                */
+
+                if (
+                    !phone.startsWith("+98")
+                ) {
+
+                    loginMessage.innerText =
+                        "شماره موبایل را با 09 وارد کنید";
+
+                    return;
+
+                }
+
+
+                loginMessage.innerText =
+                    "در حال ارسال کد...";
+
+
+                try {
+
+                    confirmationResult =
+                        await firebase
+                            .auth()
+                            .signInWithPhoneNumber(
+                                phone,
+                                window.recaptchaVerifier
+                            );
+
+
+                    console.log(
+                        "SMS SENT"
+                    );
+
+
+                    loginMessage.innerText =
+                        "کد تایید برای شما ارسال شد";
+
+
+                    codeSection.style.display =
+                        "flex";
+
+
+                }
+
+                catch (error) {
+
+                    console.error(
+                        "SMS ERROR:",
+                        error
+                    );
+
+
+                    loginMessage.innerText =
+                        "ارسال کد انجام نشد";
+
+
+                    /*
+                    اگر reCAPTCHA خراب شد
+                    دوباره ساخته شود
+                    */
+
+                    try {
+
+                        window.recaptchaVerifier =
+                            new firebase.auth.RecaptchaVerifier(
+                                "recaptcha-container",
+                                {
+                                    size: "normal"
+                                }
+                            );
+
+                    }
+
+                    catch (e) {
+
+                        console.log(e);
+
+                    }
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /*
+    =================================
+    VERIFY CODE
+    =================================
+    */
+
+    if (
+        verifyCodeButton
+    ) {
+
+        verifyCodeButton.addEventListener(
+            "click",
+            async () => {
+
+                const code =
+                    verificationCodeInput
+                        .value
+                        .trim();
+
+
+                if (!code) {
+
+                    loginMessage.innerText =
+                        "کد تایید را وارد کنید";
+
+                    return;
+
+                }
+
+
+                if (!confirmationResult) {
+
+                    loginMessage.innerText =
+                        "ابتدا کد را درخواست کنید";
+
+                    return;
+
+                }
+
+
+                try {
+
+                    const result =
+                        await confirmationResult
+                            .confirm(code);
+
+
+                    const user =
+                        result.user;
+
+
+                    console.log(
+                        "LOGIN SUCCESS"
+                    );
+
+
+                    console.log(
+                        "USER UID:",
+                        user.uid
+                    );
+
+
+                    console.log(
+                        "PHONE:",
+                        user.phoneNumber
+                    );
+
+
+                    loginMessage.innerText =
+                        "ورود موفق بود";
+
+
+                    /*
+                    بستن صفحه ورود
+                    */
+
+                    setTimeout(
+                        () => {
+
+                            loginScreen.style.display =
+                                "none";
+
+                        },
+                        500
+                    );
+
+
+                }
+
+                catch (error) {
+
+                    console.error(
+                        "VERIFY ERROR:",
+                        error
+                    );
+
+
+                    loginMessage.innerText =
+                        "کد وارد شده صحیح نیست";
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /*
+    =================================
+    AR VIDEOS
+    =================================
+    */
 
     const videos = [
 
@@ -58,7 +374,9 @@ document.addEventListener("DOMContentLoaded", () => {
         "arReady",
         () => {
 
-            console.log("AR READY");
+            console.log(
+                "AR READY"
+            );
 
         }
     );
@@ -219,7 +537,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /*
     =================================
-    لمس Instagram
+    INSTAGRAM
     =================================
     */
 
@@ -263,10 +581,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 canvas.getBoundingClientRect();
 
 
-            /*
-            مختصات لمس روی صفحه
-            */
-
             const mouse =
                 new THREE.Vector2();
 
@@ -287,10 +601,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 ) * 2 + 1;
 
 
-            /*
-            Raycaster
-            */
-
             const raycaster =
                 new THREE.Raycaster();
 
@@ -300,10 +610,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 scene.camera
             );
 
-
-            /*
-            فقط Instagram Zone
-            */
 
             const zone =
                 activeTarget.querySelector(
@@ -336,10 +642,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
 
 
-            /*
-            اگر روی ناحیه Instagram لمس شده
-            */
-
             if (
                 hits.length > 0
             ) {
@@ -348,11 +650,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     "INSTAGRAM PRESSED"
                 );
 
-
-                /*
-                اول تلاش برای باز کردن
-                اپ Instagram
-                */
 
                 const intentURL =
                     "intent://www.instagram.com/_u/SarzaminAr/#Intent;" +
@@ -375,3 +672,4 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 });
+```
