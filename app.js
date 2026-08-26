@@ -1,372 +1,436 @@
-```javascript
 console.log("APP JS START");
+
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    console.log("DOM READY");
 
-    const phoneInput =
-        document.getElementById("phoneNumber");
-
-    const sendButton =
-        document.getElementById("sendCode");
-
-    const codeSection =
-        document.getElementById("codeSection");
-
-    const codeInput =
-        document.getElementById("verificationCode");
-
-    const verifyButton =
-        document.getElementById("verifyCode");
-
-    const message =
-        document.getElementById("loginMessage");
-
-    const loginScreen =
-        document.getElementById("loginScreen");
-
-
-    let confirmationResult = null;
-    let recaptchaVerifier = null;
+    const scene =
+        document.querySelector("a-scene");
 
 
     /*
-    =================================
-    وضعیت اولیه
-    =================================
+    ================================
+    FIREBASE ANONYMOUS
+    ================================
     */
 
-    message.innerText =
-        "صفحه ورود آماده است";
+    let currentUser = null;
 
 
-    /*
-    =================================
-    ساخت reCAPTCHA
-    =================================
-    */
+    firebase.auth()
+    .signInAnonymously()
+    .then((result)=>{
 
-    try {
-
-        recaptchaVerifier =
-            new firebase.auth.RecaptchaVerifier(
-                "recaptcha-container",
-                {
-                    size: "normal",
-
-                    callback: function () {
-
-                        console.log(
-                            "RECAPTCHA SUCCESS"
-                        );
-
-                        message.innerText =
-                            "تأیید امنیتی انجام شد";
-
-                    },
-
-                    "expired-callback": function () {
-
-                        message.innerText =
-                            "تأیید امنیتی منقضی شد";
-
-                    }
-                }
-            );
+        currentUser =
+            result.user;
 
 
-        recaptchaVerifier
-            .render()
-            .then(function (id) {
+        console.log(
+            "USER:",
+            currentUser.uid
+        );
 
-                console.log(
-                    "RECAPTCHA READY:",
-                    id
-                );
 
-            })
-            .catch(function (error) {
+    })
+    .catch((error)=>{
 
-                console.error(
-                    "RECAPTCHA ERROR:",
-                    error
-                );
-
-                message.innerText =
-                    "خطا در فعال شدن تأیید امنیتی";
-
-            });
-
-    }
-
-    catch (error) {
-
-        console.error(
-            "RECAPTCHA CREATE ERROR:",
+        console.log(
+            "AUTH ERROR",
             error
         );
 
-        message.innerText =
-            "خطا در ساخت تأیید امنیتی";
+    });
 
-    }
+
+
+    const db =
+        firebase.firestore();
+
 
 
     /*
-    =================================
-    ارسال کد
-    =================================
+    ================================
+    VIDEOS
+    ================================
     */
 
-    sendButton.addEventListener(
-        "click",
-        async function () {
+
+    const videos = [
+
+        document.querySelector("#video0"),
+
+        document.querySelector("#video1"),
+
+        document.querySelector("#video2"),
+
+        document.querySelector("#video3"),
+
+        document.querySelector("#video4"),
+
+        document.querySelector("#video5")
+
+    ];
+
+
+
+    /*
+    ================================
+    CHARACTERS
+    ================================
+    */
+
+
+    const characters = [
+
+        "choromi",
+
+        "character2",
+
+        "character3",
+
+        "character4",
+
+        "character5",
+
+        "character6"
+
+    ];
+
+
+
+    let currentCharacter = null;
+
+
+
+    /*
+    ================================
+    BUTTON
+    ================================
+    */
+
+
+    const receiveBox =
+        document.querySelector("#receiveBox");
+
+
+    const receiveButton =
+        document.querySelector("#receiveButton");
+
+
+    const receiveMessage =
+        document.querySelector("#receiveMessage");
+
+
+
+
+    /*
+    ================================
+    TARGET FOUND
+    ================================
+    */
+
+
+    scene.addEventListener(
+        "targetFound",
+        async (event)=>{
+
+
+            const target =
+                event.target;
+
+
+            const data =
+                target.getAttribute(
+                    "mindar-image-target"
+                );
+
+
+            const index =
+                data.targetIndex;
+
+
 
             console.log(
-                "SEND BUTTON CLICKED"
+                "TARGET FOUND",
+                index
             );
 
 
-            message.innerText =
-                "در حال بررسی شماره...";
+
+            currentCharacter =
+                characters[index];
 
 
-            let phone =
-                phoneInput.value.trim();
+
+            receiveBox.style.display =
+                "none";
 
 
-            /*
-            0912xxxxxxx
-            تبدیل به
-            +98912xxxxxxx
-            */
 
-            if (
-                phone.startsWith("0")
-            ) {
-
-                phone =
-                    "+98" +
-                    phone.substring(1);
-
-            }
+            const video =
+                videos[index];
 
 
-            console.log(
-                "PHONE:",
-                phone
-            );
 
-
-            /*
-            بررسی شماره ایران
-            */
-
-            if (
-                !/^\+989\d{9}$/.test(phone)
-            ) {
-
-                message.innerText =
-                    "شماره را به شکل 09123456789 وارد کنید";
+            if(!video){
 
                 return;
 
             }
 
 
-            message.innerText =
-                "در حال ارسال کد پیامکی...";
 
+            /*
+            توقف بقیه ویدئوها
+            */
 
-            sendButton.disabled =
-                true;
+            videos.forEach(
+                (v,i)=>{
 
+                    if(v && i!==index){
 
-            try {
-
-                const auth =
-                    firebase.auth();
-
-
-                confirmationResult =
-                    await auth.signInWithPhoneNumber(
-                        phone,
-                        recaptchaVerifier
-                    );
-
-
-                console.log(
-                    "SMS SENT"
-                );
-
-
-                message.innerText =
-                    "کد پیامک شد؛ کد ۶ رقمی را وارد کنید";
-
-
-                codeSection.style.display =
-                    "flex";
-
-
-            }
-
-            catch (error) {
-
-                console.error(
-                    "FIREBASE ERROR:",
-                    error
-                );
-
-
-                message.innerText =
-                    "خطا: " + error.code;
-
-
-                sendButton.disabled =
-                    false;
-
-
-                /*
-                ریست reCAPTCHA
-                */
-
-                try {
-
-                    if (
-                        window.grecaptcha
-                    ) {
-
-                        grecaptcha.reset();
+                        v.pause();
 
                     }
 
                 }
-
-                catch (e) {
-
-                    console.log(e);
-
-                }
-
-            }
-
-        }
-    );
+            );
 
 
-    /*
-    =================================
-    تایید کد پیامک
-    =================================
-    */
 
-    verifyButton.addEventListener(
-        "click",
-        async function () {
+            /*
+            فقط یک بار پخش شود
+            */
 
-            const code =
-                codeInput.value.trim();
+            video.loop =
+                false;
 
 
-            if (!confirmationResult) {
-
-                message.innerText =
-                    "ابتدا کد را درخواست کنید";
-
-                return;
-
-            }
+            video.currentTime =
+                0;
 
 
-            if (
-                !/^\d{6}$/.test(code)
-            ) {
-
-                message.innerText =
-                    "کد باید ۶ رقمی باشد";
-
-                return;
-
-            }
+            video.muted =
+                false;
 
 
-            message.innerText =
-                "در حال بررسی کد...";
 
-
-            try {
-
-                const result =
-                    await confirmationResult.confirm(
-                        code
-                    );
-
-
-                const user =
-                    result.user;
+            video.onended =
+            ()=>{
 
 
                 console.log(
-                    "LOGIN SUCCESS"
+                    "VIDEO END"
                 );
+
+
+                receiveBox.style.display =
+                    "block";
+
+
+            };
+
+
+
+            try{
+
+
+                await video.play();
 
 
                 console.log(
-                    "UID:",
-                    user.uid
+                    "VIDEO PLAY"
                 );
 
-
-                console.log(
-                    "PHONE:",
-                    user.phoneNumber
-                );
-
-
-                /*
-                ذخیره کاربر فعلی
-                */
-
-                window.currentUser =
-                    user;
-
-
-                message.innerText =
-                    "ورود موفق شد";
-
-
-                /*
-                بستن صفحه ورود
-                */
-
-                setTimeout(
-                    function () {
-
-                        loginScreen.style.display =
-                            "none";
-
-                    },
-                    700
-                );
 
             }
+            catch(error){
 
-            catch (error) {
 
-                console.error(
-                    "VERIFY ERROR:",
+                console.log(
+                    "VIDEO ERROR",
                     error
                 );
 
 
-                message.innerText =
-                    "کد اشتباه است یا منقضی شده";
+                video.muted =
+                    true;
+
+
+                await video.play();
+
 
             }
 
+
+
         }
+
     );
 
+
+
+
+
+    /*
+    ================================
+    TARGET LOST
+    ================================
+    */
+
+
+    scene.addEventListener(
+        "targetLost",
+        (event)=>{
+
+
+            const data =
+                event.target.getAttribute(
+                    "mindar-image-target"
+                );
+
+
+            const index =
+                data.targetIndex;
+
+
+
+            if(videos[index]){
+
+                videos[index].pause();
+
+            }
+
+
+
+            receiveBox.style.display =
+                "none";
+
+
+
+        }
+
+    );
+
+
+
+
+
+
+    /*
+    ================================
+    RECEIVE CARD
+    ================================
+    */
+
+
+    receiveButton.addEventListener(
+        "click",
+        async ()=>{
+
+
+            if(!currentUser){
+
+                receiveMessage.innerText =
+                "در حال آماده سازی حساب...";
+
+
+                return;
+
+            }
+
+
+
+            if(!currentCharacter){
+
+                return;
+
+            }
+
+
+
+
+            receiveButton.disabled =
+                true;
+
+
+
+            receiveMessage.innerText =
+            "در حال دریافت...";
+
+
+
+
+
+            const cardRef =
+            db
+            .collection("users")
+            .doc(currentUser.uid)
+            .collection("cards")
+            .doc(currentCharacter);
+
+
+
+
+
+            const oldCard =
+            await cardRef.get();
+
+
+
+
+            if(oldCard.exists){
+
+
+                receiveMessage.innerText =
+                "🎴 این شخصیت را قبلاً داری";
+
+
+                return;
+
+
+            }
+
+
+
+
+            await cardRef.set({
+
+                character:
+                currentCharacter,
+
+
+                createdAt:
+                firebase.firestore.FieldValue.serverTimestamp()
+
+
+            });
+
+
+
+
+
+            receiveMessage.innerText =
+            "🎉 شخصیت به پروفایل اضافه شد";
+
+
+
+            receiveButton.innerText =
+            "✅ دریافت شد";
+
+
+
+            console.log(
+                "CARD SAVED",
+                currentCharacter
+            );
+
+
+
+        }
+
+    );
+
+
+
 });
-```
