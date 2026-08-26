@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="fa">
 
@@ -12,185 +11,188 @@
 <title>Sarzamin AR</title>
 
 
+<!-- ========================= -->
 <!-- A-FRAME -->
+<!-- ========================= -->
+
 <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
 
 
+<!-- ========================= -->
 <!-- MINDAR -->
+<!-- ========================= -->
+
 <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
 
+<!-- ========================= -->
 <!-- FIREBASE -->
+<!-- ========================= -->
+
 <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js"></script>
 
 <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-auth-compat.js"></script>
 
+<script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore-compat.js"></script>
 
+
+<!-- ========================= -->
 <!-- FIREBASE CONFIG -->
+<!-- ========================= -->
 
 <script>
 
 const firebaseConfig = {
 
-  apiKey: "AIzaSyAZ_uTW6l-wDqmADxb-So260cx25n5xbM",
+    apiKey:
+        "AIzaSyAZ_uTW6l-wDqmADxb-So260cx25n5xbM",
 
-  authDomain: "sarzamingame-2c220.firebaseapp.com",
+    authDomain:
+        "sarzamingame-2c220.firebaseapp.com",
 
-  projectId: "sarzamingame-2c220",
+    projectId:
+        "sarzamingame-2c220",
 
-  storageBucket: "sarzamingame-2c220.firebasestorage.app",
+    storageBucket:
+        "sarzamingame-2c220.firebasestorage.app",
 
-  messagingSenderId: "612768786041",
+    messagingSenderId:
+        "612768786041",
 
-  appId: "1:612768786041:web:6197174e927ea9cb98d6a8"
+    appId:
+        "1:612768786041:web:6197174e927ea9cb98d6a8"
 
 };
 
+
 firebase.initializeApp(firebaseConfig);
 
-const auth = firebase.auth();
+
+/*
+Firebase Auth
+*/
+
+const auth =
+    firebase.auth();
+
+
+/*
+Firestore
+*/
+
+const db =
+    firebase.firestore();
 
 </script>
 
 
+<!-- ========================= -->
 <!-- APP JS -->
+<!-- ========================= -->
 
-<script  src="app.js?v=122"></script>
+<script src="app.js?v=123"></script>
 
+
+<!-- ========================= -->
+<!-- STYLE -->
+<!-- ========================= -->
 
 <style>
 
 html,
 body{
 
-margin:0;
+    margin:0;
 
-width:100%;
+    width:100%;
 
-height:100%;
+    height:100%;
 
-overflow:hidden;
-
-font-family:Arial,sans-serif;
+    overflow:hidden;
 
 }
 
 
 a-scene{
 
-width:100%;
+    width:100%;
 
-height:100%;
+    height:100%;
 
 }
 
 
 /* ========================= */
-/* LOGIN SCREEN */
+/* RECEIVE BOX */
 /* ========================= */
 
-#loginScreen{
+#receiveBox{
 
-position:fixed;
+    position:fixed;
 
-top:0;
+    left:0;
 
-left:0;
+    right:0;
 
-width:100%;
+    bottom:40px;
 
-height:100%;
+    z-index:10000;
 
-background:white;
+    display:none;
 
-z-index:9999;
-
-display:flex;
-
-flex-direction:column;
-
-justify-content:center;
-
-align-items:center;
-
-gap:15px;
+    text-align:center;
 
 }
 
 
-#loginScreen h2{
+/* ========================= */
+/* RECEIVE BUTTON */
+/* ========================= */
 
-font-size:24px;
+#receiveButton{
 
-margin-bottom:20px;
+    padding:16px 28px;
 
-}
+    font-size:20px;
 
+    font-weight:bold;
 
-#phoneNumber,
-#verificationCode{
+    border:none;
 
-width:260px;
+    border-radius:12px;
 
-padding:14px;
+    background:white;
 
-font-size:18px;
+    color:#222;
 
-box-sizing:border-box;
+    cursor:pointer;
 
-text-align:center;
-
-}
-
-
-#sendCode,
-#verifyCode{
-
-width:260px;
-
-padding:14px;
-
-font-size:18px;
-
-border:none;
-
-border-radius:8px;
-
-cursor:pointer;
+    box-shadow:
+        0 4px 15px
+        rgba(0,0,0,0.3);
 
 }
 
 
-#recaptcha-container{
+/* ========================= */
+/* MESSAGE */
+/* ========================= */
 
-margin-top:10px;
+#receiveMessage{
 
-}
+    margin-top:12px;
 
+    font-size:17px;
 
-#codeSection{
+    font-weight:bold;
 
-display:none;
+    color:white;
 
-flex-direction:column;
-
-align-items:center;
-
-gap:15px;
-
-}
-
-
-#loginMessage{
-
-font-size:16px;
-
-text-align:center;
-
-max-width:300px;
+    text-shadow:
+        0 1px 4px
+        black;
 
 }
-
 
 </style>
 
@@ -201,52 +203,19 @@ max-width:300px;
 
 
 <!-- ========================= -->
-<!-- LOGIN -->
+<!-- RECEIVE CHARACTER -->
 <!-- ========================= -->
 
-<div id="loginScreen">
+<div id="receiveBox">
 
-<h2>
-ورود به سرزمین شگفت انگیز
-</h2>
+    <button id="receiveButton">
 
+        🎁 دریافت این شخصیت
 
-<input
-id="phoneNumber"
-type="tel"
-placeholder="شماره موبایل"
-dir="ltr"
-autocomplete="tel"
->
+    </button>
 
 
-<button id="sendCode">
-ارسال کد
-</button>
-
-
-<div id="recaptcha-container"></div>
-
-
-<div id="codeSection">
-
-<input
-id="verificationCode"
-type="number"
-placeholder="کد پیامک"
-dir="ltr"
-autocomplete="one-time-code"
->
-
-
-<button id="verifyCode">
-ورود
-</button>
-
-</div>
-
-
-<p id="loginMessage"></p>
+    <div id="receiveMessage"></div>
 
 </div>
 
@@ -257,270 +226,432 @@ autocomplete="one-time-code"
 
 <a-scene
 
-mindar-image="
-imageTargetSrc: ./targets.mind;
-warmupTolerance: 2;
-missTolerance: 1;
-"
+    mindar-image="
+        imageTargetSrc: ./targets.mind;
+        autoStart: true;
+        warmupTolerance: 2;
+        missTolerance: 1;
+    "
 
-embedded
+    embedded
 
-vr-mode-ui="enabled:false"
+    vr-mode-ui="enabled:false"
 
-device-orientation-permission-ui="enabled:false"
+    device-orientation-permission-ui="enabled:false"
 
-renderer="colorManagement:true;"
+    renderer="colorManagement:true;"
 >
 
+
+<!-- ========================= -->
+<!-- ASSETS -->
+<!-- ========================= -->
 
 <a-assets>
 
 
-<video
-id="video0"
-src="./notebook/choromi.mp4"
-preload="auto"
-loop
-muted
-playsinline
-webkit-playsinline>
-</video>
+    <!-- TARGET 0 -->
+
+    <video
+
+        id="video0"
+
+        src="./notebook/choromi.mp4"
+
+        preload="auto"
+
+        loop
+
+        muted
+
+        playsinline
+
+        webkit-playsinline>
+
+    </video>
 
 
-<video
-id="video1"
-src="./notebook2/02.mp4"
-preload="auto"
-loop
-muted
-playsinline
-webkit-playsinline>
-</video>
+    <!-- TARGET 1 -->
+
+    <video
+
+        id="video1"
+
+        src="./notebook2/02.mp4"
+
+        preload="auto"
+
+        loop
+
+        muted
+
+        playsinline
+
+        webkit-playsinline>
+
+    </video>
 
 
-<video
-id="video2"
-src="./notebook3/03.mp4"
-preload="auto"
-loop
-muted
-playsinline
-webkit-playsinline>
-</video>
+    <!-- TARGET 2 -->
+
+    <video
+
+        id="video2"
+
+        src="./notebook3/03.mp4"
+
+        preload="auto"
+
+        loop
+
+        muted
+
+        playsinline
+
+        webkit-playsinline>
+
+    </video>
 
 
-<video
-id="video3"
-src="./notebook4/04.mp4"
-preload="auto"
-loop
-muted
-playsinline
-webkit-playsinline>
-</video>
+    <!-- TARGET 3 -->
+
+    <video
+
+        id="video3"
+
+        src="./notebook4/04.mp4"
+
+        preload="auto"
+
+        loop
+
+        muted
+
+        playsinline
+
+        webkit-playsinline>
+
+    </video>
 
 
-<video
-id="video4"
-src="./notebook5/05.mp4"
-preload="auto"
-loop
-muted
-playsinline
-webkit-playsinline>
-</video>
+    <!-- TARGET 4 -->
+
+    <video
+
+        id="video4"
+
+        src="./notebook5/05.mp4"
+
+        preload="auto"
+
+        loop
+
+        muted
+
+        playsinline
+
+        webkit-playsinline>
+
+    </video>
 
 
-<video
-id="video5"
-src="./notebook6/06.mp4"
-preload="auto"
-loop
-muted
-playsinline
-webkit-playsinline>
-</video>
+    <!-- TARGET 5 -->
+
+    <video
+
+        id="video5"
+
+        src="./notebook6/06.mp4"
+
+        preload="auto"
+
+        loop
+
+        muted
+
+        playsinline
+
+        webkit-playsinline>
+
+    </video>
 
 
 </a-assets>
 
 
+<!-- ========================= -->
+<!-- CAMERA -->
+<!-- ========================= -->
+
 <a-camera
-position="0 0 0"
-look-controls="enabled:false">
+
+    position="0 0 0"
+
+    look-controls="enabled:false">
+
 </a-camera>
 
 
+<!-- ========================= -->
 <!-- TARGET 0 -->
+<!-- ========================= -->
 
 <a-entity
-mindar-image-target="targetIndex:0">
 
-<a-video
-src="#video0"
-width="1"
-height="1.42"
-position="0 0 0">
-</a-video>
+    mindar-image-target="targetIndex:0">
 
 
-<a-plane
-class="instagram-zone"
-width="0.70"
-height="0.16"
-position="-0.31 0.62 0.02"
-material="
-shader:flat;
-color:red;
-opacity:0;
-transparent:true;
-">
-</a-plane>
+    <a-video
+
+        src="#video0"
+
+        width="1"
+
+        height="1.42"
+
+        position="0 0 0">
+
+    </a-video>
+
+
+    <a-plane
+
+        class="instagram-zone"
+
+        width="0.70"
+
+        height="0.16"
+
+        position="-0.31 0.62 0.02"
+
+        material="
+            shader:flat;
+            color:red;
+            opacity:0;
+            transparent:true;
+        ">
+
+    </a-plane>
 
 </a-entity>
 
 
+<!-- ========================= -->
 <!-- TARGET 1 -->
+<!-- ========================= -->
 
 <a-entity
-mindar-image-target="targetIndex:1">
 
-<a-video
-src="#video1"
-width="1"
-height="1.42"
-position="0 0 0">
-</a-video>
+    mindar-image-target="targetIndex:1">
 
 
-<a-plane
-class="instagram-zone"
-width="0.70"
-height="0.16"
-position="-0.31 0.62 0.02"
-material="
-shader:flat;
-color:red;
-opacity:0;
-transparent:true;
-">
-</a-plane>
+    <a-video
+
+        src="#video1"
+
+        width="1"
+
+        height="1.42"
+
+        position="0 0 0">
+
+    </a-video>
+
+
+    <a-plane
+
+        class="instagram-zone"
+
+        width="0.70"
+
+        height="0.16"
+
+        position="-0.31 0.62 0.02"
+
+        material="
+            shader:flat;
+            color:red;
+            opacity:0;
+            transparent:true;
+        ">
+
+    </a-plane>
 
 </a-entity>
 
 
+<!-- ========================= -->
 <!-- TARGET 2 -->
+<!-- ========================= -->
 
 <a-entity
-mindar-image-target="targetIndex:2">
 
-<a-video
-src="#video2"
-width="1"
-height="1.42"
-position="0 0 0">
-</a-video>
+    mindar-image-target="targetIndex:2">
 
 
-<a-plane
-class="instagram-zone"
-width="0.70"
-height="0.16"
-position="-0.31 0.62 0.02"
-material="
-shader:flat;
-color:red;
-opacity:0;
-transparent:true;
-">
-</a-plane>
+    <a-video
+
+        src="#video2"
+
+        width="1"
+
+        height="1.42"
+
+        position="0 0 0">
+
+    </a-video>
+
+
+    <a-plane
+
+        class="instagram-zone"
+
+        width="0.70"
+
+        height="0.16"
+
+        position="-0.31 0.62 0.02"
+
+        material="
+            shader:flat;
+            color:red;
+            opacity:0;
+            transparent:true;
+        ">
+
+    </a-plane>
 
 </a-entity>
 
 
+<!-- ========================= -->
 <!-- TARGET 3 -->
+<!-- ========================= -->
 
 <a-entity
-mindar-image-target="targetIndex:3">
 
-<a-video
-src="#video3"
-width="1"
-height="1.42"
-position="0 0 0">
-</a-video>
+    mindar-image-target="targetIndex:3">
 
 
-<a-plane
-class="instagram-zone"
-width="0.70"
-height="0.16"
-position="-0.31 0.62 0.02"
-material="
-shader:flat;
-color:red;
-opacity:0;
-transparent:true;
-">
-</a-plane>
+    <a-video
+
+        src="#video3"
+
+        width="1"
+
+        height="1.42"
+
+        position="0 0 0">
+
+    </a-video>
+
+
+    <a-plane
+
+        class="instagram-zone"
+
+        width="0.70"
+
+        height="0.16"
+
+        position="-0.31 0.62 0.02"
+
+        material="
+            shader:flat;
+            color:red;
+            opacity:0;
+            transparent:true;
+        ">
+
+    </a-plane>
 
 </a-entity>
 
 
+<!-- ========================= -->
 <!-- TARGET 4 -->
+<!-- ========================= -->
 
 <a-entity
-mindar-image-target="targetIndex:4">
 
-<a-video
-src="#video4"
-width="1"
-height="1.42"
-position="0 0 0">
-</a-video>
+    mindar-image-target="targetIndex:4">
 
 
-<a-plane
-class="instagram-zone"
-width="0.70"
-height="0.16"
-position="-0.31 0.62 0.02"
-material="
-shader:flat;
-color:red;
-opacity:0;
-transparent:true;
-">
-</a-plane>
+    <a-video
+
+        src="#video4"
+
+        width="1"
+
+        height="1.42"
+
+        position="0 0 0">
+
+    </a-video>
+
+
+    <a-plane
+
+        class="instagram-zone"
+
+        width="0.70"
+
+        height="0.16"
+
+        position="-0.31 0.62 0.02"
+
+        material="
+            shader:flat;
+            color:red;
+            opacity:0;
+            transparent:true;
+        ">
+
+    </a-plane>
 
 </a-entity>
 
 
+<!-- ========================= -->
 <!-- TARGET 5 -->
+<!-- ========================= -->
 
 <a-entity
-mindar-image-target="targetIndex:5">
 
-<a-video
-src="#video5"
-width="1"
-height="1.42"
-position="0 0 0">
-</a-video>
+    mindar-image-target="targetIndex:5">
 
 
-<a-plane
-class="instagram-zone"
-width="0.70"
-height="0.16"
-position="-0.31 0.62 0.02"
-material="
-shader:flat;
-color:red;
-opacity:0;
-transparent:true;
-">
-</a-plane>
+    <a-video
+
+        src="#video5"
+
+        width="1"
+
+        height="1.42"
+
+        position="0 0 0">
+
+    </a-video>
+
+
+    <a-plane
+
+        class="instagram-zone"
+
+        width="0.70"
+
+        height="0.16"
+
+        position="-0.31 0.62 0.02"
+
+        material="
+            shader:flat;
+            color:red;
+            opacity:0;
+            transparent:true;
+        ">
+
+    </a-plane>
 
 </a-entity>
 
@@ -531,4 +662,3 @@ transparent:true;
 </body>
 
 </html>
-```
