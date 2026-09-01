@@ -1,660 +1,248 @@
-<!DOCTYPE html>
-<html lang="fa">
+document.addEventListener("DOMContentLoaded", () => {
 
-<head>
+    const scene =
+        document.querySelector("a-scene");
 
-<meta charset="UTF-8">
 
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
+    const videos = [
 
-<title>Sarzamin AR</title>
+        document.querySelector("#video0"),
+        document.querySelector("#video1"),
+        document.querySelector("#video2"),
+        document.querySelector("#video3"),
+        document.querySelector("#video4"),
+        document.querySelector("#video5")
 
+    ];
 
-<!-- ========================= -->
-<!-- A-FRAME -->
-<!-- ========================= -->
 
-<script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    const targets = [
 
+        document.querySelector(
+            '[mindar-image-target="targetIndex:0"]'
+        ),
 
-<!-- ========================= -->
-<!-- MINDAR -->
-<!-- ========================= -->
+        document.querySelector(
+            '[mindar-image-target="targetIndex:1"]'
+        ),
 
-<script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+        document.querySelector(
+            '[mindar-image-target="targetIndex:2"]'
+        ),
 
+        document.querySelector(
+            '[mindar-image-target="targetIndex:3"]'
+        ),
 
-<!-- ========================= -->
-<!-- FIREBASE -->
-<!-- ========================= -->
+        document.querySelector(
+            '[mindar-image-target="targetIndex:4"]'
+        ),
 
-<script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js"></script>
+        document.querySelector(
+            '[mindar-image-target="targetIndex:5"]'
+        )
 
-<script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-auth-compat.js"></script>
+    ];
 
-<script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore-compat.js"></script>
 
+    let activeTarget = null;
 
-<!-- ========================= -->
-<!-- FIREBASE CONFIG -->
-<!-- ========================= -->
 
-<script>
+    /*
+    =================================
+    AR READY
+    =================================
+    */
 
-const firebaseConfig = {
+    scene.addEventListener(
+        "arReady",
+        () => {
 
-    apiKey:
-        "AIzaSyAZ_uTW6l-wDqmADxb-So260cx25n5xbM",
+            console.log("AR READY");
 
-    authDomain:
-        "sarzamingame-2c220.firebaseapp.com",
+        }
+    );
 
-    projectId:
-        "sarzamingame-2c220",
 
-    storageBucket:
-        "sarzamingame-2c220.firebasestorage.app",
+    /*
+    =================================
+    TARGET FOUND
+    =================================
+    */
 
-    messagingSenderId:
-        "612768786041",
+    scene.addEventListener(
+        "targetFound",
+        async (e) => {
 
-    appId:
-        "1:612768786041:web:6197174e927ea9cb98d6a8"
+            const target =
+                e.target;
 
-};
 
+            const data =
+                target.getAttribute(
+                    "mindar-image-target"
+                );
 
-firebase.initializeApp(firebaseConfig);
 
+            const index =
+                data.targetIndex;
 
-/*
-Firebase Auth
-*/
 
-const auth =
-    firebase.auth();
+            console.log(
+                "TARGET FOUND:",
+                index
+            );
 
 
-/*
-Firestore
-*/
+            activeTarget =
+                target;
 
-const db =
-    firebase.firestore();
 
-</script>
+            /*
+            توقف همه ویدئوهای دیگر
+            */
 
+            videos.forEach(
+                (video, i) => {
 
-<!-- ========================= -->
-<!-- APP JS -->
-<!-- ========================= -->
+                    if (
+                        video &&
+                        i !== index
+                    ) {
 
-<script src="app.js?v=124"></script>
+                        video.pause();
 
+                    }
 
-<!-- ========================= -->
-<!-- STYLE -->
-<!-- ========================= -->
+                }
+            );
 
-<style>
 
-html,
-body{
+            /*
+            ویدئوی تارگت فعلی
+            */
 
-    margin:0;
+            const video =
+                videos[index];
 
-    width:100%;
 
-    height:100%;
+            if (!video) {
 
-    overflow:hidden;
+                return;
 
-}
+            }
 
 
-a-scene{
+            video.currentTime = 0;
 
-    width:100%;
+            video.muted = false;
 
-    height:100%;
 
-}
+            try {
 
+                await video.play();
 
-/* ========================= */
-#receiveBox{
 
-    position:fixed;
+                console.log(
+                    "VIDEO PLAYING:",
+                    index
+                );
 
-    left:50%;
+            }
 
-    top:50%;
+            catch (err) {
 
-    transform:translate(-50%, -50%);
+                console.log(
+                    "VIDEO ERROR:",
+                    index,
+                    err
+                );
 
-    z-index:10000;
+            }
 
-    display:none;
+        }
+    );
 
-    text-align:center;
 
-    width:100%;
+    /*
+    =================================
+    TARGET LOST
+    =================================
+    */
 
-    pointer-events:none;
+    scene.addEventListener(
+        "targetLost",
+        (e) => {
 
-}
+            const target =
+                e.target;
 
 
-#receiveButton{
+            const data =
+                target.getAttribute(
+                    "mindar-image-target"
+                );
 
-    padding:16px 28px;
 
-    font-size:20px;
+            const index =
+                data.targetIndex;
 
-    font-weight:bold;
 
-    border:none;
+            console.log(
+                "TARGET LOST:",
+                index
+            );
 
-    border-radius:12px;
 
-    background:white;
+            const video =
+                videos[index];
 
-    color:#222;
 
-    cursor:pointer;
+            if (video) {
 
-    box-shadow:
-        0 4px 15px
-        rgba(0,0,0,0.3);
+                video.pause();
 
-    pointer-events:auto;
+            }
 
-}
 
+            if (
+                activeTarget === target
+            ) {
 
-#receiveMessage{
+                activeTarget = null;
 
-    margin-top:12px;
+            }
 
-    font-size:17px;
+        }
+    );
 
-    font-weight:bold;
 
-    color:white;
+    /*
+    =================================
+    لمس Instagram
+    =================================
+    */
 
-    text-shadow:
-        0 1px 4px black;
+    document.addEventListener(
+        "touchend",
+        (event) => {
 
-}
+            if (!activeTarget) {
 
+                return;
 
+            }
 
-</style>
 
-</head>
+            if (
+                !scene.camera ||
+                !scene.renderer
+            ) {
 
+                return;
 
-<body>
+            }
 
 
-<!-- ========================= -->
-<!-- RECEIVE CHARACTER -->
-<!-- ========================= -->
-
-<div id="receiveBox">
-
-    <button id="receiveButton">
-
-        🎁 دریافت این شخصیت
-
-    </button>
-
-
-    <div id="receiveMessage"></div>
-
-</div>
-
-
-<!-- ========================= -->
-<!-- AR SCENE -->
-<!-- ========================= -->
-
-<a-scene
-
-    mindar-image="
-        imageTargetSrc: ./targets.mind;
-        autoStart: true;
-        warmupTolerance: 2;
-        missTolerance: 1;
-    "
-
-    embedded
-
-    vr-mode-ui="enabled:false"
-
-    device-orientation-permission-ui="enabled:false"
-
-    renderer="colorManagement:true;"
->
-
-
-<!-- ========================= -->
-<!-- ASSETS -->
-<!-- ========================= -->
-
-<a-assets>
-
-
-    <!-- TARGET 0 -->
-
-    <video
-
-        id="video0"
-
-        src="./notebook/choromi.mp4"
-
-        preload="auto"
-
-        loop
-
-        muted
-
-        playsinline
-
-        webkit-playsinline>
-
-    </video>
-
-
-    <!-- TARGET 1 -->
-
-    <video
-
-        id="video1"
-
-        src="./notebook2/02.mp4"
-
-        preload="auto"
-
-        loop
-
-        muted
-
-        playsinline
-
-        webkit-playsinline>
-
-    </video>
-
-
-    <!-- TARGET 2 -->
-
-    <video
-
-        id="video2"
-
-        src="./notebook3/03.mp4"
-
-        preload="auto"
-
-        loop
-
-        muted
-
-        playsinline
-
-        webkit-playsinline>
-
-    </video>
-
-
-    <!-- TARGET 3 -->
-
-    <video
-
-        id="video3"
-
-        src="./notebook4/04.mp4"
-
-        preload="auto"
-
-        loop
-
-        muted
-
-        playsinline
-
-        webkit-playsinline>
-
-    </video>
-
-
-    <!-- TARGET 4 -->
-
-    <video
-
-        id="video4"
-
-        src="./notebook5/05.mp4"
-
-        preload="auto"
-
-        loop
-
-        muted
-
-        playsinline
-
-        webkit-playsinline>
-
-    </video>
-
-
-    <!-- TARGET 5 -->
-
-    <video
-
-        id="video5"
-
-        src="./notebook6/06.mp4"
-
-        preload="auto"
-
-        loop
-
-        muted
-
-        playsinline
-
-        webkit-playsinline>
-
-    </video>
-
-
-</a-assets>
-
-
-<!-- ========================= -->
-<!-- CAMERA -->
-<!-- ========================= -->
-
-<a-camera
-
-    position="0 0 0"
-
-    look-controls="enabled:false">
-
-</a-camera>
-
-
-<!-- ========================= -->
-<!-- TARGET 0 -->
-<!-- ========================= -->
-
-<a-entity
-
-    mindar-image-target="targetIndex:0">
-
-
-    <a-video
-
-        src="#video0"
-
-        width="1"
-
-        height="1.42"
-
-        position="0 0 0">
-
-    </a-video>
-
-
-    <a-plane
-
-        class="instagram-zone"
-
-        width="0.70"
-
-        height="0.16"
-
-        position="-0.31 0.62 0.02"
-
-        material="
-            shader:flat;
-            color:red;
-            opacity:0;
-            transparent:true;
-        ">
-
-    </a-plane>
-
-</a-entity>
-
-
-<!-- ========================= -->
-<!-- TARGET 1 -->
-<!-- ========================= -->
-
-<a-entity
-
-    mindar-image-target="targetIndex:1">
-
-
-    <a-video
-
-        src="#video1"
-
-        width="1"
-
-        height="1.42"
-
-        position="0 0 0">
-
-    </a-video>
-
-
-    <a-plane
-
-        class="instagram-zone"
-
-        width="0.70"
-
-        height="0.16"
-
-        position="-0.31 0.62 0.02"
-
-        material="
-            shader:flat;
-            color:red;
-            opacity:0;
-            transparent:true;
-        ">
-
-    </a-plane>
-
-</a-entity>
-
-
-<!-- ========================= -->
-<!-- TARGET 2 -->
-<!-- ========================= -->
-
-<a-entity
-
-    mindar-image-target="targetIndex:2">
-
-
-    <a-video
-
-        src="#video2"
-
-        width="1"
-
-        height="1.42"
-
-        position="0 0 0">
-
-    </a-video>
-
-
-    <a-plane
-
-        class="instagram-zone"
-
-        width="0.70"
-
-        height="0.16"
-
-        position="-0.31 0.62 0.02"
-
-        material="
-            shader:flat;
-            color:red;
-            opacity:0;
-            transparent:true;
-        ">
-
-    </a-plane>
-
-</a-entity>
-
-
-<!-- ========================= -->
-<!-- TARGET 3 -->
-<!-- ========================= -->
-
-<a-entity
-
-    mindar-image-target="targetIndex:3">
-
-
-    <a-video
-
-        src="#video3"
-
-        width="1"
-
-        height="1.42"
-
-        position="0 0 0">
-
-    </a-video>
-
-
-    <a-plane
-
-        class="instagram-zone"
-
-        width="0.70"
-
-        height="0.16"
-
-        position="-0.31 0.62 0.02"
-
-        material="
-            shader:flat;
-            color:red;
-            opacity:0;
-            transparent:true;
-        ">
-
-    </a-plane>
-
-</a-entity>
-
-
-<!-- ========================= -->
-<!-- TARGET 4 -->
-<!-- ========================= -->
-
-<a-entity
-
-    mindar-image-target="targetIndex:4">
-
-
-    <a-video
-
-        src="#video4"
-
-        width="1"
-
-        height="1.42"
-
-        position="0 0 0">
-
-    </a-video>
-
-
-    <a-plane
-
-        class="instagram-zone"
-
-        width="0.70"
-
-        height="0.16"
-
-        position="-0.31 0.62 0.02"
-
-        material="
-            shader:flat;
-            color:red;
-            opacity:0;
-            transparent:true;
-        ">
-
-    </a-plane>
-
-</a-entity>
-
-
-<!-- ========================= -->
-<!-- TARGET 5 -->
-<!-- ========================= -->
-
-<a-entity
-
-    mindar-image-target="targetIndex:5">
-
-
-    <a-video
-
-        src="#video5"
-
-        width="1"
-
-        height="1.42"
-
-        position="0 0 0">
-
-    </a-video>
-
-
-    <a-plane
-
-        class="instagram-zone"
-
-        width="0.70"
-
-        height="0.16"
-
-        position="-0.31 0.62 0.02"
-
-        material="
-            shader:flat;
-            color:red;
-            opacity:0;
-            transparent:true;
-        ">
-
-    </a-plane>
-
-</a-entity>
-
-
-</a-scene>
-
-
-</body>
-
-</html>
+            const touch =
+                event.changedTouches[0];
