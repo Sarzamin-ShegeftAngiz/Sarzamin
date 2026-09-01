@@ -1,248 +1,597 @@
-document.addEventListener("DOMContentLoaded", () => {
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    const scene =
-        document.querySelector("a-scene");
+<title>سرزمین شگفت انگیز</title>
 
+<script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
-    const videos = [
+<script defer src="app.js?v=126"></script>
 
-        document.querySelector("#video0"),
-        document.querySelector("#video1"),
-        document.querySelector("#video2"),
-        document.querySelector("#video3"),
-        document.querySelector("#video4"),
-        document.querySelector("#video5")
+<style>
+html,
+body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+}
 
-    ];
+a-scene {
+    width: 100%;
+    height: 100%;
+}
 
+/* -------------------------
+   پنل اشتراک گذاری
+------------------------- */
 
-    const targets = [
+#promoBox {
+    position: fixed;
+    left: 50%;
+    bottom: 25px;
+    transform: translateX(-50%);
 
-        document.querySelector(
-            '[mindar-image-target="targetIndex:0"]'
-        ),
+    width: 88%;
+    max-width: 360px;
 
-        document.querySelector(
-            '[mindar-image-target="targetIndex:1"]'
-        ),
+    background: rgba(255,255,255,0.96);
+    border-radius: 20px;
 
-        document.querySelector(
-            '[mindar-image-target="targetIndex:2"]'
-        ),
+    padding: 14px 12px;
 
-        document.querySelector(
-            '[mindar-image-target="targetIndex:3"]'
-        ),
+    box-sizing: border-box;
 
-        document.querySelector(
-            '[mindar-image-target="targetIndex:4"]'
-        ),
+    text-align: center;
 
-        document.querySelector(
-            '[mindar-image-target="targetIndex:5"]'
-        )
+    z-index: 99999;
 
-    ];
+    display: none;
 
+    box-shadow: 0 5px 25px rgba(0,0,0,0.25);
+}
 
-    let activeTarget = null;
+/* متن اصلی */
 
+#shareText {
+    font-size: 17px;
+    font-weight: bold;
+    line-height: 1.7;
 
-    /*
-    =================================
-    AR READY
-    =================================
-    */
+    color: #222;
 
-    scene.addEventListener(
-        "arReady",
-        () => {
+    margin-bottom: 10px;
+}
 
-            console.log("AR READY");
+/* دکمه ارسال */
 
-        }
-    );
+#shareButton {
+    border: none;
 
+    background: #ff4b7d;
+    color: white;
 
-    /*
-    =================================
-    TARGET FOUND
-    =================================
-    */
+    font-size: 16px;
+    font-weight: bold;
 
-    scene.addEventListener(
-        "targetFound",
-        async (e) => {
+    border-radius: 14px;
 
-            const target =
-                e.target;
+    padding: 10px 22px;
 
+    cursor: pointer;
 
-            const data =
-                target.getAttribute(
-                    "mindar-image-target"
-                );
+    box-shadow: 0 3px 10px rgba(0,0,0,0.18);
+}
 
+/* نام مغازه */
 
-            const index =
-                data.targetIndex;
+#shopName {
+    margin-top: 9px;
 
+    font-size: 13px;
+    font-weight: bold;
 
-            console.log(
-                "TARGET FOUND:",
-                index
-            );
+    color: #777;
+}
 
+/* -------------------------
+   اینستاگرام
+------------------------- */
 
-            activeTarget =
-                target;
+#instagramInfo {
 
+    position: fixed;
 
-            /*
-            توقف همه ویدئوهای دیگر
-            */
+    top: 18px;
+    right: 15px;
 
-            videos.forEach(
-                (video, i) => {
+    z-index: 100000;
 
-                    if (
-                        video &&
-                        i !== index
-                    ) {
+    display: none;
 
-                        video.pause();
+    text-align: center;
 
-                    }
+    background: rgba(255,255,255,0.94);
 
-                }
-            );
+    padding: 7px 10px;
 
+    border-radius: 12px;
 
-            /*
-            ویدئوی تارگت فعلی
-            */
+    box-shadow: 0 3px 12px rgba(0,0,0,0.18);
+}
 
-            const video =
-                videos[index];
+#instagramLink {
 
+    display: block;
 
-            if (!video) {
+    color: #d62976;
 
-                return;
+    font-size: 15px;
 
-            }
+    font-weight: bold;
 
+    text-decoration: none;
 
-            video.currentTime = 0;
+    cursor: pointer;
+}
 
-            video.muted = false;
+#instagramText {
 
+    display: block;
 
-            try {
+    margin-top: 2px;
 
-                await video.play();
+    color: #333;
 
+    font-size: 12px;
 
-                console.log(
-                    "VIDEO PLAYING:",
-                    index
-                );
+    font-weight: bold;
+}
 
-            }
 
-            catch (err) {
+/* -------------------------
+   پنل انتخاب پیام رسان
+------------------------- */
 
-                console.log(
-                    "VIDEO ERROR:",
-                    index,
-                    err
-                );
+#sharePanel {
 
-            }
+    position: fixed;
 
-        }
-    );
+    left: 50%;
+    top: 50%;
 
+    transform: translate(-50%, -50%);
 
-    /*
-    =================================
-    TARGET LOST
-    =================================
-    */
+    width: 88%;
+    max-width: 350px;
 
-    scene.addEventListener(
-        "targetLost",
-        (e) => {
+    background: white;
 
-            const target =
-                e.target;
+    border-radius: 22px;
 
+    padding: 20px;
 
-            const data =
-                target.getAttribute(
-                    "mindar-image-target"
-                );
+    box-sizing: border-box;
 
+    z-index: 100001;
 
-            const index =
-                data.targetIndex;
+    display: none;
 
+    text-align: center;
 
-            console.log(
-                "TARGET LOST:",
-                index
-            );
+    box-shadow: 0 8px 35px rgba(0,0,0,0.3);
+}
 
+#sharePanelTitle {
 
-            const video =
-                videos[index];
+    font-size: 18px;
 
+    font-weight: bold;
 
-            if (video) {
+    margin-bottom: 16px;
+}
 
-                video.pause();
+.shareOption {
 
-            }
+    width: 100%;
 
+    border: none;
 
-            if (
-                activeTarget === target
-            ) {
+    border-radius: 14px;
 
-                activeTarget = null;
+    padding: 12px;
 
-            }
+    margin-top: 9px;
 
-        }
-    );
+    font-size: 16px;
 
+    font-weight: bold;
 
-    /*
-    =================================
-    لمس Instagram
-    =================================
-    */
+    cursor: pointer;
 
-    document.addEventListener(
-        "touchend",
-        (event) => {
+    background: #f2f2f2;
+}
 
-            if (!activeTarget) {
+#closeShare {
 
-                return;
+    margin-top: 14px;
 
-            }
+    background: transparent;
 
+    border: none;
 
-            if (
-                !scene.camera ||
-                !scene.renderer
-            ) {
+    color: #777;
 
-                return;
+    font-size: 14px;
+}
+</style>
+</head>
 
-            }
 
+<body>
 
-            const touch =
-                event.changedTouches[0];
+
+<!-- =========================
+     صحنه AR
+========================= -->
+
+<a-scene
+    mindar-image="
+        imageTargetSrc: ./targets.mind;
+        warmupTolerance: 2;
+        missTolerance: 1;
+    "
+
+    embedded
+
+    vr-mode-ui="enabled:false"
+
+    device-orientation-permission-ui="enabled:false"
+
+    renderer="colorManagement:true;"
+>
+
+
+<a-assets>
+
+    <video
+        id="video0"
+        src="./notebook/choromi.mp4"
+        preload="auto"
+        loop
+        muted
+        playsinline
+        webkit-playsinline>
+    </video>
+
+    <video
+        id="video1"
+        src="./notebook2/02.mp4"
+        preload="auto"
+        loop
+        muted
+        playsinline
+        webkit-playsinline>
+    </video>
+
+    <video
+        id="video2"
+        src="./notebook3/03.mp4"
+        preload="auto"
+        loop
+        muted
+        playsinline
+        webkit-playsinline>
+    </video>
+
+    <video
+        id="video3"
+        src="./notebook4/04.mp4"
+        preload="auto"
+        loop
+        muted
+        playsinline
+        webkit-playsinline>
+    </video>
+
+    <video
+        id="video4"
+        src="./notebook5/05.mp4"
+        preload="auto"
+        loop
+        muted
+        playsinline
+        webkit-playsinline>
+    </video>
+
+    <video
+        id="video5"
+        src="./notebook6/06.mp4"
+        preload="auto"
+        loop
+        muted
+        playsinline
+        webkit-playsinline>
+    </video>
+
+</a-assets>
+
+
+<!-- دفتر 1 -->
+
+<a-entity mindar-image-target="targetIndex:0">
+
+    <a-video
+        src="#video0"
+        width="1"
+        height="1.42"
+        position="0 0 0">
+    </a-video>
+
+    <a-plane
+        class="instagram-zone"
+        width="0.70"
+        height="0.16"
+        position="-0.31 0.62 0.02"
+        material="
+            shader:flat;
+            color:red;
+            opacity:0;
+            transparent:true;
+        ">
+    </a-plane>
+
+</a-entity>
+
+
+<!-- دفتر 2 -->
+
+<a-entity mindar-image-target="targetIndex:1">
+
+    <a-video
+        src="#video1"
+        width="1"
+        height="1.42"
+        position="0 0 0">
+    </a-video>
+
+    <a-plane
+        class="instagram-zone"
+        width="0.70"
+        height="0.16"
+        position="-0.31 0.62 0.02"
+        material="
+            shader:flat;
+            color:red;
+            opacity:0;
+            transparent:true;
+        ">
+    </a-plane>
+
+</a-entity>
+
+
+<!-- دفتر 3 -->
+
+<a-entity mindar-image-target="targetIndex:2">
+
+    <a-video
+        src="#video2"
+        width="1"
+        height="1.42"
+        position="0 0 0">
+    </a-video>
+
+    <a-plane
+        class="instagram-zone"
+        width="0.70"
+        height="0.16"
+        position="-0.31 0.62 0.02"
+        material="
+            shader:flat;
+            color:red;
+            opacity:0;
+            transparent:true;
+        ">
+    </a-plane>
+
+</a-entity>
+
+
+<!-- دفتر 4 -->
+
+<a-entity mindar-image-target="targetIndex:3">
+
+    <a-video
+        src="#video3"
+        width="1"
+        height="1.42"
+        position="0 0 0">
+    </a-video>
+
+    <a-plane
+        class="instagram-zone"
+        width="0.70"
+        height="0.16"
+        position="-0.31 0.62 0.02"
+        material="
+            shader:flat;
+            color:red;
+            opacity:0;
+            transparent:true;
+        ">
+    </a-plane>
+
+</a-entity>
+
+
+<!-- دفتر 5 -->
+
+<a-entity mindar-image-target="targetIndex:4">
+
+    <a-video
+        src="#video4"
+        width="1"
+        height="1.42"
+        position="0 0 0">
+    </a-video>
+
+    <a-plane
+        class="instagram-zone"
+        width="0.70"
+        height="0.16"
+        position="-0.31 0.62 0.02"
+        material="
+            shader:flat;
+            color:red;
+            opacity:0;
+            transparent:true;
+        ">
+    </a-plane>
+
+</a-entity>
+
+
+<!-- دفتر 6 -->
+
+<a-entity mindar-image-target="targetIndex:5">
+
+    <a-video
+        src="#video5"
+        width="1"
+        height="1.42"
+        position="0 0 0">
+    </a-video>
+
+    <a-plane
+        class="instagram-zone"
+        width="0.70"
+        height="0.16"
+        position="-0.31 0.62 0.02"
+        material="
+            shader:flat;
+            color:red;
+            opacity:0;
+            transparent:true;
+        ">
+    </a-plane>
+
+</a-entity>
+
+
+<a-camera
+    position="0 0 0"
+    look-controls="enabled:false">
+</a-camera>
+
+
+</a-scene>
+
+
+<!-- =========================
+     آیدی اینستاگرام
+========================= -->
+
+<div id="instagramInfo">
+
+    <a
+        id="instagramLink"
+        href="https://www.instagram.com/SarzaminAr/">
+
+        @SarzaminAr
+
+    </a>
+
+    <span id="instagramText">
+        ببین کدوم دفترها زنده میشن
+    </span>
+
+</div>
+
+
+<!-- =========================
+     پیام روی فیلم
+========================= -->
+
+<div id="promoBox">
+
+    <div id="shareText">
+
+        می‌خوای ببینی دفتر دوستت هم زنده میشه؟ 👀😍<br>
+
+        اینجا رو بزن، براش بفرس 👇
+
+    </div>
+
+
+    <button id="shareButton">
+
+        📤 بفرست برای دوستت
+
+    </button>
+
+
+    <div id="shopName">
+
+        ✨ سرزمین شگفت انگیز
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     پنل انتخاب پیام رسان
+========================= -->
+
+<div id="sharePanel">
+
+    <div id="sharePanelTitle">
+
+        بفرست برای دوستت 😍
+
+    </div>
+
+
+    <button
+        class="shareOption"
+        id="shareTelegram">
+
+        ✈️ تلگرام
+
+    </button>
+
+
+    <button
+        class="shareOption"
+        id="shareRubika">
+
+        💬 روبیکا
+
+    </button>
+
+
+    <button
+        class="shareOption"
+        id="shareShad">
+
+        🎓 شاد
+
+    </button>
+
+
+    <button id="closeShare">
+
+        بستن
+
+    </button>
+
+</div>
+
+
+</body>
+</html>
