@@ -1,597 +1,554 @@
 <!DOCTYPE html>
 <html lang="fa">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>سرزمین شگفت انگیز</title>
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Sarzamin AR</title>
+
 
 <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
-<script defer src="app.js?v=126"></script>
+<script defer src="app.js?v=119"></script>
+
 
 <style>
-html,
-body {
-    margin: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    font-family: Arial, sans-serif;
+
+html,body{
+margin:0;
+width:100%;
+height:100%;
+overflow:hidden;
 }
 
-a-scene {
-    width: 100%;
-    height: 100%;
+a-scene{
+width:100%;
+height:100%;
 }
 
-/* -------------------------
-   پنل اشتراک گذاری
-------------------------- */
-
-#promoBox {
-    position: fixed;
-    left: 50%;
-    bottom: 25px;
-    transform: translateX(-50%);
-
-    width: 88%;
-    max-width: 360px;
-
-    background: rgba(255,255,255,0.96);
-    border-radius: 20px;
-
-    padding: 14px 12px;
-
-    box-sizing: border-box;
-
-    text-align: center;
-
-    z-index: 99999;
-
-    display: none;
-
-    box-shadow: 0 5px 25px rgba(0,0,0,0.25);
-}
-
-/* متن اصلی */
-
-#shareText {
-    font-size: 17px;
-    font-weight: bold;
-    line-height: 1.7;
-
-    color: #222;
-
-    margin-bottom: 10px;
-}
-
-/* دکمه ارسال */
-
-#shareButton {
-    border: none;
-
-    background: #ff4b7d;
-    color: white;
-
-    font-size: 16px;
-    font-weight: bold;
-
-    border-radius: 14px;
-
-    padding: 10px 22px;
-
-    cursor: pointer;
-
-    box-shadow: 0 3px 10px rgba(0,0,0,0.18);
-}
-
-/* نام مغازه */
-
-#shopName {
-    margin-top: 9px;
-
-    font-size: 13px;
-    font-weight: bold;
-
-    color: #777;
-}
-
-/* -------------------------
-   اینستاگرام
-------------------------- */
-
-#instagramInfo {
-
-    position: fixed;
-
-    top: 18px;
-    right: 15px;
-
-    z-index: 100000;
-
-    display: none;
-
-    text-align: center;
-
-    background: rgba(255,255,255,0.94);
-
-    padding: 7px 10px;
-
-    border-radius: 12px;
-
-    box-shadow: 0 3px 12px rgba(0,0,0,0.18);
-}
-
-#instagramLink {
-
-    display: block;
-
-    color: #d62976;
-
-    font-size: 15px;
-
-    font-weight: bold;
-
-    text-decoration: none;
-
-    cursor: pointer;
-}
-
-#instagramText {
-
-    display: block;
-
-    margin-top: 2px;
-
-    color: #333;
-
-    font-size: 12px;
-
-    font-weight: bold;
-}
-
-
-/* -------------------------
-   پنل انتخاب پیام رسان
-------------------------- */
-
-#sharePanel {
-
-    position: fixed;
-
-    left: 50%;
-    top: 50%;
-
-    transform: translate(-50%, -50%);
-
-    width: 88%;
-    max-width: 350px;
-
-    background: white;
-
-    border-radius: 22px;
-
-    padding: 20px;
-
-    box-sizing: border-box;
-
-    z-index: 100001;
-
-    display: none;
-
-    text-align: center;
-
-    box-shadow: 0 8px 35px rgba(0,0,0,0.3);
-}
-
-#sharePanelTitle {
-
-    font-size: 18px;
-
-    font-weight: bold;
-
-    margin-bottom: 16px;
-}
-
-.shareOption {
-
-    width: 100%;
-
-    border: none;
-
-    border-radius: 14px;
-
-    padding: 12px;
-
-    margin-top: 9px;
-
-    font-size: 16px;
-
-    font-weight: bold;
-
-    cursor: pointer;
-
-    background: #f2f2f2;
-}
-
-#closeShare {
-
-    margin-top: 14px;
-
-    background: transparent;
-
-    border: none;
-
-    color: #777;
-
-    font-size: 14px;
-}
 </style>
+
 </head>
 
 
 <body>
 
 
-<!-- =========================
-     صحنه AR
-========================= -->
-
 <a-scene
-    mindar-image="
-        imageTargetSrc: ./targets.mind;
-        warmupTolerance: 2;
-        missTolerance: 1;
-    "
 
-    embedded
+mindar-image="
+imageTargetSrc: ./targets.mind;
+warmupTolerance: 2;
+missTolerance: 1;
+"
 
-    vr-mode-ui="enabled:false"
+embedded
 
-    device-orientation-permission-ui="enabled:false"
+vr-mode-ui="enabled:false"
 
-    renderer="colorManagement:true;"
+device-orientation-permission-ui="enabled:false"
+
+renderer="colorManagement:true;"
 >
 
 
 <a-assets>
 
-    <video
-        id="video0"
-        src="./notebook/choromi.mp4"
-        preload="auto"
-        loop
-        muted
-        playsinline
-        webkit-playsinline>
-    </video>
 
-    <video
-        id="video1"
-        src="./notebook2/02.mp4"
-        preload="auto"
-        loop
-        muted
-        playsinline
-        webkit-playsinline>
-    </video>
+<video
+id="video0"
+src="./notebook/choromi.mp4"
+preload="auto"
+loop
+muted
+playsinline
+webkit-playsinline>
+</video>
 
-    <video
-        id="video2"
-        src="./notebook3/03.mp4"
-        preload="auto"
-        loop
-        muted
-        playsinline
-        webkit-playsinline>
-    </video>
 
-    <video
-        id="video3"
-        src="./notebook4/04.mp4"
-        preload="auto"
-        loop
-        muted
-        playsinline
-        webkit-playsinline>
-    </video>
+<video
+id="video1"
+src="./notebook2/02.mp4"
+preload="auto"
+loop
+muted
+playsinline
+webkit-playsinline>
+</video>
 
-    <video
-        id="video4"
-        src="./notebook5/05.mp4"
-        preload="auto"
-        loop
-        muted
-        playsinline
-        webkit-playsinline>
-    </video>
 
-    <video
-        id="video5"
-        src="./notebook6/06.mp4"
-        preload="auto"
-        loop
-        muted
-        playsinline
-        webkit-playsinline>
-    </video>
+<video
+id="video2"
+src="./notebook3/03.mp4"
+preload="auto"
+loop
+muted
+playsinline
+webkit-playsinline>
+</video>
+
+
+<video
+id="video3"
+src="./notebook4/04.mp4"
+preload="auto"
+loop
+muted
+playsinline
+webkit-playsinline>
+</video>
+
+
+<video
+id="video4"
+src="./notebook5/05.mp4"
+preload="auto"
+loop
+muted
+playsinline
+webkit-playsinline>
+</video>
+
+
+<video
+id="video5"
+src="./notebook6/06.mp4"
+preload="auto"
+loop
+muted
+playsinline
+webkit-playsinline>
+</video>
+
 
 </a-assets>
 
 
-<!-- دفتر 1 -->
-
-<a-entity mindar-image-target="targetIndex:0">
-
-    <a-video
-        src="#video0"
-        width="1"
-        height="1.42"
-        position="0 0 0">
-    </a-video>
-
-    <a-plane
-        class="instagram-zone"
-        width="0.70"
-        height="0.16"
-        position="-0.31 0.62 0.02"
-        material="
-            shader:flat;
-            color:red;
-            opacity:0;
-            transparent:true;
-        ">
-    </a-plane>
-
-</a-entity>
-
-
-<!-- دفتر 2 -->
-
-<a-entity mindar-image-target="targetIndex:1">
-
-    <a-video
-        src="#video1"
-        width="1"
-        height="1.42"
-        position="0 0 0">
-    </a-video>
-
-    <a-plane
-        class="instagram-zone"
-        width="0.70"
-        height="0.16"
-        position="-0.31 0.62 0.02"
-        material="
-            shader:flat;
-            color:red;
-            opacity:0;
-            transparent:true;
-        ">
-    </a-plane>
-
-</a-entity>
-
-
-<!-- دفتر 3 -->
-
-<a-entity mindar-image-target="targetIndex:2">
-
-    <a-video
-        src="#video2"
-        width="1"
-        height="1.42"
-        position="0 0 0">
-    </a-video>
-
-    <a-plane
-        class="instagram-zone"
-        width="0.70"
-        height="0.16"
-        position="-0.31 0.62 0.02"
-        material="
-            shader:flat;
-            color:red;
-            opacity:0;
-            transparent:true;
-        ">
-    </a-plane>
-
-</a-entity>
-
-
-<!-- دفتر 4 -->
-
-<a-entity mindar-image-target="targetIndex:3">
-
-    <a-video
-        src="#video3"
-        width="1"
-        height="1.42"
-        position="0 0 0">
-    </a-video>
-
-    <a-plane
-        class="instagram-zone"
-        width="0.70"
-        height="0.16"
-        position="-0.31 0.62 0.02"
-        material="
-            shader:flat;
-            color:red;
-            opacity:0;
-            transparent:true;
-        ">
-    </a-plane>
-
-</a-entity>
-
-
-<!-- دفتر 5 -->
-
-<a-entity mindar-image-target="targetIndex:4">
-
-    <a-video
-        src="#video4"
-        width="1"
-        height="1.42"
-        position="0 0 0">
-    </a-video>
-
-    <a-plane
-        class="instagram-zone"
-        width="0.70"
-        height="0.16"
-        position="-0.31 0.62 0.02"
-        material="
-            shader:flat;
-            color:red;
-            opacity:0;
-            transparent:true;
-        ">
-    </a-plane>
-
-</a-entity>
-
-
-<!-- دفتر 6 -->
-
-<a-entity mindar-image-target="targetIndex:5">
-
-    <a-video
-        src="#video5"
-        width="1"
-        height="1.42"
-        position="0 0 0">
-    </a-video>
-
-    <a-plane
-        class="instagram-zone"
-        width="0.70"
-        height="0.16"
-        position="-0.31 0.62 0.02"
-        material="
-            shader:flat;
-            color:red;
-            opacity:0;
-            transparent:true;
-        ">
-    </a-plane>
-
-</a-entity>
-
-
 <a-camera
-    position="0 0 0"
-    look-controls="enabled:false">
+position="0 0 0"
+look-controls="enabled:false">
 </a-camera>
+
+
+
+<!-- ===================== -->
+<!-- TARGET 0 -->
+<!-- ===================== -->
+
+<a-entity
+mindar-image-target="targetIndex:0">
+
+<a-video
+src="#video0"
+width="1"
+height="1.42"
+position="0 0 0">
+</a-video>
+
+
+<!-- متن روی ویدئو -->
+
+<a-text
+value="می‌خوای دوستت هم ببینه\nدفترش زنده‌س؟ 😍👇 کلیک کن"
+align="center"
+direction="rtl"
+width="1.25"
+position="0 -0.48 0.03"
+color="white"
+side="double">
+</a-text>
+
+
+<!-- Instagram -->
+
+<a-text
+value="دفترهای زنده اینجا 👈"
+align="center"
+direction="rtl"
+width="0.75"
+position="-0.30 0.62 0.03"
+color="white"
+side="double">
+</a-text>
+
+
+<a-plane
+class="instagram-zone"
+width="0.70"
+height="0.16"
+position="-0.31 0.62 0.02"
+material="
+shader:flat;
+color:red;
+opacity:0;
+transparent:true;
+">
+</a-plane>
+
+
+<!-- Share -->
+
+<a-text
+value="سرزمین شگفت‌انگیز"
+align="center"
+direction="rtl"
+width="0.70"
+position="0 -0.62 0.03"
+color="white"
+side="double">
+</a-text>
+
+
+<a-plane
+class="share-zone"
+width="0.70"
+height="0.16"
+position="0 -0.62 0.02"
+material="
+shader:flat;
+color:blue;
+opacity:0;
+transparent:true;
+">
+</a-plane>
+
+
+</a-entity>
+
+
+
+<!-- ===================== -->
+<!-- TARGET 1 -->
+<!-- ===================== -->
+
+<a-entity
+mindar-image-target="targetIndex:1">
+
+<a-video
+src="#video1"
+width="1"
+height="1.42"
+position="0 0 0">
+</a-video>
+
+
+<a-text
+value="می‌خوای دوستت هم ببینه\nدفترش زنده‌س؟ 😍👇 کلیک کن"
+align="center"
+direction="rtl"
+width="1.25"
+position="0 -0.48 0.03"
+color="white"
+side="double">
+</a-text>
+
+
+<a-text
+value="دفترهای زنده اینجا 👈"
+align="center"
+direction="rtl"
+width="0.75"
+position="-0.30 0.62 0.03"
+color="white"
+side="double">
+</a-text>
+
+
+<a-plane
+class="instagram-zone"
+width="0.70"
+height="0.16"
+position="-0.31 0.62 0.02"
+material="shader:flat;color:red;opacity:0;transparent:true;">
+</a-plane>
+
+
+<a-text
+value="سرزمین شگفت‌انگیز"
+align="center"
+direction="rtl"
+width="0.70"
+position="0 -0.62 0.03"
+color="white"
+side="double">
+</a-text>
+
+
+<a-plane
+class="share-zone"
+width="0.70"
+height="0.16"
+position="0 -0.62 0.02"
+material="shader:flat;color:blue;opacity:0;transparent:true;">
+</a-plane>
+
+</a-entity>
+
+
+
+<!-- ===================== -->
+<!-- TARGET 2 -->
+<!-- ===================== -->
+
+<a-entity
+mindar-image-target="targetIndex:2">
+
+<a-video
+src="#video2"
+width="1"
+height="1.42"
+position="0 0 0">
+</a-video>
+
+<a-text
+value="می‌خوای دوستت هم ببینه\nدفترش زنده‌س؟ 😍👇 کلیک کن"
+align="center"
+direction="rtl"
+width="1.25"
+position="0 -0.48 0.03"
+color="white"
+side="double">
+</a-text>
+
+<a-text
+value="دفترهای زنده اینجا 👈"
+align="center"
+direction="rtl"
+width="0.75"
+position="-0.30 0.62 0.03"
+color="white"
+side="double">
+</a-text>
+
+<a-plane
+class="instagram-zone"
+width="0.70"
+height="0.16"
+position="-0.31 0.62 0.02"
+material="shader:flat;color:red;opacity:0;transparent:true;">
+</a-plane>
+
+<a-text
+value="سرزمین شگفت‌انگیز"
+align="center"
+direction="rtl"
+width="0.70"
+position="0 -0.62 0.03"
+color="white"
+side="double">
+</a-text>
+
+<a-plane
+class="share-zone"
+width="0.70"
+height="0.16"
+position="0 -0.62 0.02"
+material="shader:flat;color:blue;opacity:0;transparent:true;">
+</a-plane>
+
+</a-entity>
+
+
+
+<!-- ===================== -->
+<!-- TARGET 3 -->
+<!-- ===================== -->
+
+<a-entity
+mindar-image-target="targetIndex:3">
+
+<a-video
+src="#video3"
+width="1"
+height="1.42"
+position="0 0 0">
+</a-video>
+
+<a-text
+value="می‌خوای دوستت هم ببینه\nدفترش زنده‌س؟ 😍👇 کلیک کن"
+align="center"
+direction="rtl"
+width="1.25"
+position="0 -0.48 0.03"
+color="white"
+side="double">
+</a-text>
+
+<a-text
+value="دفترهای زنده اینجا 👈"
+align="center"
+direction="rtl"
+width="0.75"
+position="-0.30 0.62 0.03"
+color="white"
+side="double">
+</a-text>
+
+<a-plane
+class="instagram-zone"
+width="0.70"
+height="0.16"
+position="-0.31 0.62 0.02"
+material="shader:flat;color:red;opacity:0;transparent:true;">
+</a-plane>
+
+<a-text
+value="سرزمین شگفت‌انگیز"
+align="center"
+direction="rtl"
+width="0.70"
+position="0 -0.62 0.03"
+color="white"
+side="double">
+</a-text>
+
+<a-plane
+class="share-zone"
+width="0.70"
+height="0.16"
+position="0 -0.62 0.02"
+material="shader:flat;color:blue;opacity:0;transparent:true;">
+</a-plane>
+
+</a-entity>
+
+
+
+<!-- ===================== -->
+<!-- TARGET 4 -->
+<!-- ===================== -->
+
+<a-entity
+mindar-image-target="targetIndex:4">
+
+<a-video
+src="#video4"
+width="1"
+height="1.42"
+position="0 0 0">
+</a-video>
+
+<a-text
+value="می‌خوای دوستت هم ببینه\nدفترش زنده‌س؟ 😍👇 کلیک کن"
+align="center"
+direction="rtl"
+width="1.25"
+position="0 -0.48 0.03"
+color="white"
+side="double">
+</a-text>
+
+<a-text
+value="دفترهای زنده اینجا 👈"
+align="center"
+direction="rtl"
+width="0.75"
+position="-0.30 0.62 0.03"
+color="white"
+side="double">
+</a-text>
+
+<a-plane
+class="instagram-zone"
+width="0.70"
+height="0.16"
+position="-0.31 0.62 0.02"
+material="shader:flat;color:red;opacity:0;transparent:true;">
+</a-plane>
+
+<a-text
+value="سرزمین شگفت‌انگیز"
+align="center"
+direction="rtl"
+width="0.70"
+position="0 -0.62 0.03"
+color="white"
+side="double">
+</a-text>
+
+<a-plane
+class="share-zone"
+width="0.70"
+height="0.16"
+position="0 -0.62 0.02"
+material="shader:flat;color:blue;opacity:0;transparent:true;">
+</a-plane>
+
+</a-entity>
+
+
+
+<!-- ===================== -->
+<!-- TARGET 5 -->
+<!-- ===================== -->
+
+<a-entity
+mindar-image-target="targetIndex:5">
+
+<a-video
+src="#video5"
+width="1"
+height="1.42"
+position="0 0 0">
+</a-video>
+
+<a-text
+value="می‌خوای دوستت هم ببینه\nدفترش زنده‌س؟ 😍👇 کلیک کن"
+align="center"
+direction="rtl"
+width="1.25"
+position="0 -0.48 0.03"
+color="white"
+side="double">
+</a-text>
+
+<a-text
+value="دفترهای زنده اینجا 👈"
+align="center"
+direction="rtl"
+width="0.75"
+position="-0.30 0.62 0.03"
+color="white"
+side="double">
+</a-text>
+
+<a-plane
+class="instagram-zone"
+width="0.70"
+height="0.16"
+position="-0.31 0.62 0.02"
+material="shader:flat;color:red;opacity:0;transparent:true;">
+</a-plane>
+
+<a-text
+value="سرزمین شگفت‌انگیز"
+align="center"
+direction="rtl"
+width="0.70"
+position="0 -0.62 0.03"
+color="white"
+side="double">
+</a-text>
+
+<a-plane
+class="share-zone"
+width="0.70"
+height="0.16"
+position="0 -0.62 0.02"
+material="shader:flat;color:blue;opacity:0;transparent:true;">
+</a-plane>
+
+</a-entity>
 
 
 </a-scene>
 
-
-<!-- =========================
-     آیدی اینستاگرام
-========================= -->
-
-<div id="instagramInfo">
-
-    <a
-        id="instagramLink"
-        href="https://www.instagram.com/SarzaminAr/">
-
-        @SarzaminAr
-
-    </a>
-
-    <span id="instagramText">
-        ببین کدوم دفترها زنده میشن
-    </span>
-
-</div>
-
-
-<!-- =========================
-     پیام روی فیلم
-========================= -->
-
-<div id="promoBox">
-
-    <div id="shareText">
-
-        می‌خوای ببینی دفتر دوستت هم زنده میشه؟ 👀😍<br>
-
-        اینجا رو بزن، براش بفرس 👇
-
-    </div>
-
-
-    <button id="shareButton">
-
-        📤 بفرست برای دوستت
-
-    </button>
-
-
-    <div id="shopName">
-
-        ✨ سرزمین شگفت انگیز
-
-    </div>
-
-</div>
-
-
-<!-- =========================
-     پنل انتخاب پیام رسان
-========================= -->
-
-<div id="sharePanel">
-
-    <div id="sharePanelTitle">
-
-        بفرست برای دوستت 😍
-
-    </div>
-
-
-    <button
-        class="shareOption"
-        id="shareTelegram">
-
-        ✈️ تلگرام
-
-    </button>
-
-
-    <button
-        class="shareOption"
-        id="shareRubika">
-
-        💬 روبیکا
-
-    </button>
-
-
-    <button
-        class="shareOption"
-        id="shareShad">
-
-        🎓 شاد
-
-    </button>
-
-
-    <button id="closeShare">
-
-        بستن
-
-    </button>
-
-</div>
-
-
 </body>
+
 </html>
