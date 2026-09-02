@@ -15,21 +15,26 @@
 
 <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
-<script defer src="app.js?v=118"></script>
+<script defer src="app.js?v=119"></script>
 
 
 <style>
 
-html,body{
+html,
+body{
+
 margin:0;
 width:100%;
 height:100%;
 overflow:hidden;
+
 }
 
 a-scene{
+
 width:100%;
 height:100%;
+
 }
 
 </style>
@@ -61,6 +66,8 @@ renderer="colorManagement:true;"
 <a-assets>
 
 
+<!-- VIDEO 0 -->
+
 <video
 id="video0"
 src="./notebook/choromi.mp4"
@@ -71,6 +78,8 @@ playsinline
 webkit-playsinline>
 </video>
 
+
+<!-- VIDEO 1 -->
 
 <video
 id="video1"
@@ -83,6 +92,8 @@ webkit-playsinline>
 </video>
 
 
+<!-- VIDEO 2 -->
+
 <video
 id="video2"
 src="./notebook3/03.mp4"
@@ -93,6 +104,8 @@ playsinline
 webkit-playsinline>
 </video>
 
+
+<!-- VIDEO 3 -->
 
 <video
 id="video3"
@@ -105,6 +118,8 @@ webkit-playsinline>
 </video>
 
 
+<!-- VIDEO 4 -->
+
 <video
 id="video4"
 src="./notebook5/05.mp4"
@@ -115,6 +130,8 @@ playsinline
 webkit-playsinline>
 </video>
 
+
+<!-- VIDEO 5 -->
 
 <video
 id="video5"
@@ -131,6 +148,8 @@ webkit-playsinline>
 
 
 
+<!-- CAMERA -->
+
 <a-camera
 position="0 0 0"
 look-controls="enabled:false">
@@ -138,9 +157,9 @@ look-controls="enabled:false">
 
 
 
-<!-- ===================== -->
+<!-- ================================= -->
 <!-- TARGET 0 -->
-<!-- ===================== -->
+<!-- ================================= -->
 
 <a-entity
 mindar-image-target="targetIndex:0">
@@ -152,6 +171,8 @@ height="1.42"
 position="0 0 0">
 </a-video>
 
+
+<!-- Instagram -->
 
 <a-plane
 class="instagram-zone"
@@ -166,13 +187,29 @@ transparent:true;
 ">
 </a-plane>
 
+
+<!-- Share روی نوشته پایین -->
+
+<a-plane
+class="share-zone"
+width="0.70"
+height="0.16"
+position="0 -0.62 0.02"
+material="
+shader:flat;
+color:white;
+opacity:0;
+transparent:true;
+">
+</a-plane>
+
 </a-entity>
 
 
 
-<!-- ===================== -->
+<!-- ================================= -->
 <!-- TARGET 1 -->
-<!-- ===================== -->
+<!-- ================================= -->
 
 <a-entity
 mindar-image-target="targetIndex:1">
@@ -198,13 +235,27 @@ transparent:true;
 ">
 </a-plane>
 
+
+<a-plane
+class="share-zone"
+width="0.70"
+height="0.16"
+position="0 -0.62 0.02"
+material="
+shader:flat;
+color:white;
+opacity:0;
+transparent:true;
+">
+</a-plane>
+
 </a-entity>
 
 
 
-<!-- ===================== -->
+<!-- ================================= -->
 <!-- TARGET 2 -->
-<!-- ===================== -->
+<!-- ================================= -->
 
 <a-entity
 mindar-image-target="targetIndex:2">
@@ -230,13 +281,27 @@ transparent:true;
 ">
 </a-plane>
 
+
+<a-plane
+class="share-zone"
+width="0.70"
+height="0.16"
+position="0 -0.62 0.02"
+material="
+shader:flat;
+color:white;
+opacity:0;
+transparent:true;
+">
+</a-plane>
+
 </a-entity>
 
 
 
-<!-- ===================== -->
+<!-- ================================= -->
 <!-- TARGET 3 -->
-<!-- ===================== -->
+<!-- ================================= -->
 
 <a-entity
 mindar-image-target="targetIndex:3">
@@ -262,13 +327,27 @@ transparent:true;
 ">
 </a-plane>
 
+
+<a-plane
+class="share-zone"
+width="0.70"
+height="0.16"
+position="0 -0.62 0.02"
+material="
+shader:flat;
+color:white;
+opacity:0;
+transparent:true;
+">
+</a-plane>
+
 </a-entity>
 
 
 
-<!-- ===================== -->
+<!-- ================================= -->
 <!-- TARGET 4 -->
-<!-- ===================== -->
+<!-- ================================= -->
 
 <a-entity
 mindar-image-target="targetIndex:4">
@@ -294,13 +373,27 @@ transparent:true;
 ">
 </a-plane>
 
+
+<a-plane
+class="share-zone"
+width="0.70"
+height="0.16"
+position="0 -0.62 0.02"
+material="
+shader:flat;
+color:white;
+opacity:0;
+transparent:true;
+">
+</a-plane>
+
 </a-entity>
 
 
 
-<!-- ===================== -->
+<!-- ================================= -->
 <!-- TARGET 5 -->
-<!-- ===================== -->
+<!-- ================================= -->
 
 <a-entity
 mindar-image-target="targetIndex:5">
@@ -321,6 +414,20 @@ position="-0.31 0.62 0.02"
 material="
 shader:flat;
 color:red;
+opacity:0;
+transparent:true;
+">
+</a-plane>
+
+
+<a-plane
+class="share-zone"
+width="0.70"
+height="0.16"
+position="0 -0.62 0.02"
+material="
+shader:flat;
+color:white;
 opacity:0;
 transparent:true;
 ">
