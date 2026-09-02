@@ -1,227 +1,147 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-    const scene =
-        document.querySelector("a-scene");
-
+    const scene = document.querySelector("a-scene");
 
     const videos = [
-
         document.querySelector("#video0"),
         document.querySelector("#video1"),
         document.querySelector("#video2"),
         document.querySelector("#video3"),
         document.querySelector("#video4"),
         document.querySelector("#video5")
-
     ];
-
 
     const targets = [
-
-        document.querySelector(
-            '[mindar-image-target="targetIndex:0"]'
-        ),
-
-        document.querySelector(
-            '[mindar-image-target="targetIndex:1"]'
-        ),
-
-        document.querySelector(
-            '[mindar-image-target="targetIndex:2"]'
-        ),
-
-        document.querySelector(
-            '[mindar-image-target="targetIndex:3"]'
-        ),
-
-        document.querySelector(
-            '[mindar-image-target="targetIndex:4"]'
-        ),
-
-        document.querySelector(
-            '[mindar-image-target="targetIndex:5"]'
-        )
-
+        document.querySelector('[mindar-image-target="targetIndex:0"]'),
+        document.querySelector('[mindar-image-target="targetIndex:1"]'),
+        document.querySelector('[mindar-image-target="targetIndex:2"]'),
+        document.querySelector('[mindar-image-target="targetIndex:3"]'),
+        document.querySelector('[mindar-image-target="targetIndex:4"]'),
+        document.querySelector('[mindar-image-target="targetIndex:5"]')
     ];
-
 
     let activeTarget = null;
 
 
-    /*
-    =================================
-    AR READY
-    =================================
-    */
+    // ================================
+    // AR READY
+    // ================================
 
-    scene.addEventListener(
-        "arReady",
-        () => {
+    scene.addEventListener("arReady", () => {
 
-            console.log("AR READY");
+        console.log("AR READY");
 
-        }
-    );
+    });
 
 
-    /*
-    =================================
-    TARGET FOUND
-    =================================
-    */
+    // ================================
+    // TARGET FOUND
+    // ================================
 
-    scene.addEventListener(
-        "targetFound",
-        async (e) => {
+    scene.addEventListener("targetFound", async (e) => {
 
-            const target =
-                e.target;
+        const target = e.target;
 
+        const data =
+            target.getAttribute("mindar-image-target");
 
-            const data =
-                target.getAttribute(
-                    "mindar-image-target"
-                );
+        const index =
+            data.targetIndex;
 
+        console.log("TARGET FOUND:", index);
 
-            const index =
-                data.targetIndex;
+        activeTarget = target;
 
 
-            console.log(
-                "TARGET FOUND:",
-                index
-            );
+        // توقف همه ویدئوهای دیگر
+        videos.forEach((video, i) => {
 
-
-            activeTarget =
-                target;
-
-
-            /*
-            توقف همه ویدئوهای دیگر
-            */
-
-            videos.forEach(
-                (video, i) => {
-
-                    if (
-                        video &&
-                        i !== index
-                    ) {
-
-                        video.pause();
-
-                    }
-
-                }
-            );
-
-
-            /*
-            ویدئوی تارگت فعلی
-            */
-
-            const video =
-                videos[index];
-
-
-            if (!video) {
-
-                return;
-
-            }
-
-
-            video.currentTime = 0;
-
-            video.muted = false;
-
-
-            try {
-
-                await video.play();
-
-
-                console.log(
-                    "VIDEO PLAYING:",
-                    index
-                );
-
-            }
-
-            catch (err) {
-
-                console.log(
-                    "VIDEO ERROR:",
-                    index,
-                    err
-                );
-
-            }
-
-        }
-    );
-
-
-    /*
-    =================================
-    TARGET LOST
-    =================================
-    */
-
-    scene.addEventListener(
-        "targetLost",
-        (e) => {
-
-            const target =
-                e.target;
-
-
-            const data =
-                target.getAttribute(
-                    "mindar-image-target"
-                );
-
-
-            const index =
-                data.targetIndex;
-
-
-            console.log(
-                "TARGET LOST:",
-                index
-            );
-
-
-            const video =
-                videos[index];
-
-
-            if (video) {
+            if (video && i !== index) {
 
                 video.pause();
 
             }
 
+        });
 
-            if (
-                activeTarget === target
-            ) {
 
-                activeTarget = null;
+        // ویدئوی تارگت فعلی
+        const video = videos[index];
 
-            }
+        if (!video) {
+
+            return;
 
         }
-    );
+
+        video.currentTime = 0;
+
+        video.muted = false;
 
 
-    /*
-    =================================
-    لمس Instagram
-    =================================
-    */
+        try {
+
+            await video.play();
+
+            console.log(
+                "VIDEO PLAYING:",
+                index
+            );
+
+        }
+
+        catch (err) {
+
+            console.log(
+                "VIDEO ERROR:",
+                index,
+                err
+            );
+
+        }
+
+    });
+
+
+    // ================================
+    // TARGET LOST
+    // ================================
+
+    scene.addEventListener("targetLost", (e) => {
+
+        const target = e.target;
+
+        const data =
+            target.getAttribute("mindar-image-target");
+
+        const index =
+            data.targetIndex;
+
+        console.log(
+            "TARGET LOST:",
+            index
+        );
+
+        const video = videos[index];
+
+        if (video) {
+
+            video.pause();
+
+        }
+
+        if (activeTarget === target) {
+
+            activeTarget = null;
+
+        }
+
+    });
+
+
+    // ================================
+    // لمس روی Instagram و Share
+    // ================================
 
     document.addEventListener(
         "touchend",
@@ -233,7 +153,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             }
 
-
             if (
                 !scene.camera ||
                 !scene.renderer
@@ -243,10 +162,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
             }
 
-
             const touch =
                 event.changedTouches[0];
-
 
             if (!touch) {
 
@@ -254,22 +171,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
             }
 
-
             const canvas =
                 scene.renderer.domElement;
-
 
             const rect =
                 canvas.getBoundingClientRect();
 
 
-            /*
-            مختصات لمس روی صفحه
-            */
-
+            // مختصات لمس
             const mouse =
                 new THREE.Vector2();
-
 
             mouse.x =
                 (
@@ -277,7 +188,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     /
                     rect.width
                 ) * 2 - 1;
-
 
             mouse.y =
                 -(
@@ -287,13 +197,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 ) * 2 + 1;
 
 
-            /*
-            Raycaster
-            */
-
+            // Raycaster
             const raycaster =
                 new THREE.Raycaster();
-
 
             raycaster.setFromCamera(
                 mouse,
@@ -301,23 +207,19 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
 
-            /*
-            =================================
-            Instagram Zone
-            =================================
-            */
+            // ================================
+            // INSTAGRAM
+            // ================================
 
             const instagramZone =
                 activeTarget.querySelector(
                     ".instagram-zone"
                 );
 
-
             if (instagramZone) {
 
                 const instagramMesh =
                     instagramZone.getObject3D("mesh");
-
 
                 if (instagramMesh) {
 
@@ -327,7 +229,6 @@ document.addEventListener("DOMContentLoaded", () => {
                             true
                         );
 
-
                     if (
                         instagramHits.length > 0
                     ) {
@@ -336,10 +237,6 @@ document.addEventListener("DOMContentLoaded", () => {
                             "INSTAGRAM PRESSED"
                         );
 
-
-                        /*
-                        باز کردن Instagram
-                        */
 
                         const intentURL =
                             "intent://www.instagram.com/_u/SarzaminAr/#Intent;" +
@@ -351,7 +248,6 @@ document.addEventListener("DOMContentLoaded", () => {
                         window.location.href =
                             intentURL;
 
-
                         return;
 
                     }
@@ -361,17 +257,14 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
 
-            /*
-            =================================
-            SHARE روی سرزمین شگفت‌انگیز
-            =================================
-            */
+            // ================================
+            // SHARE
+            // ================================
 
             const shareZone =
                 activeTarget.querySelector(
                     ".share-zone"
                 );
-
 
             if (!shareZone) {
 
@@ -379,10 +272,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
             }
 
-
             const shareMesh =
                 shareZone.getObject3D("mesh");
-
 
             if (!shareMesh) {
 
@@ -390,17 +281,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
             }
 
-
             const shareHits =
                 raycaster.intersectObject(
                     shareMesh,
                     true
                 );
 
-
-            /*
-            اگر روی سرزمین شگفت‌انگیز لمس شد
-            */
 
             if (
                 shareHits.length > 0
@@ -411,30 +297,32 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
 
 
+                // لینک همین صفحه
                 const shareURL =
                     window.location.href;
 
 
-                /*
-                متن ارسال برای دوست
-                */
-
+                // متن پیام
                 const shareText =
-                    "می‌خوای دوستاتو سورپرایز کنی؟ بفرس براش👇";
+                    "📚✨ این فقط یه دفتر معمولی نیست!\n\n" +
+                    "این دفتر می‌تونه زنده بشه! 😱\n" +
+                    "دوربین گوشیت رو بگیر روی جلد و خودت ببین چه اتفاقی می‌افته! 👀\n\n" +
+                    "🔥 حالا اگه دوست داری طرح‌های زنده‌ی دیگه رو هم ببینی، " +
+                    "این لینک رو بزن و بیا آیدی اینستاگرام سرزمین شگفت‌انگیز رو ببین!\n" +
+                    "شاید طرح مورد علاقه‌ات اونجا منتظرت باشه 😍📚\n\n" +
+                    "اگه دفترت هنوز زنده نشده، درخواست زنده‌شدنش رو بده! 😉✨";
 
 
-                /*
-                باز کردن پنجره Share گوشی
-                */
+                // ================================
+                // Share گوشی
+                // ================================
 
-                if (
-                    navigator.share
-                ) {
+                if (navigator.share) {
 
                     navigator.share({
 
                         title:
-                            "سرزمین شگفت‌انگیز",
+                            "سرزمین شگفت‌انگیز 📚✨",
 
                         text:
                             shareText,
@@ -463,19 +351,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 }
 
-                /*
-                اگر Share گوشی پشتیبانی نشد
-                لینک کپی شود
-                */
+
+                // ================================
+                // اگر Share پشتیبانی نشد
+                // ================================
 
                 else {
 
                     navigator.clipboard
-                        .writeText(shareURL)
+                        .writeText(
+                            shareText +
+                            "\n\n" +
+                            shareURL
+                        )
+
                         .then(() => {
 
                             alert(
-                                "لینک کپی شد ❤️\nبرای دوستت بفرست"
+                                "متن و لینک کپی شد ❤️\nبرای دوستت بفرست"
                             );
 
                         })
@@ -483,7 +376,9 @@ document.addEventListener("DOMContentLoaded", () => {
                         .catch(() => {
 
                             prompt(
-                                "این لینک را برای دوستت بفرست:",
+                                "این متن و لینک را برای دوستت بفرست:",
+                                shareText +
+                                "\n\n" +
                                 shareURL
                             );
 
