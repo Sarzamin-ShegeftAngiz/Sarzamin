@@ -89,6 +89,41 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
 
+            /*
+            متن‌ها دوباره مخفی شوند
+            */
+
+            const liveText =
+                target.querySelector(
+                    ".live-text"
+                );
+
+            const surpriseText =
+                target.querySelector(
+                    ".surprise-text"
+                );
+
+
+            if (liveText) {
+
+                liveText.setAttribute(
+                    "visible",
+                    false
+                );
+
+            }
+
+
+            if (surpriseText) {
+
+                surpriseText.setAttribute(
+                    "visible",
+                    false
+                );
+
+            }
+
+
             const video =
                 videos[index];
 
@@ -109,10 +144,120 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 await video.play();
 
+
                 console.log(
                     "VIDEO PLAYING:",
                     index
                 );
+
+
+                /*
+                =================================
+                بعد از یک بار کامل شدن ویدیو
+                نوشته‌ها ظاهر شوند
+                =================================
+                */
+
+                const showTextsOnce =
+                    () => {
+
+                        if (
+                            activeTarget !== target
+                        ) {
+
+                            return;
+
+                        }
+
+
+                        if (liveText) {
+
+                            liveText.setAttribute(
+                                "visible",
+                                true
+                            );
+
+                        }
+
+
+                        if (surpriseText) {
+
+                            surpriseText.setAttribute(
+                                "visible",
+                                true
+                            );
+
+                        }
+
+
+                        console.log(
+                            "TEXTS VISIBLE"
+                        );
+
+                    };
+
+
+                /*
+                فقط اولین پایان ویدیو
+                */
+
+                video.addEventListener(
+                    "ended",
+                    showTextsOnce,
+                    {
+                        once: true
+                    }
+                );
+
+
+                /*
+                اگر ویدیو Loop باشد،
+                مرورگر ممکن است ended را اجرا نکند.
+                بنابراین زمان پایان را بررسی می‌کنیم.
+                */
+
+                const checkEnd =
+                    () => {
+
+                        if (
+                            activeTarget !== target
+                        ) {
+
+                            return;
+
+                        }
+
+
+                        if (
+                            video.duration &&
+                            video.currentTime >=
+                            video.duration - 0.15
+                        ) {
+
+                            showTextsOnce();
+
+                            return;
+
+                        }
+
+
+                        if (
+                            !video.paused
+                        ) {
+
+                            requestAnimationFrame(
+                                checkEnd
+                            );
+
+                        }
+
+                    };
+
+
+                requestAnimationFrame(
+                    checkEnd
+                );
+
 
             }
 
@@ -261,7 +406,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             /*
             =================================
-            Instagram
+            INSTAGRAM
             =================================
             */
 
@@ -319,7 +464,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             /*
             =================================
-            Share
+            SHARE
             =================================
             */
 
@@ -356,9 +501,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
                         const shareText =
-                            "یه دفتر دیدم که زنده میشه! 😍 " +
-                            "کنجکاوی ببینی چه اتفاقی میفته؟ " +
-                            "این لینک رو برای دوستت بفرست 👇";
+                            "یه چیز خیلی باحال پیدا کردم! 😍📚 " +
+                            "فکر کن یه دفتر معمولی رو با دوربین گوشیت بگیری و یهو زنده بشه! 🤯✨ " +
+                            "شخصیت روی دفتر شروع می‌کنه به حرکت و انگار خود دفتر جون می‌گیره! 😍 " +
+                            "اگه کنجکاوی ببینی چطوریه، این لینک رو باز کن و دوربین گوشیت رو روی دفتر بگیر 👇 " +
+                            "بعدش حتماً یکی از دوستات رو هم سورپرایز کن! 😉🔥";
 
 
                         if (
