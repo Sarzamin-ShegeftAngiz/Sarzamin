@@ -1,127 +1,337 @@
-if (!touch) {
+<!DOCTYPE html>
+<html lang="fa">
 
-                return;
+<head>
 
-            }
+<meta charset="UTF-8">
 
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
 
-            const canvas =
-                scene.renderer.domElement;
-
-
-            const rect =
-                canvas.getBoundingClientRect();
+<title>Sarzamin AR</title>
 
 
-            /*
-            مختصات لمس روی صفحه
-            */
+<script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
 
-            const mouse =
-                new THREE.Vector2();
+<script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
-
-            mouse.x =
-                (
-                    (touch.clientX - rect.left)
-                    /
-                    rect.width
-                ) * 2 - 1;
+<script defer src="app.js?v=118"></script>
 
 
-            mouse.y =
-                -(
-                    (touch.clientY - rect.top)
-                    /
-                    rect.height
-                ) * 2 + 1;
+<style>
+
+html,body{
+margin:0;
+width:100%;
+height:100%;
+overflow:hidden;
+}
+
+a-scene{
+width:100%;
+height:100%;
+}
+
+</style>
+
+</head>
 
 
-            /*
-            Raycaster
-            */
-
-            const raycaster =
-                new THREE.Raycaster();
+<body>
 
 
-            raycaster.setFromCamera(
-                mouse,
-                scene.camera
-            );
+<a-scene
+
+mindar-image="
+imageTargetSrc: ./targets.mind;
+warmupTolerance: 2;
+missTolerance: 1;
+"
+
+embedded
+
+vr-mode-ui="enabled:false"
+
+device-orientation-permission-ui="enabled:false"
+
+renderer="colorManagement:true;"
+>
 
 
-            /*
-            فقط Instagram Zone
-            */
-
-            const zone =
-                activeTarget.querySelector(
-                    ".instagram-zone"
-                );
+<a-assets>
 
 
-            if (!zone) {
-
-                return;
-
-            }
-
-
-            const mesh =
-                zone.getObject3D("mesh");
-
-
-            if (!mesh) {
-
-                return;
-
-            }
+<video
+id="video0"
+src="./notebook/choromi.mp4"
+preload="auto"
+loop
+muted
+playsinline
+webkit-playsinline>
+</video>
 
 
-            const hits =
-                raycaster.intersectObject(
-                    mesh,
-                    true
-                );
+<video
+id="video1"
+src="./notebook2/02.mp4"
+preload="auto"
+loop
+muted
+playsinline
+webkit-playsinline>
+</video>
 
 
-            /*
-            اگر روی ناحیه Instagram لمس شده
-            */
-
-            if (
-                hits.length > 0
-            ) {
-
-                console.log(
-                    "INSTAGRAM PRESSED"
-                );
+<video
+id="video2"
+src="./notebook3/03.mp4"
+preload="auto"
+loop
+muted
+playsinline
+webkit-playsinline>
+</video>
 
 
-                /*
-                اول تلاش برای باز کردن
-                اپ Instagram
-                */
+<video
+id="video3"
+src="./notebook4/04.mp4"
+preload="auto"
+loop
+muted
+playsinline
+webkit-playsinline>
+</video>
 
-                const intentURL =
-                    "intent://www.instagram.com/_u/SarzaminAr/#Intent;" +
-                    "package=com.instagram.android;" +
-                    "scheme=https;" +
-                    "end";
+
+<video
+id="video4"
+src="./notebook5/05.mp4"
+preload="auto"
+loop
+muted
+playsinline
+webkit-playsinline>
+</video>
 
 
-                window.location.href =
-                    intentURL;
+<video
+id="video5"
+src="./notebook6/06.mp4"
+preload="auto"
+loop
+muted
+playsinline
+webkit-playsinline>
+</video>
 
-            }
 
-        },
+</a-assets>
 
-        {
-            passive: true
-        }
 
-    );
 
-});
+<a-camera
+position="0 0 0"
+look-controls="enabled:false">
+</a-camera>
+
+
+
+<!-- ===================== -->
+<!-- TARGET 0 -->
+<!-- ===================== -->
+
+<a-entity
+mindar-image-target="targetIndex:0">
+
+<a-video
+src="#video0"
+width="1"
+height="1.42"
+position="0 0 0">
+</a-video>
+
+
+<a-plane
+class="instagram-zone"
+width="0.70"
+height="0.16"
+position="-0.31 0.62 0.02"
+material="
+shader:flat;
+color:red;
+opacity:0;
+transparent:true;
+">
+</a-plane>
+
+</a-entity>
+
+
+
+<!-- ===================== -->
+<!-- TARGET 1 -->
+<!-- ===================== -->
+
+<a-entity
+mindar-image-target="targetIndex:1">
+
+<a-video
+src="#video1"
+width="1"
+height="1.42"
+position="0 0 0">
+</a-video>
+
+
+<a-plane
+class="instagram-zone"
+width="0.70"
+height="0.16"
+position="-0.31 0.62 0.02"
+material="
+shader:flat;
+color:red;
+opacity:0;
+transparent:true;
+">
+</a-plane>
+
+</a-entity>
+
+
+
+<!-- ===================== -->
+<!-- TARGET 2 -->
+<!-- ===================== -->
+
+<a-entity
+mindar-image-target="targetIndex:2">
+
+<a-video
+src="#video2"
+width="1"
+height="1.42"
+position="0 0 0">
+</a-video>
+
+
+<a-plane
+class="instagram-zone"
+width="0.70"
+height="0.16"
+position="-0.31 0.62 0.02"
+material="
+shader:flat;
+color:red;
+opacity:0;
+transparent:true;
+">
+</a-plane>
+
+</a-entity>
+
+
+
+<!-- ===================== -->
+<!-- TARGET 3 -->
+<!-- ===================== -->
+
+<a-entity
+mindar-image-target="targetIndex:3">
+
+<a-video
+src="#video3"
+width="1"
+height="1.42"
+position="0 0 0">
+</a-video>
+
+
+<a-plane
+class="instagram-zone"
+width="0.70"
+height="0.16"
+position="-0.31 0.62 0.02"
+material="
+shader:flat;
+color:red;
+opacity:0;
+transparent:true;
+">
+</a-plane>
+
+</a-entity>
+
+
+
+<!-- ===================== -->
+<!-- TARGET 4 -->
+<!-- ===================== -->
+
+<a-entity
+mindar-image-target="targetIndex:4">
+
+<a-video
+src="#video4"
+width="1"
+height="1.42"
+position="0 0 0">
+</a-video>
+
+
+<a-plane
+class="instagram-zone"
+width="0.70"
+height="0.16"
+position="-0.31 0.62 0.02"
+material="
+shader:flat;
+color:red;
+opacity:0;
+transparent:true;
+">
+</a-plane>
+
+</a-entity>
+
+
+
+<!-- ===================== -->
+<!-- TARGET 5 -->
+<!-- ===================== -->
+
+<a-entity
+mindar-image-target="targetIndex:5">
+
+<a-video
+src="#video5"
+width="1"
+height="1.42"
+position="0 0 0">
+</a-video>
+
+
+<a-plane
+class="instagram-zone"
+width="0.70"
+height="0.16"
+position="-0.31 0.62 0.02"
+material="
+shader:flat;
+color:red;
+opacity:0;
+transparent:true;
+">
+</a-plane>
+
+</a-entity>
+
+
+
+</a-scene>
+
+</body>
+
+</html>
