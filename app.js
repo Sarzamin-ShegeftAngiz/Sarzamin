@@ -1,347 +1,504 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-  const videos = [
-    document.querySelector("#video0"),
-    document.querySelector("#video1"),
-    document.querySelector("#video2"),
-    document.querySelector("#video3"),
-    document.querySelector("#video4"),
-    document.querySelector("#video5")
-  ];
-
-  const targets = [
-    document.querySelector('[mindar-image-target="targetIndex: 0"]'),
-    document.querySelector('[mindar-image-target="targetIndex: 1"]'),
-    document.querySelector('[mindar-image-target="targetIndex: 2"]'),
-    document.querySelector('[mindar-image-target="targetIndex: 3"]'),
-    document.querySelector('[mindar-image-target="targetIndex: 4"]'),
-    document.querySelector('[mindar-image-target="targetIndex: 5"]')
-  ];
-
-  const completedOnce = [false, false, false, false, false, false];
+    const scene =
+        document.querySelector("a-scene");
 
 
-  // --------------------------------------------------
-  // مخفی / ظاهر کردن نوشته‌ها
-  // --------------------------------------------------
+    const videos = [
 
-  function setTexts(index, visible) {
+        document.querySelector("#video0"),
+        document.querySelector("#video1"),
+        document.querySelector("#video2"),
+        document.querySelector("#video3"),
+        document.querySelector("#video4"),
+        document.querySelector("#video5")
 
-    const ids = [
-      `promo${index}`,
-      `liveText${index}`,
-      `shareText${index}`
     ];
 
-    ids.forEach(id => {
 
-      const el = document.querySelector(`#${id}`);
+    const targets = [
 
-      if (el) {
-        el.setAttribute("visible", visible);
-      }
+        document.querySelector(
+            '[mindar-image-target="targetIndex:0"]'
+        ),
 
-    });
-  }
+        document.querySelector(
+            '[mindar-image-target="targetIndex:1"]'
+        ),
 
+        document.querySelector(
+            '[mindar-image-target="targetIndex:2"]'
+        ),
 
-  // --------------------------------------------------
-  // آماده‌سازی هر ویدیو
-  // --------------------------------------------------
+        document.querySelector(
+            '[mindar-image-target="targetIndex:3"]'
+        ),
 
-  videos.forEach((video, index) => {
+        document.querySelector(
+            '[mindar-image-target="targetIndex:4"]'
+        ),
 
-    if (!video) return;
+        document.querySelector(
+            '[mindar-image-target="targetIndex:5"]'
+        )
 
-    // اول نوشته‌های جدید مخفی باشند
-    setTexts(index, false);
+    ];
 
 
-    // وقتی یک دور کامل ویدیو تمام شد
-    video.addEventListener("ended", async () => {
+    let activeTarget = null;
 
-      // فقط اولین دور
-      if (!completedOnce[index]) {
 
-        completedOnce[index] = true;
+    /*
+    =================================
+    AR READY
+    =================================
+    */
 
-        // نمایش نوشته‌های جدید
-        setTexts(index, true);
-      }
+    scene.addEventListener(
+        "arReady",
+        () => {
 
-
-      // دوباره ویدیو از اول شروع شود
-      try {
-
-        video.currentTime = 0;
-
-        await video.play();
-
-      } catch (error) {
-
-        console.log(
-          "Video دوباره پخش نشد:",
-          index,
-          error
-        );
-
-      }
-
-    });
-
-  });
-
-
-
-  // --------------------------------------------------
-  // TARGET FOUND
-  // --------------------------------------------------
-
-  targets.forEach((target, index) => {
-
-    if (!target) return;
-
-    target.addEventListener("targetFound", async () => {
-
-      console.log("TARGET FOUND:", index);
-
-
-      const video = videos[index];
-
-      if (!video) return;
-
-
-      // شروع یک سیکل جدید
-      completedOnce[index] = false;
-
-      // نوشته‌های جدید دوباره مخفی شوند
-      setTexts(index, false);
-
-
-      // ویدیو از اول
-      try {
-
-        video.pause();
-
-        video.currentTime = 0;
-
-      } catch (e) {}
-
-
-      // پخش
-      try {
-
-        await video.play();
-
-      } catch (error) {
-
-        console.log(
-          "Video play blocked:",
-          index,
-          error
-        );
-
-      }
-
-    });
-
-
-
-    // --------------------------------------------------
-    // TARGET LOST
-    // --------------------------------------------------
-
-    target.addEventListener("targetLost", () => {
-
-      console.log("TARGET LOST:", index);
-
-      const video = videos[index];
-
-      if (!video) return;
-
-
-      video.pause();
-
-      completedOnce[index] = false;
-
-      setTexts(index, false);
-
-    });
-
-  });
-
-
-
-  // --------------------------------------------------
-  // لینک اینستاگرام
-  // --------------------------------------------------
-
-  for (let i = 0; i < 6; i++) {
-
-    const instagram =
-      document.querySelector(`#instagram${i}`);
-
-    const instagramZone =
-      document.querySelector(`#instagramZone${i}`);
-
-
-    function openInstagram() {
-
-      window.open(
-        "https://www.instagram.com/SarzaminAr/",
-        "_blank"
-      );
-
-    }
-
-
-    if (instagram) {
-
-      instagram.addEventListener(
-        "click",
-        openInstagram
-      );
-
-    }
-
-
-    if (instagramZone) {
-
-      instagramZone.addEventListener(
-        "click",
-        openInstagram
-      );
-
-    }
-
-  }
-
-
-
-  // --------------------------------------------------
-  // لینک / اشتراک‌گذاری سرزمین شگفت‌انگیز
-  // --------------------------------------------------
-
-  for (let i = 0; i < 6; i++) {
-
-    const store =
-      document.querySelector(`#store${i}`);
-
-    const shareZone =
-      document.querySelector(
-        `#shareZone${i}`
-      );
-
-
-    async function sharePage() {
-
-      const url = window.location.href;
-
-
-      // اگر گوشی قابلیت Share داشته باشد
-      if (
-        navigator.share
-      ) {
-
-        try {
-
-          await navigator.share({
-            title: "سرزمین شگفت‌انگیز",
-            text: "این دفتر رو ببین 😍",
-            url: url
-          });
-
-        } catch (error) {
-
-          console.log(
-            "Share cancelled"
-          );
+            console.log("AR READY");
 
         }
-
-        return;
-      }
+    );
 
 
-      // اگر Share نداشت، لینک کپی شود
-      try {
+    /*
+    =================================
+    TARGET FOUND
+    =================================
+    */
 
-        await navigator.clipboard.writeText(url);
+    scene.addEventListener(
+        "targetFound",
+        async (e) => {
 
-        alert(
-          "لینک کپی شد ❤️\nبرای دوستت بفرست"
-        );
-
-      } catch (error) {
-
-        prompt(
-          "این لینک رو کپی کن:",
-          url
-        );
-
-      }
-
-    }
+            const target =
+                e.target;
 
 
-    if (store) {
-
-      store.addEventListener(
-        "click",
-        sharePage
-      );
-
-    }
+            const data =
+                target.getAttribute(
+                    "mindar-image-target"
+                );
 
 
-    if (shareZone) {
-
-      shareZone.addEventListener(
-        "click",
-        sharePage
-      );
-
-    }
-
-  }
+            const index =
+                data.targetIndex;
 
 
-
-  // --------------------------------------------------
-  // کمک به اجازه صدای ویدیو در موبایل
-  // بدون نمایش دکمه
-  // --------------------------------------------------
-
-  function unlockAudio() {
-
-    videos.forEach(video => {
-
-      if (!video) return;
-
-      video.muted = false;
-
-    });
-
-  }
+            console.log(
+                "TARGET FOUND:",
+                index
+            );
 
 
-  document.addEventListener(
-    "touchstart",
-    unlockAudio,
-    {
-      once: true,
-      passive: true
-    }
-  );
+            activeTarget =
+                target;
 
 
-  document.addEventListener(
-    "click",
-    unlockAudio,
-    {
-      once: true
-    }
-  );
+            /*
+            توقف همه ویدئوهای دیگر
+            */
 
+            videos.forEach(
+                (video, i) => {
+
+                    if (
+                        video &&
+                        i !== index
+                    ) {
+
+                        video.pause();
+
+                    }
+
+                }
+            );
+
+
+            /*
+            ویدئوی تارگت فعلی
+            */
+
+            const video =
+                videos[index];
+
+
+            if (!video) {
+
+                return;
+
+            }
+
+
+            video.currentTime = 0;
+
+            video.muted = false;
+
+
+            try {
+
+                await video.play();
+
+
+                console.log(
+                    "VIDEO PLAYING:",
+                    index
+                );
+
+            }
+
+            catch (err) {
+
+                console.log(
+                    "VIDEO ERROR:",
+                    index,
+                    err
+                );
+
+            }
+
+        }
+    );
+
+
+    /*
+    =================================
+    TARGET LOST
+    =================================
+    */
+
+    scene.addEventListener(
+        "targetLost",
+        (e) => {
+
+            const target =
+                e.target;
+
+
+            const data =
+                target.getAttribute(
+                    "mindar-image-target"
+                );
+
+
+            const index =
+                data.targetIndex;
+
+
+            console.log(
+                "TARGET LOST:",
+                index
+            );
+
+
+            const video =
+                videos[index];
+
+
+            if (video) {
+
+                video.pause();
+
+            }
+
+
+            if (
+                activeTarget === target
+            ) {
+
+                activeTarget = null;
+
+            }
+
+        }
+    );
+
+
+    /*
+    =================================
+    لمس Instagram
+    =================================
+    */
+
+    document.addEventListener(
+        "touchend",
+        (event) => {
+
+            if (!activeTarget) {
+
+                return;
+
+            }
+
+
+            if (
+                !scene.camera ||
+                !scene.renderer
+            ) {
+
+                return;
+
+            }
+
+
+            const touch =
+                event.changedTouches[0];
+
+
+            if (!touch) {
+
+                return;
+
+            }
+
+
+            const canvas =
+                scene.renderer.domElement;
+
+
+            const rect =
+                canvas.getBoundingClientRect();
+
+
+            /*
+            مختصات لمس روی صفحه
+            */
+
+            const mouse =
+                new THREE.Vector2();
+
+
+            mouse.x =
+                (
+                    (touch.clientX - rect.left)
+                    /
+                    rect.width
+                ) * 2 - 1;
+
+
+            mouse.y =
+                -(
+                    (touch.clientY - rect.top)
+                    /
+                    rect.height
+                ) * 2 + 1;
+
+
+            /*
+            Raycaster
+            */
+
+            const raycaster =
+                new THREE.Raycaster();
+
+
+            raycaster.setFromCamera(
+                mouse,
+                scene.camera
+            );
+
+
+            /*
+            =================================
+            Instagram Zone
+            =================================
+            */
+
+            const instagramZone =
+                activeTarget.querySelector(
+                    ".instagram-zone"
+                );
+
+
+            if (instagramZone) {
+
+                const instagramMesh =
+                    instagramZone.getObject3D("mesh");
+
+
+                if (instagramMesh) {
+
+                    const instagramHits =
+                        raycaster.intersectObject(
+                            instagramMesh,
+                            true
+                        );
+
+
+                    if (
+                        instagramHits.length > 0
+                    ) {
+
+                        console.log(
+                            "INSTAGRAM PRESSED"
+                        );
+
+
+                        /*
+                        باز کردن Instagram
+                        */
+
+                        const intentURL =
+                            "intent://www.instagram.com/_u/SarzaminAr/#Intent;" +
+                            "package=com.instagram.android;" +
+                            "scheme=https;" +
+                            "end";
+
+
+                        window.location.href =
+                            intentURL;
+
+
+                        return;
+
+                    }
+
+                }
+
+            }
+
+
+            /*
+            =================================
+            SHARE روی سرزمین شگفت‌انگیز
+            =================================
+            */
+
+            const shareZone =
+                activeTarget.querySelector(
+                    ".share-zone"
+                );
+
+
+            if (!shareZone) {
+
+                return;
+
+            }
+
+
+            const shareMesh =
+                shareZone.getObject3D("mesh");
+
+
+            if (!shareMesh) {
+
+                return;
+
+            }
+
+
+            const shareHits =
+                raycaster.intersectObject(
+                    shareMesh,
+                    true
+                );
+
+
+            /*
+            اگر روی سرزمین شگفت‌انگیز لمس شد
+            */
+
+            if (
+                shareHits.length > 0
+            ) {
+
+                console.log(
+                    "SHARE PRESSED"
+                );
+
+
+                const shareURL =
+                    window.location.href;
+
+
+                /*
+                متن ارسال برای دوست
+                */
+
+                const shareText =
+                    "می‌خوای دوستاتو سورپرایز کنی؟ بفرس براش👇";
+
+
+                /*
+                باز کردن پنجره Share گوشی
+                */
+
+                if (
+                    navigator.share
+                ) {
+
+                    navigator.share({
+
+                        title:
+                            "سرزمین شگفت‌انگیز",
+
+                        text:
+                            shareText,
+
+                        url:
+                            shareURL
+
+                    })
+
+                    .then(() => {
+
+                        console.log(
+                            "SHARE SUCCESS"
+                        );
+
+                    })
+
+                    .catch((err) => {
+
+                        console.log(
+                            "SHARE CANCELLED",
+                            err
+                        );
+
+                    });
+
+                }
+
+                /*
+                اگر Share گوشی پشتیبانی نشد
+                لینک کپی شود
+                */
+
+                else {
+
+                    navigator.clipboard
+                        .writeText(shareURL)
+                        .then(() => {
+
+                            alert(
+                                "لینک کپی شد ❤️\nبرای دوستت بفرست"
+                            );
+
+                        })
+
+                        .catch(() => {
+
+                            prompt(
+                                "این لینک را برای دوستت بفرست:",
+                                shareURL
+                            );
+
+                        });
+
+                }
+
+            }
+
+        },
+
+        {
+            passive: true
+        }
+
+    );
 
 });
