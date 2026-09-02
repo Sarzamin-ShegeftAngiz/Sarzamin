@@ -1,247 +1,347 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-    const scene = document.querySelector("a-scene");
+  const videos = [
+    document.querySelector("#video0"),
+    document.querySelector("#video1"),
+    document.querySelector("#video2"),
+    document.querySelector("#video3"),
+    document.querySelector("#video4"),
+    document.querySelector("#video5")
+  ];
 
-    const videos = [
-        document.querySelector("#video0"),
-        document.querySelector("#video1"),
-        document.querySelector("#video2"),
-        document.querySelector("#video3"),
-        document.querySelector("#video4"),
-        document.querySelector("#video5")
+  const targets = [
+    document.querySelector('[mindar-image-target="targetIndex: 0"]'),
+    document.querySelector('[mindar-image-target="targetIndex: 1"]'),
+    document.querySelector('[mindar-image-target="targetIndex: 2"]'),
+    document.querySelector('[mindar-image-target="targetIndex: 3"]'),
+    document.querySelector('[mindar-image-target="targetIndex: 4"]'),
+    document.querySelector('[mindar-image-target="targetIndex: 5"]')
+  ];
+
+  const completedOnce = [false, false, false, false, false, false];
+
+
+  // --------------------------------------------------
+  // مخفی / ظاهر کردن نوشته‌ها
+  // --------------------------------------------------
+
+  function setTexts(index, visible) {
+
+    const ids = [
+      `promo${index}`,
+      `liveText${index}`,
+      `shareText${index}`
     ];
 
-    const targets = [
-        document.querySelector("#target0"),
-        document.querySelector("#target1"),
-        document.querySelector("#target2"),
-        document.querySelector("#target3"),
-        document.querySelector("#target4"),
-        document.querySelector("#target5")
-    ];
+    ids.forEach(id => {
 
+      const el = document.querySelector(`#${id}`);
 
-    // ----------------------------------------
-    // باز کردن اجازه صدا با اولین لمس کاربر
-    // بدون نمایش دکمه
-    // ----------------------------------------
-
-    let soundUnlocked = false;
-
-    document.addEventListener("touchstart", async () => {
-
-        if (soundUnlocked) return;
-
-        for (const video of videos) {
-
-            try {
-
-                video.muted = false;
-                video.volume = 1;
-
-                video.currentTime = 0;
-
-                await video.play();
-
-                video.pause();
-
-                video.currentTime = 0;
-
-            } catch (e) {
-
-                console.log("Audio unlock:", e);
-
-            }
-
-        }
-
-        soundUnlocked = true;
-
-    }, { once: true });
-
-
-    // ----------------------------------------
-    // مخفی کردن نوشته‌ها
-    // ----------------------------------------
-
-    function hideTexts(target) {
-
-        const texts = target.querySelectorAll("a-text");
-
-        texts.forEach(text => {
-
-            text.setAttribute("visible", false);
-
-        });
-
-    }
-
-
-    // ----------------------------------------
-    // نمایش نوشته‌ها
-    // ----------------------------------------
-
-    function showTexts(target) {
-
-        const texts = target.querySelectorAll("a-text");
-
-        texts.forEach(text => {
-
-            text.setAttribute("visible", true);
-
-        });
-
-    }
-
-
-    // ----------------------------------------
-    // وقتی AR آماده شد
-    // ----------------------------------------
-
-    scene.addEventListener("arReady", () => {
-
-        console.log("AR READY");
+      if (el) {
+        el.setAttribute("visible", visible);
+      }
 
     });
+  }
 
 
-    // ----------------------------------------
-    // هر ۶ تارگت
-    // ----------------------------------------
+  // --------------------------------------------------
+  // آماده‌سازی هر ویدیو
+  // --------------------------------------------------
 
-    targets.forEach((target, index) => {
+  videos.forEach((video, index) => {
 
-        if (!target) return;
+    if (!video) return;
 
-
-        // دفتر پیدا شد
-        target.addEventListener("targetFound", async () => {
-
-            console.log("TARGET FOUND:", index);
+    // اول نوشته‌های جدید مخفی باشند
+    setTexts(index, false);
 
 
-            // نوشته‌ها ظاهر شوند
-            showTexts(target);
+    // وقتی یک دور کامل ویدیو تمام شد
+    video.addEventListener("ended", async () => {
+
+      // فقط اولین دور
+      if (!completedOnce[index]) {
+
+        completedOnce[index] = true;
+
+        // نمایش نوشته‌های جدید
+        setTexts(index, true);
+      }
 
 
-            const video = videos[index];
+      // دوباره ویدیو از اول شروع شود
+      try {
 
-            if (!video) return;
+        video.currentTime = 0;
 
+        await video.play();
 
-            // صدا
-            video.muted = false;
-            video.volume = 1;
+      } catch (error) {
 
-
-            // از اول شروع شود
-            video.currentTime = 0;
-
-
-            try {
-
-                await video.play();
-
-                console.log("VIDEO PLAYING:", index);
-
-            } catch (error) {
-
-                console.log("VIDEO PLAY ERROR:", error);
-
-            }
-
-        });
-
-
-        // دفتر گم شد
-        target.addEventListener("targetLost", () => {
-
-            console.log("TARGET LOST:", index);
-
-
-            const video = videos[index];
-
-
-            if (video) {
-
-                video.pause();
-
-                video.currentTime = 0;
-
-            }
-
-
-            // نوشته‌ها مخفی شوند
-            hideTexts(target);
-
-        });
-
-    });
-
-
-    // ----------------------------------------
-    // Instagram
-    // ----------------------------------------
-
-    document.addEventListener("click", (event) => {
-
-        const zone = event.target.closest(".instagram-zone");
-
-        if (!zone) return;
-
-
-        window.open(
-            "https://instagram.com/",
-            "_blank"
+        console.log(
+          "Video دوباره پخش نشد:",
+          index,
+          error
         );
 
+      }
+
+    });
+
+  });
+
+
+
+  // --------------------------------------------------
+  // TARGET FOUND
+  // --------------------------------------------------
+
+  targets.forEach((target, index) => {
+
+    if (!target) return;
+
+    target.addEventListener("targetFound", async () => {
+
+      console.log("TARGET FOUND:", index);
+
+
+      const video = videos[index];
+
+      if (!video) return;
+
+
+      // شروع یک سیکل جدید
+      completedOnce[index] = false;
+
+      // نوشته‌های جدید دوباره مخفی شوند
+      setTexts(index, false);
+
+
+      // ویدیو از اول
+      try {
+
+        video.pause();
+
+        video.currentTime = 0;
+
+      } catch (e) {}
+
+
+      // پخش
+      try {
+
+        await video.play();
+
+      } catch (error) {
+
+        console.log(
+          "Video play blocked:",
+          index,
+          error
+        );
+
+      }
+
     });
 
 
-    // ----------------------------------------
-    // Share
-    // ----------------------------------------
 
-    document.addEventListener("click", async (event) => {
+    // --------------------------------------------------
+    // TARGET LOST
+    // --------------------------------------------------
 
-        const zone = event.target.closest(".share-zone");
+    target.addEventListener("targetLost", () => {
 
-        if (!zone) return;
+      console.log("TARGET LOST:", index);
+
+      const video = videos[index];
+
+      if (!video) return;
 
 
-        const shareData = {
+      video.pause();
 
-            title: "سرزمین شگفت‌انگیز",
+      completedOnce[index] = false;
 
-            text: "دفترهای زنده سرزمین شگفت‌انگیز 😍",
+      setTexts(index, false);
 
-            url: window.location.href
+    });
 
-        };
+  });
 
+
+
+  // --------------------------------------------------
+  // لینک اینستاگرام
+  // --------------------------------------------------
+
+  for (let i = 0; i < 6; i++) {
+
+    const instagram =
+      document.querySelector(`#instagram${i}`);
+
+    const instagramZone =
+      document.querySelector(`#instagramZone${i}`);
+
+
+    function openInstagram() {
+
+      window.open(
+        "https://www.instagram.com/SarzaminAr/",
+        "_blank"
+      );
+
+    }
+
+
+    if (instagram) {
+
+      instagram.addEventListener(
+        "click",
+        openInstagram
+      );
+
+    }
+
+
+    if (instagramZone) {
+
+      instagramZone.addEventListener(
+        "click",
+        openInstagram
+      );
+
+    }
+
+  }
+
+
+
+  // --------------------------------------------------
+  // لینک / اشتراک‌گذاری سرزمین شگفت‌انگیز
+  // --------------------------------------------------
+
+  for (let i = 0; i < 6; i++) {
+
+    const store =
+      document.querySelector(`#store${i}`);
+
+    const shareZone =
+      document.querySelector(
+        `#shareZone${i}`
+      );
+
+
+    async function sharePage() {
+
+      const url = window.location.href;
+
+
+      // اگر گوشی قابلیت Share داشته باشد
+      if (
+        navigator.share
+      ) {
 
         try {
 
-            if (navigator.share) {
-
-                await navigator.share(shareData);
-
-            } else {
-
-                await navigator.clipboard.writeText(
-                    window.location.href
-                );
-
-                alert("لینک کپی شد");
-
-            }
+          await navigator.share({
+            title: "سرزمین شگفت‌انگیز",
+            text: "این دفتر رو ببین 😍",
+            url: url
+          });
 
         } catch (error) {
 
-            console.log("Share cancelled");
+          console.log(
+            "Share cancelled"
+          );
 
         }
 
+        return;
+      }
+
+
+      // اگر Share نداشت، لینک کپی شود
+      try {
+
+        await navigator.clipboard.writeText(url);
+
+        alert(
+          "لینک کپی شد ❤️\nبرای دوستت بفرست"
+        );
+
+      } catch (error) {
+
+        prompt(
+          "این لینک رو کپی کن:",
+          url
+        );
+
+      }
+
+    }
+
+
+    if (store) {
+
+      store.addEventListener(
+        "click",
+        sharePage
+      );
+
+    }
+
+
+    if (shareZone) {
+
+      shareZone.addEventListener(
+        "click",
+        sharePage
+      );
+
+    }
+
+  }
+
+
+
+  // --------------------------------------------------
+  // کمک به اجازه صدای ویدیو در موبایل
+  // بدون نمایش دکمه
+  // --------------------------------------------------
+
+  function unlockAudio() {
+
+    videos.forEach(video => {
+
+      if (!video) return;
+
+      video.muted = false;
+
     });
+
+  }
+
+
+  document.addEventListener(
+    "touchstart",
+    unlockAudio,
+    {
+      once: true,
+      passive: true
+    }
+  );
+
+
+  document.addEventListener(
+    "click",
+    unlockAudio,
+    {
+      once: true
+    }
+  );
+
 
 });
