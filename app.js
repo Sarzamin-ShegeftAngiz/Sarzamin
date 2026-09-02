@@ -1,11 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-    const scene = document.querySelector("a-scene");
+    const scene =
+        document.querySelector("a-scene");
 
-
-    // =========================
-    // ویدیوها
-    // =========================
 
     const videos = [
 
@@ -19,141 +16,44 @@ document.addEventListener("DOMContentLoaded", () => {
     ];
 
 
-    // =========================
-    // عناصر صفحه
-    // =========================
-
-    const promoBox =
-        document.querySelector("#promoBox");
-
-    const shareButton =
-        document.querySelector("#shareButton");
-
-    const sharePanel =
-        document.querySelector("#sharePanel");
-
-    const closeShare =
-        document.querySelector("#closeShare");
-
-    const instagramInfo =
-        document.querySelector("#instagramInfo");
-
-    const instagramLink =
-        document.querySelector("#instagramLink");
-
-
-    // =========================
-    // وضعیت
-    // =========================
-
     let activeTarget = null;
 
-    let currentVideo = null;
 
-    let endWatcher = null;
+    /*
+    =================================
+    AR READY
+    =================================
+    */
 
-    let firstCycleShown = false;
+    scene.addEventListener(
+        "arReady",
+        () => {
 
-
-    // =========================
-    // لینک اصلی AR
-    // =========================
-
-    const arURL =
-        "https://sarzamin-shegeftangiz.github.io/";
-
-
-    // =========================
-    // متن اشتراک گذاری
-    // =========================
-
-    const shareText =
-`😍 ببین چی پیدا کردم!
-دفترم زنده شد! 😂🔥
-فکر می‌کنی دفتر تو هم زنده میشه؟ 👀
-بیا امتحانش کن👇
-
-سرزمین شگفت‌انگیز ✨`;
-
-
-    // =========================
-    // آماده شدن AR
-    // =========================
-
-    scene.addEventListener("arReady", () => {
-
-        console.log("AR READY");
-
-    });
-
-
-    // =========================
-    // حذف بررسی دور ویدیو قبلی
-    // =========================
-
-    function removeVideoWatcher() {
-
-        if (
-            currentVideo &&
-            endWatcher
-        ) {
-
-            currentVideo.removeEventListener(
-                "timeupdate",
-                endWatcher
-            );
+            console.log("AR READY");
 
         }
-
-        currentVideo = null;
-
-        endWatcher = null;
-
-    }
+    );
 
 
-    // =========================
-    // نمایش پیام
-    // =========================
-
-    function showPromo() {
-
-        promoBox.style.display = "block";
-
-        instagramInfo.style.display = "block";
-
-    }
-
-
-    // =========================
-    // مخفی کردن پیام
-    // =========================
-
-    function hidePromo() {
-
-        promoBox.style.display = "none";
-
-        sharePanel.style.display = "none";
-
-        instagramInfo.style.display = "none";
-
-    }
-
-
-    // =========================
-    // پیدا شدن دفتر
-    // =========================
+    /*
+    =================================
+    TARGET FOUND
+    =================================
+    */
 
     scene.addEventListener(
         "targetFound",
         async (e) => {
 
-            const target = e.target;
+            const target =
+                e.target;
+
 
             const data =
                 target.getAttribute(
                     "mindar-image-target"
                 );
+
 
             const index =
                 data.targetIndex;
@@ -165,10 +65,13 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
 
-            activeTarget = target;
+            activeTarget =
+                target;
 
 
-            // توقف ویدیوهای دیگر
+            /*
+            توقف بقیه ویدئوها
+            */
 
             videos.forEach(
                 (video, i) => {
@@ -197,92 +100,10 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
 
-            // بررسی قبلی را پاک کن
-
-            removeVideoWatcher();
-
-
-            currentVideo = video;
-
-            firstCycleShown = false;
-
-
-            // پیام‌ها دوباره مخفی شوند
-
-            hidePromo();
-
-
-            // از اول پخش شود
-
             video.currentTime = 0;
-
-
-            // صدا
 
             video.muted = false;
 
-
-            // حتماً لوپ باشد
-
-            video.loop = true;
-
-
-            // =========================
-            // تشخیص پایان دور اول
-            // بدون توقف ویدیو
-            // =========================
-
-            endWatcher = () => {
-
-                if (
-                    firstCycleShown
-                ) {
-
-                    return;
-
-                }
-
-
-                if (
-                    video.duration &&
-                    isFinite(video.duration)
-                ) {
-
-                    const remaining =
-                        video.duration -
-                        video.currentTime;
-
-
-                    if (
-                        remaining <= 0.20
-                    ) {
-
-                        firstCycleShown = true;
-
-
-                        console.log(
-                            "FIRST VIDEO CYCLE COMPLETE"
-                        );
-
-
-                        showPromo();
-
-                    }
-
-                }
-
-            };
-
-
-            video.addEventListener(
-                "timeupdate",
-                endWatcher
-            );
-
-
-            // =========================
-            // پخش
-            // =========================
 
             try {
 
@@ -309,20 +130,25 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 
-    // =========================
-    // گم شدن دفتر
-    // =========================
+    /*
+    =================================
+    TARGET LOST
+    =================================
+    */
 
     scene.addEventListener(
         "targetLost",
         (e) => {
 
-            const target = e.target;
+            const target =
+                e.target;
+
 
             const data =
                 target.getAttribute(
                     "mindar-image-target"
                 );
+
 
             const index =
                 data.targetIndex;
@@ -353,244 +179,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
             }
 
-
-            removeVideoWatcher();
-
-            hidePromo();
-
         }
     );
 
 
-    // =========================
-    // باز کردن پنل اشتراک
-    // =========================
-
-    shareButton.addEventListener(
-        "click",
-        (event) => {
-
-            event.preventDefault();
-
-            event.stopPropagation();
-
-
-            sharePanel.style.display =
-                "block";
-
-        }
-    );
-
-
-    // =========================
-    // بستن پنل
-    // =========================
-
-    closeShare.addEventListener(
-        "click",
-        (event) => {
-
-            event.preventDefault();
-
-            event.stopPropagation();
-
-
-            sharePanel.style.display =
-                "none";
-
-        }
-    );
-
-
-    // =========================
-    // اشتراک اصلی گوشی
-    // =========================
-
-    async function nativeShare() {
-
-        if (
-            navigator.share
-        ) {
-
-            try {
-
-                await navigator.share({
-
-                    title:
-                        "سرزمین شگفت انگیز ✨",
-
-                    text:
-                        shareText,
-
-                    url:
-                        arURL
-
-                });
-
-            }
-
-            catch (err) {
-
-                console.log(
-                    "Share cancelled"
-                );
-
-            }
-
-            return true;
-
-        }
-
-
-        return false;
-
-    }
-
-
-    // =========================
-    // تلگرام
-    // =========================
-
-    document
-        .querySelector("#shareTelegram")
-        .addEventListener(
-            "click",
-            () => {
-
-                const url =
-                    "https://t.me/share/url?url=" +
-                    encodeURIComponent(arURL) +
-                    "&text=" +
-                    encodeURIComponent(shareText);
-
-
-                window.location.href = url;
-
-            }
-        );
-
-
-    // =========================
-    // روبیکا
-    // =========================
-
-    document
-        .querySelector("#shareRubika")
-        .addEventListener(
-            "click",
-            async () => {
-
-                sharePanel.style.display =
-                    "none";
-
-
-                const worked =
-                    await nativeShare();
-
-
-                if (!worked) {
-
-                    alert(
-                        "از گزینه اشتراک‌گذاری گوشی استفاده کن ❤️"
-                    );
-
-                }
-
-            }
-        );
-
-
-    // =========================
-    // شاد
-    // =========================
-
-    document
-        .querySelector("#shareShad")
-        .addEventListener(
-            "click",
-            async () => {
-
-                sharePanel.style.display =
-                    "none";
-
-
-                const worked =
-                    await nativeShare();
-
-
-                if (!worked) {
-
-                    alert(
-                        "از گزینه اشتراک‌گذاری گوشی استفاده کن ❤️"
-                    );
-
-                }
-
-            }
-        );
-
-
-    // =========================
-    // اینستاگرام
-    // =========================
-
-    instagramLink.addEventListener(
-        "click",
-        (event) => {
-
-            event.preventDefault();
-
-            event.stopPropagation();
-
-
-            console.log(
-                "INSTAGRAM PRESSED"
-            );
-
-
-            const intentURL =
-                "intent://www.instagram.com/_u/SarzaminAr/#Intent;" +
-                "package=com.instagram.android;" +
-                "scheme=https;" +
-                "end";
-
-
-            window.location.href =
-                intentURL;
-
-        }
-    );
-
-
-    // =========================
-    // کلیک روی آیدی اینستاگرام
-    // قدیمی + حفظ شده
-    // =========================
+    /*
+    =================================
+    TOUCH
+    =================================
+    */
 
     document.addEventListener(
         "touchend",
-        (event) => {
-
-
-            // اگر روی پنل اشتراک کلیک شده
-            // کاری با AR نداشته باش
-
-            if (
-                event.target.closest(
-                    "#promoBox"
-                ) ||
-                event.target.closest(
-                    "#sharePanel"
-                ) ||
-                event.target.closest(
-                    "#instagramInfo"
-                )
-            ) {
-
-                return;
-
-            }
-
+        async (event) => {
 
             if (!activeTarget) {
 
@@ -634,32 +235,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
             mouse.x =
                 (
-                    (
-                        touch.clientX -
-                        rect.left
-                    )
+                    (touch.clientX - rect.left)
                     /
                     rect.width
-                )
-                *
-                2
-                -
-                1;
+                ) * 2 - 1;
 
 
             mouse.y =
                 -(
-                    (
-                        touch.clientY -
-                        rect.top
-                    )
+                    (touch.clientY - rect.top)
                     /
                     rect.height
-                )
-                *
-                2
-                +
-                1;
+                ) * 2 + 1;
 
 
             const raycaster =
@@ -672,57 +259,154 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
 
-            const zone =
+            /*
+            =================================
+            Instagram
+            =================================
+            */
+
+            const instagramZone =
                 activeTarget.querySelector(
                     ".instagram-zone"
                 );
 
 
-            if (!zone) {
+            if (instagramZone) {
 
-                return;
+                const instagramMesh =
+                    instagramZone.getObject3D(
+                        "mesh"
+                    );
+
+
+                if (instagramMesh) {
+
+                    const hits =
+                        raycaster.intersectObject(
+                            instagramMesh,
+                            true
+                        );
+
+
+                    if (
+                        hits.length > 0
+                    ) {
+
+                        console.log(
+                            "INSTAGRAM PRESSED"
+                        );
+
+
+                        const intentURL =
+                            "intent://www.instagram.com/_u/SarzaminAr/#Intent;" +
+                            "package=com.instagram.android;" +
+                            "scheme=https;" +
+                            "end";
+
+
+                        window.location.href =
+                            intentURL;
+
+
+                        return;
+
+                    }
+
+                }
 
             }
 
 
-            const mesh =
-                zone.getObject3D(
-                    "mesh"
+            /*
+            =================================
+            Share
+            =================================
+            */
+
+            const shareZone =
+                activeTarget.querySelector(
+                    ".share-zone"
                 );
 
 
-            if (!mesh) {
+            if (shareZone) {
 
-                return;
-
-            }
-
-
-            const hits =
-                raycaster.intersectObject(
-                    mesh,
-                    true
-                );
+                const shareMesh =
+                    shareZone.getObject3D(
+                        "mesh"
+                    );
 
 
-            if (
-                hits.length > 0
-            ) {
+                if (shareMesh) {
 
-                console.log(
-                    "INSTAGRAM PRESSED"
-                );
-
-
-                const intentURL =
-                    "intent://www.instagram.com/_u/SarzaminAr/#Intent;" +
-                    "package=com.instagram.android;" +
-                    "scheme=https;" +
-                    "end";
+                    const hits =
+                        raycaster.intersectObject(
+                            shareMesh,
+                            true
+                        );
 
 
-                window.location.href =
-                    intentURL;
+                    if (
+                        hits.length > 0
+                    ) {
+
+                        console.log(
+                            "SHARE PRESSED"
+                        );
+
+
+                        const shareText =
+                            "یه دفتر دیدم که زنده میشه! 😍 " +
+                            "کنجکاوی ببینی چه اتفاقی میفته؟ " +
+                            "این لینک رو برای دوستت بفرست 👇";
+
+
+                        if (
+                            navigator.share
+                        ) {
+
+                            try {
+
+                                await navigator.share({
+
+                                    title:
+                                        "سرزمین شگفت‌انگیز",
+
+                                    text:
+                                        shareText,
+
+                                    url:
+                                        window.location.href
+
+                                });
+
+                            }
+
+                            catch (err) {
+
+                                console.log(
+                                    "SHARE CANCELLED",
+                                    err
+                                );
+
+                            }
+
+                        }
+
+                        else {
+
+                            alert(
+                                "اشتراک‌گذاری در این مرورگر پشتیبانی نمی‌شود."
+                            );
+
+                        }
+
+
+                        return;
+
+                    }
+
+                }
 
             }
 
