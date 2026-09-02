@@ -1,669 +1,127 @@
-<!DOCTYPE html>
-<html lang="fa">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>سرزمین شگفت‌انگیز</title>
-
-  <!-- A-Frame -->
-  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
-
-  <!-- MindAR -->
-  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
-
-  <script defer src="app.js?v=120"></script>
-
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background: black;
-    }
-
-    #loading {
-      position: fixed;
-      z-index: 9999;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      color: white;
-      font-size: 20px;
-      display: none;
-    }
-  </style>
-</head>
-
-<body>
-
-<a-scene
-  mindar-image="
-    imageTargetSrc: ./targets.mind;
-    autoStart: true;
-    warmupTolerance: 2;
-    missTolerance: 1;
-  "
-  color-space="sRGB"
-  renderer="colorManagement: true; physicallyCorrectLights: true"
-  vr-mode-ui="enabled: false"
-  device-orientation-permission-ui="enabled: false"
->
-
-  <!-- دوربین -->
-  <a-camera
-    position="0 0 0"
-    look-controls="enabled: false"
-    cursor="fuse: false; rayOrigin: mouse;"
-    raycaster="far: 10000; objects: .clickable;"
-  ></a-camera>
-
-
-  <!-- ================================================= -->
-  <!-- TARGET 0 -->
-  <!-- ================================================= -->
-
-  <a-entity mindar-image-target="targetIndex: 0">
-
-    <a-video
-      id="arVideo0"
-      src="#video0"
-      position="0 0 0"
-      width="1"
-      height="1.42"
-      rotation="0 0 0"
-    ></a-video>
-
-
-    <!-- نوشته جدید بالا -->
-    <a-text
-      id="promo0"
-      value="می‌خوای دوستاتو سورپرایز کنی؟\nبفرس براش👇"
-      position="0 0.63 0.01"
-      align="center"
-      anchor="center"
-      width="1.2"
-      color="#ffffff"
-      visible="false"
-    ></a-text>
-
-
-    <!-- نوشته جدید کنار آیدی -->
-    <a-text
-      id="liveText0"
-      value="دفترهای زنده 👈"
-      position="-0.31 0.72 0.02"
-      align="center"
-      anchor="center"
-      width="0.75"
-      color="#ffffff"
-      visible="false"
-    ></a-text>
-
-
-    <!-- آیدی اینستاگرام - جای اصلی حفظ شده -->
-    <a-text
-      id="instagram0"
-      class="clickable"
-      value="@SarzaminAr"
-      position="-0.31 0.62 0.02"
-      align="center"
-      anchor="center"
-      width="0.75"
-      color="#ffffff"
-      visible="true"
-    ></a-text>
-
-    <a-plane
-      id="instagramZone0"
-      class="clickable"
-      position="-0.31 0.62 0.03"
-      width="0.75"
-      height="0.20"
-      material="transparent: true; opacity: 0.001;"
-    ></a-plane>
-
-
-    <!-- نوشته جدید بالای سرزمین -->
-    <a-text
-      id="shareText0"
-      value="می‌خوای دوستاتو سورپرایز کنی؟ بفرس براش👇"
-      position="0 -0.52 0.02"
-      align="center"
-      anchor="center"
-      width="1.15"
-      color="#ffffff"
-      visible="false"
-    ></a-text>
-
-
-    <!-- سرزمین شگفت انگیز - جای اصلی حفظ شده -->
-    <a-text
-      id="store0"
-      class="clickable"
-      value="سرزمین شگفت‌انگیز"
-      position="0 -0.62 0.02"
-      align="center"
-      anchor="center"
-      width="1.05"
-      color="#ffffff"
-      visible="true"
-    ></a-text>
-
-    <a-plane
-      id="shareZone0"
-      class="clickable"
-      position="0 -0.62 0.03"
-      width="1.10"
-      height="0.20"
-      material="transparent: true; opacity: 0.001;"
-    ></a-plane>
-
-  </a-entity>
-
-
-
-  <!-- ================================================= -->
-  <!-- TARGET 1 -->
-  <!-- ================================================= -->
-
-  <a-entity mindar-image-target="targetIndex: 1">
-
-    <a-video
-      id="arVideo1"
-      src="#video1"
-      position="0 0 0"
-      width="1"
-      height="1.42"
-      rotation="0 0 0"
-    ></a-video>
-
-    <a-text
-      id="promo1"
-      value="می‌خوای دوستاتو سورپرایز کنی؟\nبفرس براش👇"
-      position="0 0.63 0.01"
-      align="center"
-      anchor="center"
-      width="1.2"
-      color="#ffffff"
-      visible="false"
-    ></a-text>
-
-    <a-text
-      id="liveText1"
-      value="دفترهای زنده 👈"
-      position="-0.31 0.72 0.02"
-      align="center"
-      anchor="center"
-      width="0.75"
-      color="#ffffff"
-      visible="false"
-    ></a-text>
-
-    <a-text
-      id="instagram1"
-      class="clickable"
-      value="@SarzaminAr"
-      position="-0.31 0.62 0.02"
-      align="center"
-      anchor="center"
-      width="0.75"
-      color="#ffffff"
-    ></a-text>
-
-    <a-plane
-      class="clickable"
-      position="-0.31 0.62 0.03"
-      width="0.75"
-      height="0.20"
-      material="transparent: true; opacity: 0.001;"
-    ></a-plane>
-
-    <a-text
-      id="shareText1"
-      value="می‌خوای دوستاتو سورپرایز کنی؟ بفرس براش👇"
-      position="0 -0.52 0.02"
-      align="center"
-      anchor="center"
-      width="1.15"
-      color="#ffffff"
-      visible="false"
-    ></a-text>
-
-    <a-text
-      id="store1"
-      class="clickable"
-      value="سرزمین شگفت‌انگیز"
-      position="0 -0.62 0.02"
-      align="center"
-      anchor="center"
-      width="1.05"
-      color="#ffffff"
-    ></a-text>
-
-    <a-plane
-      class="clickable"
-      position="0 -0.62 0.03"
-      width="1.10"
-      height="0.20"
-      material="transparent: true; opacity: 0.001;"
-    ></a-plane>
-
-  </a-entity>
-
-
-
-  <!-- ================================================= -->
-  <!-- TARGET 2 -->
-  <!-- ================================================= -->
-
-  <a-entity mindar-image-target="targetIndex: 2">
-
-    <a-video
-      id="arVideo2"
-      src="#video2"
-      position="0 0 0"
-      width="1"
-      height="1.42"
-    ></a-video>
-
-    <a-text
-      id="promo2"
-      value="می‌خوای دوستاتو سورپرایز کنی؟\nبفرس براش👇"
-      position="0 0.63 0.01"
-      align="center"
-      anchor="center"
-      width="1.2"
-      color="#ffffff"
-      visible="false"
-    ></a-text>
-
-    <a-text
-      id="liveText2"
-      value="دفترهای زنده 👈"
-      position="-0.31 0.72 0.02"
-      align="center"
-      anchor="center"
-      width="0.75"
-      color="#ffffff"
-      visible="false"
-    ></a-text>
-
-    <a-text
-      id="instagram2"
-      class="clickable"
-      value="@SarzaminAr"
-      position="-0.31 0.62 0.02"
-      align="center"
-      anchor="center"
-      width="0.75"
-      color="#ffffff"
-    ></a-text>
-
-    <a-plane
-      class="clickable"
-      position="-0.31 0.62 0.03"
-      width="0.75"
-      height="0.20"
-      material="transparent: true; opacity: 0.001;"
-    ></a-plane>
-
-    <a-text
-      id="shareText2"
-      value="می‌خوای دوستاتو سورپرایز کنی؟ بفرس براش👇"
-      position="0 -0.52 0.02"
-      align="center"
-      anchor="center"
-      width="1.15"
-      color="#ffffff"
-      visible="false"
-    ></a-text>
-
-    <a-text
-      id="store2"
-      class="clickable"
-      value="سرزمین شگفت‌انگیز"
-      position="0 -0.62 0.02"
-      align="center"
-      anchor="center"
-      width="1.05"
-      color="#ffffff"
-    ></a-text>
-
-    <a-plane
-      class="clickable"
-      position="0 -0.62 0.03"
-      width="1.10"
-      height="0.20"
-      material="transparent: true; opacity: 0.001;"
-    ></a-plane>
-
-  </a-entity>
-
-
-
-  <!-- ================================================= -->
-  <!-- TARGET 3 -->
-  <!-- ================================================= -->
-
-  <a-entity mindar-image-target="targetIndex: 3">
-
-    <a-video
-      id="arVideo3"
-      src="#video3"
-      position="0 0 0"
-      width="1"
-      height="1.42"
-    ></a-video>
-
-    <a-text
-      id="promo3"
-      value="می‌خوای دوستاتو سورپرایز کنی؟\nبفرس براش👇"
-      position="0 0.63 0.01"
-      align="center"
-      anchor="center"
-      width="1.2"
-      color="#ffffff"
-      visible="false"
-    ></a-text>
-
-    <a-text
-      id="liveText3"
-      value="دفترهای زنده 👈"
-      position="-0.31 0.72 0.02"
-      align="center"
-      anchor="center"
-      width="0.75"
-      color="#ffffff"
-      visible="false"
-    ></a-text>
-
-    <a-text
-      id="instagram3"
-      class="clickable"
-      value="@SarzaminAr"
-      position="-0.31 0.62 0.02"
-      align="center"
-      anchor="center"
-      width="0.75"
-      color="#ffffff"
-    ></a-text>
-
-    <a-plane
-      class="clickable"
-      position="-0.31 0.62 0.03"
-      width="0.75"
-      height="0.20"
-      material="transparent: true; opacity: 0.001;"
-    ></a-plane>
-
-    <a-text
-      id="shareText3"
-      value="می‌خوای دوستاتو سورپرایز کنی؟ بفرس براش👇"
-      position="0 -0.52 0.02"
-      align="center"
-      anchor="center"
-      width="1.15"
-      color="#ffffff"
-      visible="false"
-    ></a-text>
-
-    <a-text
-      id="store3"
-      class="clickable"
-      value="سرزمین شگفت‌انگیز"
-      position="0 -0.62 0.02"
-      align="center"
-      anchor="center"
-      width="1.05"
-      color="#ffffff"
-    ></a-text>
-
-    <a-plane
-      class="clickable"
-      position="0 -0.62 0.03"
-      width="1.10"
-      height="0.20"
-      material="transparent: true; opacity: 0.001;"
-    ></a-plane>
-
-  </a-entity>
-
-
-
-  <!-- ================================================= -->
-  <!-- TARGET 4 -->
-  <!-- ================================================= -->
-
-  <a-entity mindar-image-target="targetIndex: 4">
-
-    <a-video
-      id="arVideo4"
-      src="#video4"
-      position="0 0 0"
-      width="1"
-      height="1.42"
-    ></a-video>
-
-    <a-text
-      id="promo4"
-      value="می‌خوای دوستاتو سورپرایز کنی؟\nبفرس براش👇"
-      position="0 0.63 0.01"
-      align="center"
-      anchor="center"
-      width="1.2"
-      color="#ffffff"
-      visible="false"
-    ></a-text>
-
-    <a-text
-      id="liveText4"
-      value="دفترهای زنده 👈"
-      position="-0.31 0.72 0.02"
-      align="center"
-      anchor="center"
-      width="0.75"
-      color="#ffffff"
-      visible="false"
-    ></a-text>
-
-    <a-text
-      id="instagram4"
-      class="clickable"
-      value="@SarzaminAr"
-      position="-0.31 0.62 0.02"
-      align="center"
-      anchor="center"
-      width="0.75"
-      color="#ffffff"
-    ></a-text>
-
-    <a-plane
-      class="clickable"
-      position="-0.31 0.62 0.03"
-      width="0.75"
-      height="0.20"
-      material="transparent: true; opacity: 0.001;"
-    ></a-plane>
-
-    <a-text
-      id="shareText4"
-      value="می‌خوای دوستاتو سورپرایز کنی؟ بفرس براش👇"
-      position="0 -0.52 0.02"
-      align="center"
-      anchor="center"
-      width="1.15"
-      color="#ffffff"
-      visible="false"
-    ></a-text>
-
-    <a-text
-      id="store4"
-      class="clickable"
-      value="سرزمین شگفت‌انگیز"
-      position="0 -0.62 0.02"
-      align="center"
-      anchor="center"
-      width="1.05"
-      color="#ffffff"
-    ></a-text>
-
-    <a-plane
-      class="clickable"
-      position="0 -0.62 0.03"
-      width="1.10"
-      height="0.20"
-      material="transparent: true; opacity: 0.001;"
-    ></a-plane>
-
-  </a-entity>
-
-
-
-  <!-- ================================================= -->
-  <!-- TARGET 5 -->
-  <!-- ================================================= -->
-
-  <a-entity mindar-image-target="targetIndex: 5">
-
-    <a-video
-      id="arVideo5"
-      src="#video5"
-      position="0 0 0"
-      width="1"
-      height="1.42"
-    ></a-video>
-
-    <a-text
-      id="promo5"
-      value="می‌خوای دوستاتو سورپرایز کنی؟\nبفرس براش👇"
-      position="0 0.63 0.01"
-      align="center"
-      anchor="center"
-      width="1.2"
-      color="#ffffff"
-      visible="false"
-    ></a-text>
-
-    <a-text
-      id="liveText5"
-      value="دفترهای زنده 👈"
-      position="-0.31 0.72 0.02"
-      align="center"
-      anchor="center"
-      width="0.75"
-      color="#ffffff"
-      visible="false"
-    ></a-text>
-
-    <a-text
-      id="instagram5"
-      class="clickable"
-      value="@SarzaminAr"
-      position="-0.31 0.62 0.02"
-      align="center"
-      anchor="center"
-      width="0.75"
-      color="#ffffff"
-    ></a-text>
-
-    <a-plane
-      class="clickable"
-      position="-0.31 0.62 0.03"
-      width="0.75"
-      height="0.20"
-      material="transparent: true; opacity: 0.001;"
-    ></a-plane>
-
-    <a-text
-      id="shareText5"
-      value="می‌خوای دوستاتو سورپرایز کنی؟ بفرس براش👇"
-      position="0 -0.52 0.02"
-      align="center"
-      anchor="center"
-      width="1.15"
-      color="#ffffff"
-      visible="false"
-    ></a-text>
-
-    <a-text
-      id="store5"
-      class="clickable"
-      value="سرزمین شگفت‌انگیز"
-      position="0 -0.62 0.02"
-      align="center"
-      anchor="center"
-      width="1.05"
-      color="#ffffff"
-    ></a-text>
-
-    <a-plane
-      class="clickable"
-      position="0 -0.62 0.03"
-      width="1.10"
-      height="0.20"
-      material="transparent: true; opacity: 0.001;"
-    ></a-plane>
-
-  </a-entity>
-
-
-  <!-- ویدیوها -->
-  <a-assets>
-
-    <video
-      id="video0"
-      src="./notebook/choromi.mp4"
-      preload="auto"
-      playsinline
-      webkit-playsinline
-    ></video>
-
-    <video
-      id="video1"
-      src="./notebook2/02.mp4"
-      preload="auto"
-      playsinline
-      webkit-playsinline
-    ></video>
-
-    <video
-      id="video2"
-      src="./notebook3/03.mp4"
-      preload="auto"
-      playsinline
-      webkit-playsinline
-    ></video>
-
-    <video
-      id="video3"
-      src="./notebook4/04.mp4"
-      preload="auto"
-      playsinline
-      webkit-playsinline
-    ></video>
-
-    <video
-      id="video4"
-      src="./notebook5/05.mp4"
-      preload="auto"
-      playsinline
-      webkit-playsinline
-    ></video>
-
-    <video
-      id="video5"
-      src="./notebook6/06.mp4"
-      preload="auto"
-      playsinline
-      webkit-playsinline
-    ></video>
-
-  </a-assets>
-
-</a-scene>
-
-</body>
-</html>
+if (!touch) {
+
+                return;
+
+            }
+
+
+            const canvas =
+                scene.renderer.domElement;
+
+
+            const rect =
+                canvas.getBoundingClientRect();
+
+
+            /*
+            مختصات لمس روی صفحه
+            */
+
+            const mouse =
+                new THREE.Vector2();
+
+
+            mouse.x =
+                (
+                    (touch.clientX - rect.left)
+                    /
+                    rect.width
+                ) * 2 - 1;
+
+
+            mouse.y =
+                -(
+                    (touch.clientY - rect.top)
+                    /
+                    rect.height
+                ) * 2 + 1;
+
+
+            /*
+            Raycaster
+            */
+
+            const raycaster =
+                new THREE.Raycaster();
+
+
+            raycaster.setFromCamera(
+                mouse,
+                scene.camera
+            );
+
+
+            /*
+            فقط Instagram Zone
+            */
+
+            const zone =
+                activeTarget.querySelector(
+                    ".instagram-zone"
+                );
+
+
+            if (!zone) {
+
+                return;
+
+            }
+
+
+            const mesh =
+                zone.getObject3D("mesh");
+
+
+            if (!mesh) {
+
+                return;
+
+            }
+
+
+            const hits =
+                raycaster.intersectObject(
+                    mesh,
+                    true
+                );
+
+
+            /*
+            اگر روی ناحیه Instagram لمس شده
+            */
+
+            if (
+                hits.length > 0
+            ) {
+
+                console.log(
+                    "INSTAGRAM PRESSED"
+                );
+
+
+                /*
+                اول تلاش برای باز کردن
+                اپ Instagram
+                */
+
+                const intentURL =
+                    "intent://www.instagram.com/_u/SarzaminAr/#Intent;" +
+                    "package=com.instagram.android;" +
+                    "scheme=https;" +
+                    "end";
+
+
+                window.location.href =
+                    intentURL;
+
+            }
+
+        },
+
+        {
+            passive: true
+        }
+
+    );
+
+});
