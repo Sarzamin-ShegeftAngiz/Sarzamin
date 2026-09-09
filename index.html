@@ -1,379 +1,342 @@
-<!DOCTYPE html>
-<html lang="fa">
+<!DOCTYPE html><html lang="fa"><head>
+    <meta charset="UTF-8"><meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-<head>
-    <meta charset="UTF-8">
+<title>Sarzamin AR</title>
 
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<!-- A-Frame -->
+<script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
 
-    <title>Sarzamin AR</title>
+<!-- MindAR -->
+<script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
-    <!-- A-Frame -->
-    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+<!-- برنامه اصلی -->
+<script defer src="app.js?v=3"></script>
 
-    <!-- MindAR -->
-    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+<!-- استایل -->
+<link rel="stylesheet" href="style.css?v=3">
 
-    <!-- برنامه اصلی -->
-    <script defer src="app.js?v=2"></script>
+</head><body><a-scene
+mindar-image="
+imageTargetSrc: ./Group1/targets.mind;
+warmupTolerance: 2;
+missTolerance: 1;
+"
+embedded
+vr-mode-ui="enabled:false"
+device-orientation-permission-ui="enabled:false"
+renderer="colorManagement:true; alpha:true;"
 
-    <!-- استایل -->
-    <link rel="stylesheet" href="style.css?v=2">
-</head>
+«»
 
-<body>
+<a-assets>
 
-<a-scene
-    mindar-image="
-        imageTargetSrc: ./Group1/targets.mind;
-        warmupTolerance: 2;
-        missTolerance: 1;
-    "
-    embedded
-    vr-mode-ui="enabled:false"
-    device-orientation-permission-ui="enabled:false"
-    renderer="colorManagement:true; alpha:true;"
->
+    <!-- =========================
+         GROUP 1
+    ========================== -->
 
-    <a-assets>
+    <video id="g1-video0" src="./Group1/01/01.mp4"
+        preload="auto" loop muted playsinline webkit-playsinline></video>
 
-        <!-- Group1 -->
-        <video id="video0"
-            src="./Group1/01/01.mp4"
-            preload="auto"
-            loop
-            muted
-            playsinline
-            webkit-playsinline>
-        </video>
+    <video id="g1-video1" src="./Group1/02/02.mp4"
+        preload="auto" loop muted playsinline webkit-playsinline></video>
 
-        <video id="video1"
-            src="./Group1/02/02.mp4"
-            preload="auto"
-            loop
-            muted
-            playsinline
-            webkit-playsinline>
-        </video>
+    <video id="g1-video2" src="./Group1/03/03.mp4"
+        preload="auto" loop muted playsinline webkit-playsinline></video>
 
-        <video id="video2"
-            src="./Group1/03/03.mp4"
-            preload="auto"
-            loop
-            muted
-            playsinline
-            webkit-playsinline>
-        </video>
+    <video id="g1-video3" src="./Group1/04/04.mp4"
+        preload="auto" loop muted playsinline webkit-playsinline></video>
 
-        <video id="video3"
-            src="./Group1/04/04.mp4"
-            preload="auto"
-            loop
-            muted
-            playsinline
-            webkit-playsinline>
-        </video>
+    <video id="g1-video4" src="./Group1/05/05.mp4"
+        preload="auto" loop muted playsinline webkit-playsinline></video>
 
-        <video id="video4"
-            src="./Group1/05/05.mp4"
-            preload="auto"
-            loop
-            muted
-            playsinline
-            webkit-playsinline>
-        </video>
+    <video id="g1-video5" src="./Group1/06/06.mp4"
+        preload="auto" loop muted playsinline webkit-playsinline></video>
 
-        <video id="video5"
-            src="./Group1/06/06.mp4"
-            preload="auto"
-            loop
-            muted
-            playsinline
-            webkit-playsinline>
-        </video>
+    <video id="g1-video6" src="./Group1/07/07.mp4"
+        preload="auto" loop muted playsinline webkit-playsinline></video>
 
-        <video id="video6"
-            src="./Group1/07/07.mp4"
-            preload="auto"
-            loop
-            muted
-            playsinline
-            webkit-playsinline>
-        </video>
+    <video id="g1-video7" src="./Group1/08/08.mp4"
+        preload="auto" loop muted playsinline webkit-playsinline></video>
 
-        <video id="video7"
-            src="./Group1/08/08.mp4"
-            preload="auto"
-            loop
-            muted
-            playsinline
-            webkit-playsinline>
-        </video>
+    <video id="g1-video8" src="./Group1/09/09.mp4"
+        preload="auto" loop muted playsinline webkit-playsinline></video>
 
-        <video id="video8"
-            src="./Group1/09/09.mp4"
-            preload="auto"
-            loop
-            muted
-            playsinline
-            webkit-playsinline>
-        </video>
+    <video id="g1-video9" src="./Group1/10/10.mp4"
+        preload="auto" loop muted playsinline webkit-playsinline></video>
 
-        <video id="video9"
-            src="./Group1/10/10.mp4"
-            preload="auto"
-            loop
-            muted
-            playsinline
-            webkit-playsinline>
-        </video>
+    <video id="g1-video10" src="./Group1/11/11.mp4"
+        preload="auto" loop muted playsinline webkit-playsinline></video>
 
-        <video id="video10"
-            src="./Group1/11/11.mp4"
-            preload="auto"
-            loop
-            muted
-            playsinline
-            webkit-playsinline>
-        </video>
+    <video id="g1-video11" src="./Group1/12/12.mp4"
+        preload="auto" loop muted playsinline webkit-playsinline></video>
 
-        <video id="video11"
-            src="./Group1/12/12.mp4"
-            preload="auto"
-            loop
-            muted
-            playsinline
-            webkit-playsinline>
-        </video>
+    <video id="g1-video12" src="./Group1/13/13.mp4"
+        preload="auto" loop muted playsinline webkit-playsinline></video>
 
-        <video id="video12"
-            src="./Group1/13/13.mp4"
-            preload="auto"
-            loop
-            muted
-            playsinline
-            webkit-playsinline>
-        </video>
+    <video id="g1-video13" src="./Group1/14/14.mp4"
+        preload="auto" loop muted playsinline webkit-playsinline></video>
 
-        <video id="video13"
-            src="./Group1/14/14.mp4"
-            preload="auto"
-            loop
-            muted
-            playsinline
-            webkit-playsinline>
-        </video>
+    <video id="g1-video14" src="./Group1/15/15.mp4"
+        preload="auto" loop muted playsinline webkit-playsinline></video>
 
-        <video id="video14"
-            src="./Group1/15/15.mp4"
-            preload="auto"
-            loop
-            muted
-            playsinline
-            webkit-playsinline>
-        </video>
+    <video id="g1-video15" src="./Group1/16/16.mp4"
+        preload="auto" loop muted playsinline webkit-playsinline></video>
 
-        <video id="video15"
-            src="./Group1/16/16.mp4"
-            preload="auto"
-            loop
-            muted
-            playsinline
-            webkit-playsinline>
-        </video>
+    <video id="g1-video16" src="./Group1/17/17.mp4"
+        preload="auto" loop muted playsinline webkit-playsinline></video>
 
-        <video id="video16"
-            src="./Group1/17/17.mp4"
-            preload="auto"
-            loop
-            muted
-            playsinline
-            webkit-playsinline>
-        </video>
+    <video id="g1-video17" src="./Group1/18/18.mp4"
+        preload="auto" loop muted playsinline webkit-playsinline></video>
 
-        <video id="video17"
-            src="./Group1/18/18.mp4"
-            preload="auto"
-            loop
-            muted
-            playsinline
-            webkit-playsinline>
-        </video>
+    <video id="g1-video18" src="./Group1/19/19.mp4"
+        preload="auto" loop muted playsinline webkit-playsinline></video>
 
-        <video id="video18"
-            src="./Group1/19/19.mp4"
-            preload="auto"
-            loop
-            muted
-            playsinline
-            webkit-playsinline>
-        </video>
-
-        <video id="video19"
-            src="./Group1/20/20.mp4"
-            preload="auto"
-            loop
-            muted
-            playsinline
-            webkit-playsinline>
-        </video>
-
-    </a-assets>
+    <video id="g1-video19" src="./Group1/20/20.mp4"
+        preload="auto" loop muted playsinline webkit-playsinline></video>
 
 
-    <!-- Target 01 -->
-    <a-entity mindar-image-target="targetIndex: 0">
-        <a-video
-            src="#video0"
-            width="1"
-            height="1.42"
-            position="0 0 0">
-        </a-video>
+    <!-- =========================
+         GROUP 2
+    ========================== -->
 
-        <a-text
-            class="after-video-text surprise-text"
-            value="می‌خوای دوستاتو هم سورپرایز کنی؟ 😍👇"
-            align="center"
-            width="1.8"
-            position="0 0.58 0.03">
-        </a-text>
+    <video id="g2-video0" src="./Group2/01/01.mp4"
+        preload="auto" loop muted playsinline webkit-playsinline></video>
 
-        <a-text
-            class="after-video-text instagram-text"
-            value="دفترهای زنده اینجا 👈"
-            align="center"
-            width="1.5"
-            position="-0.30 0.62 0.03">
-        </a-text>
+    <video id="g2-video1" src="./Group2/02/02.mp4"
+        preload="auto" loop muted playsinline webkit-playsinline></video>
 
-        <a-plane
-            class="instagram-zone"
-            width="0.70"
-            height="0.16"
-            position="-0.31 0.62 0.02"
-            material="transparent:true; opacity:0;">
-        </a-plane>
+    <video id="g2-video2" src="./Group2/03/03.mp4"
+        preload="auto" loop muted playsinline webkit-playsinline></video>
 
-        <a-text
-            value="سرزمین شگفت‌انگیز"
-            align="center"
-            width="1.8"
-            position="0 -0.62 0.03">
-        </a-text>
+    <video id="g2-video3" src="./Group2/04/04.mp4"
+        preload="auto" loop muted playsinline webkit-playsinline></video>
 
-        <a-plane
-            class="share-zone"
-            width="0.9"
-            height="0.18"
-            position="0 -0.62 0.02"
-            material="transparent:true; opacity:0;">
-        </a-plane>
-    </a-entity>
+    <video id="g2-video4" src="./Group2/05/05.mp4"
+        preload="auto" loop muted playsinline webkit-playsinline></video>
 
+    <video id="g2-video5" src="./Group2/06/06.mp4"
+        preload="auto" loop muted playsinline webkit-playsinline></video>
 
-    <!-- Target 02 -->
-    <a-entity mindar-image-target="targetIndex: 1">
-        <a-video src="#video1" width="1" height="1.42"></a-video>
-    </a-entity>
+    <video id="g2-video6" src="./Group2/07/07.mp4"
+        preload="auto" loop muted playsinline webkit-playsinline></video>
 
-    <!-- Target 03 -->
-    <a-entity mindar-image-target="targetIndex: 2">
-        <a-video src="#video2" width="1" height="1.42"></a-video>
-    </a-entity>
+    <video id="g2-video7" src="./Group2/08/08.mp4"
+        preload="auto" loop muted playsinline webkit-playsinline></video>
 
-    <!-- Target 04 -->
-    <a-entity mindar-image-target="targetIndex: 3">
-        <a-video src="#video3" width="1" height="1.42"></a-video>
-    </a-entity>
+    <video id="g2-video8" src="./Group2/09/09.mp4"
+        preload="auto" loop muted playsinline webkit-playsinline></video>
 
-    <!-- Target 05 -->
-    <a-entity mindar-image-target="targetIndex: 4">
-        <a-video src="#video4" width="1" height="1.42"></a-video>
-    </a-entity>
+    <video id="g2-video9" src="./Group2/10/10.mp4"
+        preload="auto" loop muted playsinline webkit-playsinline></video>
 
-    <!-- Target 06 -->
-    <a-entity mindar-image-target="targetIndex: 5">
-        <a-video src="#video5" width="1" height="1.42"></a-video>
-    </a-entity>
+    <video id="g2-video10" src="./Group2/11/11.mp4"
+        preload="auto" loop muted playsinline webkit-playsinline></video>
 
-    <!-- Target 07 -->
-    <a-entity mindar-image-target="targetIndex: 6">
-        <a-video src="#video6" width="1" height="1.42"></a-video>
-    </a-entity>
+    <video id="g2-video11" src="./Group2/12/12.mp4"
+        preload="auto" loop muted playsinline webkit-playsinline></video>
 
-    <!-- Target 08 -->
-    <a-entity mindar-image-target="targetIndex: 7">
-        <a-video src="#video7" width="1" height="1.42"></a-video>
-    </a-entity>
+    <video id="g2-video12" src="./Group2/13/13.mp4"
+        preload="auto" loop muted playsinline webkit-playsinline></video>
 
-    <!-- Target 09 -->
-    <a-entity mindar-image-target="targetIndex: 8">
-        <a-video src="#video8" width="1" height="1.42"></a-video>
-    </a-entity>
+    <video id="g2-video13" src="./Group2/14/14.mp4"
+        preload="auto" loop muted playsinline webkit-playsinline></video>
 
-    <!-- Target 10 -->
-    <a-entity mindar-image-target="targetIndex: 9">
-        <a-video src="#video9" width="1" height="1.42"></a-video>
-    </a-entity>
+    <video id="g2-video14" src="./Group2/15/15.mp4"
+        preload="auto" loop muted playsinline webkit-playsinline></video>
 
-    <!-- Target 11 -->
-    <a-entity mindar-image-target="targetIndex: 10">
-        <a-video src="#video10" width="1" height="1.42"></a-video>
-    </a-entity>
+    <video id="g2-video15" src="./Group2/16/16.mp4"
+        preload="auto" loop muted playsinline webkit-playsinline></video>
 
-    <!-- Target 12 -->
-    <a-entity mindar-image-target="targetIndex: 11">
-        <a-video src="#video11" width="1" height="1.42"></a-video>
-    </a-entity>
+    <video id="g2-video16" src="./Group2/17/17.mp4"
+        preload="auto" loop muted playsinline webkit-playsinline></video>
 
-    <!-- Target 13 -->
-    <a-entity mindar-image-target="targetIndex: 12">
-        <a-video src="#video12" width="1" height="1.42"></a-video>
-    </a-entity>
+    <video id="g2-video17" src="./Group2/18/18.mp4"
+        preload="auto" loop muted playsinline webkit-playsinline></video>
 
-    <!-- Target 14 -->
-    <a-entity mindar-image-target="targetIndex: 13">
-        <a-video src="#video13" width="1" height="1.42"></a-video>
-    </a-entity>
+    <video id="g2-video18" src="./Group2/19/19.mp4"
+        preload="auto" loop muted playsinline webkit-playsinline></video>
 
-    <!-- Target 15 -->
-    <a-entity mindar-image-target="targetIndex: 14">
-        <a-video src="#video14" width="1" height="1.42"></a-video>
-    </a-entity>
+    <video id="g2-video19" src="./Group2/20/20.mp4"
+        preload="auto" loop muted playsinline webkit-playsinline></video>
 
-    <!-- Target 16 -->
-    <a-entity mindar-image-target="targetIndex: 15">
-        <a-video src="#video15" width="1" height="1.42"></a-video>
-    </a-entity>
-
-    <!-- Target 17 -->
-    <a-entity mindar-image-target="targetIndex: 16">
-        <a-video src="#video16" width="1" height="1.42"></a-video>
-    </a-entity>
-
-    <!-- Target 18 -->
-    <a-entity mindar-image-target="targetIndex: 17">
-        <a-video src="#video17" width="1" height="1.42"></a-video>
-    </a-entity>
-
-    <!-- Target 19 -->
-    <a-entity mindar-image-target="targetIndex: 18">
-        <a-video src="#video18" width="1" height="1.42"></a-video>
-    </a-entity>
-
-    <!-- Target 20 -->
-    <a-entity mindar-image-target="targetIndex: 19">
-        <a-video src="#video19" width="1" height="1.42"></a-video>
-    </a-entity>
+</a-assets>
 
 
-    <a-camera
-        position="0 0 0"
-        look-controls="enabled:false">
-    </a-camera>
+<!-- =========================
+     GROUP 1 TARGETS
+========================== -->
 
-</a-scene>
+<a-entity mindar-image-target="targetIndex: 0">
+    <a-video src="#g1-video0" width="1" height="1.42"></a-video>
+</a-entity>
 
-</body>
+<a-entity mindar-image-target="targetIndex: 1">
+    <a-video src="#g1-video1" width="1" height="1.42"></a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 2">
+    <a-video src="#g1-video2" width="1" height="1.42"></a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 3">
+    <a-video src="#g1-video3" width="1" height="1.42"></a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 4">
+    <a-video src="#g1-video4" width="1" height="1.42"></a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 5">
+    <a-video src="#g1-video5" width="1" height="1.42"></a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 6">
+    <a-video src="#g1-video6" width="1" height="1.42"></a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 7">
+    <a-video src="#g1-video7" width="1" height="1.42"></a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 8">
+    <a-video src="#g1-video8" width="1" height="1.42"></a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 9">
+    <a-video src="#g1-video9" width="1" height="1.42"></a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 10">
+    <a-video src="#g1-video10" width="1" height="1.42"></a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 11">
+    <a-video src="#g1-video11" width="1" height="1.42"></a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 12">
+    <a-video src="#g1-video12" width="1" height="1.42"></a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 13">
+    <a-video src="#g1-video13" width="1" height="1.42"></a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 14">
+    <a-video src="#g1-video14" width="1" height="1.42"></a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 15">
+    <a-video src="#g1-video15" width="1" height="1.42"></a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 16">
+    <a-video src="#g1-video16" width="1" height="1.42"></a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 17">
+    <a-video src="#g1-video17" width="1" height="1.42"></a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 18">
+    <a-video src="#g1-video18" width="1" height="1.42"></a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 19">
+    <a-video src="#g1-video19" width="1" height="1.42"></a-video>
+</a-entity>
+
+
+<!-- =========================
+     GROUP 2 TARGETS
+========================== -->
+
+<a-entity mindar-image-target="targetIndex: 0">
+    <a-video src="#g2-video0" width="1" height="1.42"></a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 1">
+    <a-video src="#g2-video1" width="1" height="1.42"></a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 2">
+    <a-video src="#g2-video2" width="1" height="1.42"></a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 3">
+    <a-video src="#g2-video3" width="1" height="1.42"></a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 4">
+    <a-video src="#g2-video4" width="1" height="1.42"></a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 5">
+    <a-video src="#g2-video5" width="1" height="1.42"></a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 6">
+    <a-video src="#g2-video6" width="1" height="1.42"></a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 7">
+    <a-video src="#g2-video7" width="1" height="1.42"></a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 8">
+    <a-video src="#g2-video8" width="1" height="1.42"></a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 9">
+    <a-video src="#g2-video9" width="1" height="1.42"></a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 10">
+    <a-video src="#g2-video10" width="1" height="1.42"></a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 11">
+    <a-video src="#g2-video11" width="1" height="1.42"></a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 12">
+    <a-video src="#g2-video12" width="1" height="1.42"></a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 13">
+    <a-video src="#g2-video13" width="1" height="1.42"></a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 14">
+    <a-video src="#g2-video14" width="1" height="1.42"></a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 15">
+    <a-video src="#g2-video15" width="1" height="1.42"></a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 16">
+    <a-video src="#g2-video16" width="1" height="1.42"></a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 17">
+    <a-video src="#g2-video17" width="1" height="1.42"></a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 18">
+    <a-video src="#g2-video18" width="1" height="1.42"></a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 19">
+    <a-video src="#g2-video19" width="1" height="1.42"></a-video>
+</a-entity>
+
+
+<a-camera
+    position="0 0 0"
+    look-controls="enabled:false">
+</a-camera>
+
+</a-scene></body>
 </html>
