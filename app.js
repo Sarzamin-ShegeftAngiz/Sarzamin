@@ -2,204 +2,247 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const scene = document.querySelector("a-scene");
 
-    const videos = [
-        document.querySelector("#video0"),
-        document.querySelector("#video1"),
-        document.querySelector("#video2"),
-        document.querySelector("#video3"),
-        document.querySelector("#video4"),
-        document.querySelector("#video5")
-    ];
+    const videos = [];
 
-    const targets = [
-        document.querySelector('[mindar-image-target="targetIndex:0"]'),
-        document.querySelector('[mindar-image-target="targetIndex:1"]'),
-        document.querySelector('[mindar-image-target="targetIndex:2"]'),
-        document.querySelector('[mindar-image-target="targetIndex:3"]'),
-        document.querySelector('[mindar-image-target="targetIndex:4"]'),
-        document.querySelector('[mindar-image-target="targetIndex:5"]')
-    ];
+    for (let i = 0; i < 20; i++) {
+        videos.push(document.querySelector("#video" + i));
+    }
 
     let activeTarget = null;
+    let activeVideo = null;
+
+    let firstPlayFinished = false;
 
 
-    // ================================
+    // -----------------------------
     // AR READY
-    // ================================
+    // -----------------------------
 
     scene.addEventListener("arReady", () => {
-
-        console.log("AR READY");
-
+        console.log("AR READY - GROUP 1");
     });
 
 
-    // ================================
+    // -----------------------------
     // TARGET FOUND
-    // ================================
+    // -----------------------------
 
-    scene.addEventListener("targetFound", async (e) => {
+    scene.addEventListener("targetFound", async (event) => {
 
-        const target = e.target;
+        const target = event.target;
 
-        const data =
-            target.getAttribute("mindar-image-target");
+        const data = target.getAttribute("mindar-image-target");
 
-        const index =
-            data.targetIndex;
+        if (!data) return;
+
+        const index = Number(data.targetIndex);
 
         console.log("TARGET FOUND:", index);
 
         activeTarget = target;
 
-
         // توقف همه ویدئوهای دیگر
         videos.forEach((video, i) => {
 
-            if (video && i !== index) {
+            if (!video) return;
 
+            if (i !== index) {
                 video.pause();
-
             }
 
         });
 
-
-        // ویدئوی تارگت فعلی
         const video = videos[index];
 
         if (!video) {
-
+            console.log("VIDEO NOT FOUND:", index);
             return;
-
         }
 
+        activeVideo = video;
+
+        // شروع از ابتدا
         video.currentTime = 0;
 
+        // برای اجازه پخش روی موبایل
         video.muted = false;
-
 
         try {
 
             await video.play();
 
-            console.log(
-                "VIDEO PLAYING:",
-                index
-            );
+            console.log("VIDEO PLAYING:", index);
+
+        } catch (error) {
+
+            console.log("VIDEO PLAY ERROR:", error);
+
+            // اگر صدادار اجازه پخش نداد،
+            // یک بار بی‌صدا امتحان می‌کنیم.
+            video.muted = true;
+
+            try {
+                await video.play();
+                console.log("VIDEO PLAYING MUTED:", index);
+            } catch (error2) {
+                console.log("VIDEO STILL FAILED:", error2);
+            }
 
         }
 
-        catch (err) {
+        // متن‌ها را برای هر Target مخفی می‌کنیم
+        hideAfterTexts(target);
 
-            console.log(
-                "VIDEO ERROR:",
-                index,
-                err
-            );
+        firstPlayFinished = false;
 
-        }
-
+        watchFirstLoop(video, target);
     });
 
 
-    // ================================
+    // -----------------------------
     // TARGET LOST
-    // ================================
+    // -----------------------------
 
-    scene.addEventListener("targetLost", (e) => {
+    scene.addEventListener("targetLost", (event) => {
 
-        const target = e.target;
+        const target = event.target;
 
-        const data =
-            target.getAttribute("mindar-image-target");
+        const data = target.getAttribute("mindar-image-target");
 
-        const index =
-            data.targetIndex;
+        if (!data) return;
 
-        console.log(
-            "TARGET LOST:",
-            index
-        );
+        const index = Number(data.targetIndex);
+
+        console.log("TARGET LOST:", index);
 
         const video = videos[index];
 
         if (video) {
-
             video.pause();
-
         }
 
         if (activeTarget === target) {
-
             activeTarget = null;
-
+            activeVideo = null;
         }
 
     });
 
 
-    // ================================
-    // لمس روی Instagram و Share
-    // ================================
+    // -----------------------------
+    // تشخیص پایان اولین دور ویدئو
+    // -----------------------------
+
+    function watchFirstLoop(video, target) {
+
+        const startTime = performance.now();
+
+        function check() {
+
+            // اگر Target دیگر فعال نیست
+            if (activeTarget !== target) {
+                return;
+            }
+
+            // اگر قبلاً انجام شده
+            if (firstPlayFinished) {
+                return;
+            }
+
+            /*
+             * چون video دارای loop است،
+             * از ended استفاده نمی‌کنیم.
+             *
+             * وقتی زمان ویدئو نزدیک انتها شود،
+             * اولین دور را کامل‌شده در نظر می‌گیریم.
+             */
+
+            if (
+                video.duration &&
+                video.duration > 0 &&
+                video.currentTime >= video.duration - 0.15
+            ) {
+
+                firstPlayFinished = true;
+
+                showAfterTexts(target);
+
+                console.log("FIRST LOOP FINISHED");
+
+                return;
+            }
+
+            requestAnimationFrame(check);
+        }
+
+        requestAnimationFrame(check);
+    }
+
+
+    // -----------------------------
+    // مخفی کردن متن‌ها
+    // -----------------------------
+
+    function hideAfterTexts(target) {
+
+        const texts = target.querySelectorAll(".after-video-text");
+
+        texts.forEach((text) => {
+
+            text.setAttribute("visible", "false");
+
+        });
+
+    }
+
+
+    // -----------------------------
+    // نمایش متن‌ها
+    // -----------------------------
+
+    function showAfterTexts(target) {
+
+        const texts = target.querySelectorAll(".after-video-text");
+
+        texts.forEach((text) => {
+
+            text.setAttribute("visible", "true");
+
+        });
+
+    }
+
+
+    // -----------------------------
+    // لمس صفحه
+    // -----------------------------
 
     document.addEventListener(
         "touchend",
-        (event) => {
+        async (event) => {
 
-            if (!activeTarget) {
+            if (!activeTarget) return;
 
-                return;
+            if (!scene.camera || !scene.renderer) return;
 
-            }
+            const touch = event.changedTouches[0];
 
-            if (
-                !scene.camera ||
-                !scene.renderer
-            ) {
+            if (!touch) return;
 
-                return;
+            const canvas = scene.renderer.domElement;
 
-            }
+            const rect = canvas.getBoundingClientRect();
 
-            const touch =
-                event.changedTouches[0];
-
-            if (!touch) {
-
-                return;
-
-            }
-
-            const canvas =
-                scene.renderer.domElement;
-
-            const rect =
-                canvas.getBoundingClientRect();
-
-
-            // مختصات لمس
-            const mouse =
-                new THREE.Vector2();
+            const mouse = new THREE.Vector2();
 
             mouse.x =
-                (
-                    (touch.clientX - rect.left)
-                    /
-                    rect.width
-                ) * 2 - 1;
+                ((touch.clientX - rect.left) / rect.width) * 2 - 1;
 
             mouse.y =
-                -(
-                    (touch.clientY - rect.top)
-                    /
-                    rect.height
-                ) * 2 + 1;
+                -((touch.clientY - rect.top) / rect.height) * 2 + 1;
 
 
-            // Raycaster
-            const raycaster =
-                new THREE.Raycaster();
+            const raycaster = new THREE.Raycaster();
 
             raycaster.setFromCamera(
                 mouse,
@@ -207,36 +250,24 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
 
-            // ================================
-            // INSTAGRAM
-            // ================================
+            // -----------------------------
+            // Instagram
+            // -----------------------------
 
             const instagramZone =
-                activeTarget.querySelector(
-                    ".instagram-zone"
-                );
+                activeTarget.querySelector(".instagram-zone");
 
             if (instagramZone) {
 
-                const instagramMesh =
+                const mesh =
                     instagramZone.getObject3D("mesh");
 
-                if (instagramMesh) {
+                if (mesh) {
 
-                    const instagramHits =
-                        raycaster.intersectObject(
-                            instagramMesh,
-                            true
-                        );
+                    const hits =
+                        raycaster.intersectObject(mesh, true);
 
-                    if (
-                        instagramHits.length > 0
-                    ) {
-
-                        console.log(
-                            "INSTAGRAM PRESSED"
-                        );
-
+                    if (hits.length > 0) {
 
                         const intentURL =
                             "intent://www.instagram.com/_u/SarzaminAr/#Intent;" +
@@ -244,156 +275,90 @@ document.addEventListener("DOMContentLoaded", () => {
                             "scheme=https;" +
                             "end";
 
-
-                        window.location.href =
-                            intentURL;
+                        window.location.href = intentURL;
 
                         return;
-
                     }
-
                 }
-
             }
 
 
-            // ================================
-            // SHARE
-            // ================================
+            // -----------------------------
+            // Share
+            // -----------------------------
 
             const shareZone =
-                activeTarget.querySelector(
-                    ".share-zone"
-                );
+                activeTarget.querySelector(".share-zone");
 
-            if (!shareZone) {
+            if (shareZone) {
 
-                return;
+                const mesh =
+                    shareZone.getObject3D("mesh");
 
-            }
+                if (mesh) {
 
-            const shareMesh =
-                shareZone.getObject3D("mesh");
+                    const hits =
+                        raycaster.intersectObject(mesh, true);
 
-            if (!shareMesh) {
+                    if (hits.length > 0) {
 
-                return;
+                        const shareText =
+                            "یه چیز خیلی باحال پیدا کردم! 😍📚 " +
+                            "فکر کن یه دفتر معمولی رو با دوربین گوشیت بگیری و یهو زنده بشه! 🤯✨ " +
+                            "شخصیت روی دفتر شروع می‌کنه به حرکت و انگار خود دفتر جون می‌گیره! 😍 " +
+                            "اگه کنجکاوی ببینی چطوریه، این لینک رو باز کن و دوربین گوشیت رو روی دفتر بگیر 👇 " +
+                            "بعدش حتماً یکی از دوستات رو هم سورپرایز کن! 😉🔥";
 
-            }
+                        if (navigator.share) {
 
-            const shareHits =
-                raycaster.intersectObject(
-                    shareMesh,
-                    true
-                );
+                            try {
 
+                                await navigator.share({
+                                    title: "Sarzamin AR",
+                                    text: shareText,
+                                    url: window.location.href
+                                });
 
-            if (
-                shareHits.length > 0
-            ) {
+                            } catch (error) {
 
-                console.log(
-                    "SHARE PRESSED"
-                );
+                                console.log(
+                                    "Share cancelled:",
+                                    error
+                                );
 
+                            }
 
-                // لینک همین صفحه
-                const shareURL =
-                    window.location.href;
+                        } else {
 
+                            try {
 
-                // متن پیام
-                const shareText =
-                    "📚✨ این فقط یه دفتر معمولی نیست!\n\n" +
-                    "این دفتر می‌تونه زنده بشه! 😱\n" +
-                    "دوربین گوشیت رو بگیر روی جلد و خودت ببین چه اتفاقی می‌افته! 👀\n\n" +
-                    "🔥 حالا اگه دوست داری طرح‌های زنده‌ی دیگه رو هم ببینی، " +
-                    "این لینک رو بزن و بیا آیدی اینستاگرام سرزمین شگفت‌انگیز رو ببین!\n" +
-                    "شاید طرح مورد علاقه‌ات اونجا منتظرت باشه 😍📚\n\n" +
-                    "اگه دفترت هنوز زنده نشده، درخواست زنده‌شدنش رو بده! 😉✨";
+                                await navigator.clipboard.writeText(
+                                    shareText + "\n" +
+                                    window.location.href
+                                );
 
+                                alert(
+                                    "متن آماده شد و کپی شد 😊"
+                                );
 
-                // ================================
-                // Share گوشی
-                // ================================
+                            } catch (error) {
 
-                if (navigator.share) {
+                                console.log(
+                                    "Clipboard error:",
+                                    error
+                                );
 
-                    navigator.share({
+                            }
 
-                        title:
-                            "سرزمین شگفت‌انگیز 📚✨",
+                        }
 
-                        text:
-                            shareText,
-
-                        url:
-                            shareURL
-
-                    })
-
-                    .then(() => {
-
-                        console.log(
-                            "SHARE SUCCESS"
-                        );
-
-                    })
-
-                    .catch((err) => {
-
-                        console.log(
-                            "SHARE CANCELLED",
-                            err
-                        );
-
-                    });
-
+                        return;
+                    }
                 }
-
-
-                // ================================
-                // اگر Share پشتیبانی نشد
-                // ================================
-
-                else {
-
-                    navigator.clipboard
-                        .writeText(
-                            shareText +
-                            "\n\n" +
-                            shareURL
-                        )
-
-                        .then(() => {
-
-                            alert(
-                                "متن و لینک کپی شد ❤️\nبرای دوستت بفرست"
-                            );
-
-                        })
-
-                        .catch(() => {
-
-                            prompt(
-                                "این متن و لینک را برای دوستت بفرست:",
-                                shareText +
-                                "\n\n" +
-                                shareURL
-                            );
-
-                        });
-
-                }
-
             }
 
         },
-
-        {
-            passive: true
-        }
-
+        { passive: true }
     );
 
 });
