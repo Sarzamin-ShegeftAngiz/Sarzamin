@@ -1,473 +1,343 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-  // =========================================================
-  // GROUPS
-  // =========================================================
-
   const GROUPS = {
     Group1: {
-      mindFile: "Group1/targets.mind",
-      firstVideo: 1
+      mind: "Group1/targets.mind",
+      startVideo: 1
     },
     Group2: {
-      mindFile: "Group2/targets.mind",
-      firstVideo: 31
+      mind: "Group2/targets.mind",
+      startVideo: 31
     }
   };
 
-  const params = new URLSearchParams(
-    window.location.search
-  );
+  let group =
+    new URLSearchParams(location.search).get("group");
 
-  let selectedGroup = params.get("group");
-
-  if (!selectedGroup || !GROUPS[selectedGroup]) {
-    selectedGroup = localStorage.getItem(
-      "sarzamin_selected_group"
-    );
+  if (!GROUPS[group]) {
+    group = localStorage.getItem("sarzamin_group");
   }
-
-  // =========================================================
-  // VARIABLES
-  // =========================================================
 
   let scene = null;
   let video = null;
-
   let activeTarget = null;
-  let currentTargetIndex = -1;
-  let currentVideoNumber = null;
+  let activeIndex = -1;
+  let currentVideo = -1;
 
-  // =========================================================
-  // STYLE
-  // =========================================================
+  /* =====================================================
+     REMOVE OLD GROUP UI
+  ===================================================== */
+
+  function removeOldUI() {
+    [
+      "#groupSelector",
+      "#group-selection",
+      "#groupSelection",
+      "#groupPage",
+      "#group-page"
+    ].forEach(selector => {
+      document.querySelectorAll(selector).forEach(el => {
+        el.remove();
+      });
+    });
+  }
+
+  /* =====================================================
+     STYLES
+  ===================================================== */
 
   const style = document.createElement("style");
 
   style.textContent = `
     html,body{
-      margin:0;
-      padding:0;
+      margin:0!important;
+      padding:0!important;
       width:100%;
       height:100%;
       overflow:hidden;
       background:#000;
+    }
+
+    #groupSelectorNew{
+      position:fixed;
+      inset:0;
+      z-index:999999;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      background:linear-gradient(145deg,#6d4aff,#241047);
       font-family:Arial,sans-serif;
     }
 
-    #groupSelector{
-      position:fixed;
-      inset:0;
-      width:100vw;
-      height:100vh;
-      z-index:100000;
-
-      display:flex;
-      align-items:center;
-      justify-content:center;
-
-      background:linear-gradient(
-        145deg,
-        #704cff,
-        #26134f
-      );
-
-      padding:20px;
-    }
-
-    #groupCard{
-      width:min(90vw,430px);
+    .groupCard{
+      width:85%;
+      max-width:400px;
       padding:30px 22px;
       border-radius:28px;
-
-      background:rgba(255,255,255,.15);
-      border:1px solid rgba(255,255,255,.3);
-
-      backdrop-filter:blur(15px);
-      -webkit-backdrop-filter:blur(15px);
-
       text-align:center;
       color:white;
-
+      background:rgba(255,255,255,.16);
       box-shadow:0 20px 60px rgba(0,0,0,.4);
+      backdrop-filter:blur(15px);
     }
 
-    #groupCard h1{
-      margin:0 0 8px;
+    .groupCard h1{
+      margin:0 0 10px;
       font-size:30px;
-      font-weight:900;
     }
 
-    #groupCard p{
+    .groupCard p{
       margin:0 0 25px;
       font-size:18px;
     }
 
-    .groupButton{
-      display:block;
+    .groupBtn{
       width:100%;
-      margin:10px 0;
       padding:16px;
-
+      margin:9px 0;
       border:0;
       border-radius:16px;
-
       background:white;
       color:#222;
-
       font-size:18px;
       font-weight:bold;
-
       touch-action:manipulation;
-      -webkit-tap-highlight-color:transparent;
-    }
-
-    .groupButton:active{
-      transform:scale(.97);
     }
 
     #blueLoading{
       position:fixed;
       inset:0;
-      width:100vw;
-      height:100vh;
-      z-index:99999;
-
+      z-index:999998;
       display:flex;
-      align-items:center;
-      justify-content:center;
       flex-direction:column;
-
+      justify-content:center;
+      align-items:center;
       background:#0878d1;
       color:white;
+      font-family:Arial,sans-serif;
       text-align:center;
     }
 
-    #blueLoading .logo{
+    #blueLoading strong{
       font-size:36px;
-      font-weight:900;
-      letter-spacing:2px;
       margin-bottom:15px;
     }
 
-    #blueLoading .loadingText{
+    #blueLoading span{
       font-size:18px;
     }
 
-    #changeGroupButton{
+    #changeGroup{
       position:fixed;
       top:15px;
       right:15px;
       z-index:9999;
-
-      padding:10px 14px;
-      border:0;
-      border-radius:12px;
-
-      background:rgba(0,0,0,.55);
-      color:white;
-
-      font-size:14px;
-      font-weight:bold;
-
       display:none;
+      padding:11px 15px;
+      border:0;
+      border-radius:14px;
+      background:rgba(0,0,0,.6);
+      color:white;
+      font-size:15px;
     }
 
-    /* TEST TOUCH AREAS */
-    .testTouch{
-      position:relative;
+    .testZone{
+      opacity:.7;
     }
   `;
 
   document.head.appendChild(style);
 
-  // =========================================================
-  // GROUP SELECTOR
-  // =========================================================
+  /* =====================================================
+     GROUP PAGE
+  ===================================================== */
 
-  function showGroupSelector() {
+  function showGroups() {
 
-    const old = document.getElementById(
-      "groupSelector"
-    );
+    removeOldUI();
 
-    if (old) old.remove();
-
-    const selector = document.createElement("div");
-
-    selector.id = "groupSelector";
+    const page = document.createElement("div");
+    page.id = "groupSelectorNew";
 
     const card = document.createElement("div");
+    card.className = "groupCard";
 
-    card.id = "groupCard";
+    card.innerHTML = `
+      <h1>سرزمین شگفت انگیز</h1>
+      <p>انتخاب گروه دفترها</p>
+    `;
 
-    const title = document.createElement("h1");
+    ["Group1","Group2"].forEach((name,index) => {
 
-    title.textContent =
-      "سرزمین شگفت انگیز";
+      const btn = document.createElement("button");
 
-    const subtitle = document.createElement("p");
+      btn.className = "groupBtn";
+      btn.textContent =
+        index === 0 ? "گروه یک" : "گروه دو";
 
-    subtitle.textContent =
-      "انتخاب گروه دفترها";
-
-    card.appendChild(title);
-    card.appendChild(subtitle);
-
-    // GROUP 1
-    const group1 =
-      document.createElement("button");
-
-    group1.className = "groupButton";
-    group1.textContent = "گروه یک";
-
-    group1.addEventListener(
-      "touchend",
-      function(e){
-        e.preventDefault();
-        e.stopPropagation();
-        selectGroup("Group1");
-      },
-      {passive:false}
-    );
-
-    group1.addEventListener(
-      "click",
-      function(e){
-        e.preventDefault();
-        e.stopPropagation();
-        selectGroup("Group1");
-      }
-    );
-
-    // GROUP 2
-    const group2 =
-      document.createElement("button");
-
-    group2.className = "groupButton";
-    group2.textContent = "گروه دو";
-
-    group2.addEventListener(
-      "touchend",
-      function(e){
-        e.preventDefault();
-        e.stopPropagation();
-        selectGroup("Group2");
-      },
-      {passive:false}
-    );
-
-    group2.addEventListener(
-      "click",
-      function(e){
-        e.preventDefault();
-        e.stopPropagation();
-        selectGroup("Group2");
-      }
-    );
-
-    card.appendChild(group1);
-    card.appendChild(group2);
-
-    selector.appendChild(card);
-
-    document.body.appendChild(selector);
-  }
-
-  // =========================================================
-  // SELECT GROUP
-  // =========================================================
-
-  function selectGroup(groupName) {
-
-    localStorage.setItem(
-      "sarzamin_selected_group",
-      groupName
-    );
-
-    const selector =
-      document.getElementById(
-        "groupSelector"
+      btn.addEventListener(
+        "touchend",
+        e => {
+          e.preventDefault();
+          e.stopPropagation();
+          chooseGroup(name);
+        },
+        {passive:false}
       );
 
-    if (selector) {
-      selector.remove();
-    }
+      btn.addEventListener(
+        "click",
+        e => {
+          e.preventDefault();
+          e.stopPropagation();
+          chooseGroup(name);
+        }
+      );
 
-    // جلوگیری از صفحه سیاه
+      card.appendChild(btn);
+    });
+
+    page.appendChild(card);
+    document.body.appendChild(page);
+  }
+
+  /* =====================================================
+     CHOOSE GROUP
+  ===================================================== */
+
+  function chooseGroup(name) {
+
+    localStorage.setItem(
+      "sarzamin_group",
+      name
+    );
+
+    removeOldUI();
+
+    document
+      .querySelectorAll("a-scene")
+      .forEach(el => el.remove());
+
     document.body.innerHTML = "";
 
-    // دوباره Style را اضافه کن
     document.head.appendChild(style);
 
-    // صفحه آبی
-    showBlueLoading();
+    showLoading();
 
     setTimeout(() => {
 
-      window.location.replace(
-        window.location.pathname +
+      location.replace(
+        location.pathname +
         "?group=" +
-        encodeURIComponent(groupName)
+        encodeURIComponent(name)
       );
 
-    }, 50);
+    },100);
+
   }
 
-  // =========================================================
-  // BLUE LOADING
-  // =========================================================
+  /* =====================================================
+     BLUE LOADING
+  ===================================================== */
 
-  function showBlueLoading() {
+  function showLoading() {
 
     const old =
-      document.getElementById(
-        "blueLoading"
-      );
+      document.getElementById("blueLoading");
 
-    if (old) old.remove();
+    if(old) old.remove();
 
-    const loading =
+    const box =
       document.createElement("div");
 
-    loading.id = "blueLoading";
+    box.id = "blueLoading";
 
-    const logo =
-      document.createElement("div");
+    box.innerHTML = `
+      <strong>SARZAMINAR</strong>
+      <span>در حال آماده‌سازی دوربین...</span>
+    `;
 
-    logo.className = "logo";
-    logo.textContent = "SARZAMINAR";
-
-    const text =
-      document.createElement("div");
-
-    text.className = "loadingText";
-
-    text.textContent =
-      "در حال آماده‌سازی دوربین...";
-
-    loading.appendChild(logo);
-    loading.appendChild(text);
-
-    document.body.appendChild(loading);
+    document.body.appendChild(box);
   }
 
-  // =========================================================
-  // CHANGE GROUP BUTTON
-  // =========================================================
+  /* =====================================================
+     CHANGE GROUP
+  ===================================================== */
 
-  function createChangeGroupButton() {
+  function createChangeButton() {
 
-    const button =
+    const btn =
       document.createElement("button");
 
-    button.id = "changeGroupButton";
+    btn.id = "changeGroup";
+    btn.textContent = "🔄 تغییر گروه";
 
-    button.textContent =
-      "🔄 تغییر گروه";
-
-    button.addEventListener(
-      "click",
-      changeGroup
-    );
-
-    document.body.appendChild(button);
-  }
-
-  function changeGroup() {
-
-    if (video) {
+    btn.addEventListener("click",() => {
 
       try {
-        video.pause();
-        video.currentTime = 0;
-        video.removeAttribute("src");
-        video.load();
-      } catch(e){}
-    }
-
-    if (scene) {
+        if(video){
+          video.pause();
+          video.removeAttribute("src");
+          video.load();
+        }
+      }catch(e){}
 
       try {
+        if(scene &&
+           scene.systems["mindar-image"]){
 
-        const mindar =
-          scene.systems["mindar-image"];
-
-        if (
-          mindar &&
-          typeof mindar.stop === "function"
-        ) {
-          mindar.stop();
+          scene.systems["mindar-image"].stop();
         }
+      }catch(e){}
 
-      } catch(e){}
-    }
+      localStorage.removeItem(
+        "sarzamin_group"
+      );
 
-    document
-      .querySelectorAll("video")
-      .forEach(v => {
+      location.replace(
+        location.pathname
+      );
+    });
 
-        if (v.srcObject) {
-
-          try {
-            v.srcObject
-              .getTracks()
-              .forEach(
-                track => track.stop()
-              );
-          } catch(e){}
-        }
-      });
-
-    localStorage.removeItem(
-      "sarzamin_selected_group"
-    );
-
-    window.location.replace(
-      window.location.pathname
-    );
+    document.body.appendChild(btn);
   }
 
-  // =========================================================
-  // NO GROUP
-  // =========================================================
+  /* =====================================================
+     IF NO GROUP
+  ===================================================== */
 
-  if (
-    !selectedGroup ||
-    !GROUPS[selectedGroup]
-  ) {
-
-    showGroupSelector();
+  if(!group || !GROUPS[group]) {
+    showGroups();
     return;
   }
 
-  // =========================================================
-  // SELECTED GROUP
-  // =========================================================
+  /* =====================================================
+     START SELECTED GROUP
+  ===================================================== */
 
-  showBlueLoading();
+  removeOldUI();
+  showLoading();
+  createChangeButton();
 
-  createChangeGroupButton();
+  const config = GROUPS[group];
 
-  const groupConfig =
-    GROUPS[selectedGroup];
-
-  // =========================================================
-  // A-FRAME SCENE
-  // =========================================================
+  /* =====================================================
+     CREATE SCENE
+  ===================================================== */
 
   scene =
     document.createElement("a-scene");
 
+  scene.id = "arScene";
+
   scene.setAttribute(
     "mindar-image",
     `
-      imageTargetSrc: ${groupConfig.mindFile};
+      imageTargetSrc: ${config.mind};
       autoStart: true;
       uiLoading: no;
       uiScanning: no;
       uiError: no;
-
       filterMinCF: 0.0001;
       filterBeta: 0.001;
     `
@@ -480,24 +350,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
   scene.setAttribute(
     "renderer",
-    "colorManagement: true; physicallyCorrectLights: true;"
+    "colorManagement: true;"
   );
 
   scene.setAttribute(
     "vr-mode-ui",
-    "enabled:false"
+    "enabled: false"
   );
 
   scene.setAttribute(
     "device-orientation-permission-ui",
-    "enabled:false"
+    "enabled: false"
   );
 
   document.body.appendChild(scene);
 
-  // =========================================================
-  // CAMERA
-  // =========================================================
+  /* =====================================================
+     CAMERA
+  ===================================================== */
 
   const camera =
     document.createElement("a-camera");
@@ -514,56 +384,38 @@ document.addEventListener("DOMContentLoaded", () => {
 
   scene.appendChild(camera);
 
-  // =========================================================
-  // ONE SHARED VIDEO
-  // =========================================================
+  /* =====================================================
+     ONE VIDEO
+  ===================================================== */
 
   video =
     document.createElement("video");
 
   video.id = "arVideo";
 
-  video.setAttribute(
-    "preload",
-    "none"
-  );
-
-  video.setAttribute(
-    "loop",
-    ""
-  );
-
-  video.setAttribute(
-    "muted",
-    ""
-  );
-
-  video.setAttribute(
-    "playsinline",
-    ""
-  );
+  video.preload = "none";
+  video.loop = true;
+  video.muted = true;
+  video.playsInline = true;
 
   video.setAttribute(
     "webkit-playsinline",
     ""
   );
 
-  video.muted = true;
-  video.playsInline = true;
-
   document.body.appendChild(video);
 
-  // =========================================================
-  // SCENE LOADED
-  // =========================================================
+  /* =====================================================
+     SCENE READY
+  ===================================================== */
 
   scene.addEventListener(
     "loaded",
     () => {
 
       console.log(
-        "Scene loaded:",
-        selectedGroup
+        "AR SCENE READY:",
+        group
       );
 
       createTargets();
@@ -575,35 +427,30 @@ document.addEventListener("DOMContentLoaded", () => {
             "blueLoading"
           );
 
-        if (loading) {
+        if(loading)
           loading.remove();
-        }
 
-        const changeButton =
+        const change =
           document.getElementById(
-            "changeGroupButton"
+            "changeGroup"
           );
 
-        if (changeButton) {
-          changeButton.style.display =
+        if(change)
+          change.style.display =
             "block";
-        }
 
-      }, 500);
+      },500);
+
     }
   );
 
-  // =========================================================
-  // CREATE 30 TARGETS
-  // =========================================================
+  /* =====================================================
+     CREATE 30 TARGETS
+  ===================================================== */
 
   function createTargets() {
 
-    for (
-      let i = 0;
-      i < 30;
-      i++
-    ) {
+    for(let i=0;i<30;i++){
 
       const target =
         document.createElement(
@@ -612,190 +459,153 @@ document.addEventListener("DOMContentLoaded", () => {
 
       target.setAttribute(
         "mindar-image-target",
-        `targetIndex: ${i};`
+        `targetIndex:${i};`
       );
 
-      target.dataset.targetIndex =
-        i;
+      /* ================= VIDEO ================= */
 
-      // =====================================================
-      // VIDEO
-      // =====================================================
-
-      const videoEntity =
+      const v =
         document.createElement(
           "a-video"
         );
 
-      videoEntity.id =
-        `videoTarget_${i}`;
-
-      // فعلاً اندازه پایه
-      // بعداً با عکس Target دقیق تنظیم می‌کنیم
-
-      videoEntity.setAttribute(
-        "width",
-        "1"
+      v.classList.add(
+        "arVideoPlane"
       );
 
-      videoEntity.setAttribute(
-        "height",
-        "0.5625"
-      );
-
-      videoEntity.setAttribute(
-        "position",
-        "0 0 0"
-      );
-
-      videoEntity.setAttribute(
-        "rotation",
-        "0 0 0"
-      );
-
-      videoEntity.setAttribute(
+      v.setAttribute(
         "src",
         "#arVideo"
       );
 
-      videoEntity.setAttribute(
+      v.setAttribute(
+        "width",
+        "1"
+      );
+
+      v.setAttribute(
+        "height",
+        "0.5625"
+      );
+
+      v.setAttribute(
+        "position",
+        "0 0 0"
+      );
+
+      v.setAttribute(
+        "rotation",
+        "0 0 0"
+      );
+
+      v.setAttribute(
         "visible",
         "false"
       );
 
-      videoEntity.setAttribute(
-        "material",
-        "shader: flat;"
-      );
+      target.appendChild(v);
 
-      videoEntity.classList.add(
-        "ar-video-plane"
-      );
+      /* ================= INSTAGRAM ================= */
 
-      target.appendChild(
-        videoEntity
-      );
-
-      // =====================================================
-      // INSTAGRAM RED TEST ZONE
-      // =====================================================
-
-      const instagramZone =
+      const insta =
         document.createElement(
           "a-plane"
         );
 
-      instagramZone.classList.add(
-        "instagram-zone",
-        "testTouch"
+      insta.classList.add(
+        "instagram-zone"
       );
 
-      instagramZone.setAttribute(
+      insta.setAttribute(
         "width",
-        "0.72"
+        ".72"
       );
 
-      instagramZone.setAttribute(
+      insta.setAttribute(
         "height",
-        "0.18"
+        ".18"
       );
 
-      instagramZone.setAttribute(
+      insta.setAttribute(
         "position",
-        "0 -0.39 0.03"
+        "0 -.39 .03"
       );
 
-      // قرمز برای تست
-      instagramZone.setAttribute(
+      insta.setAttribute(
         "material",
-        "color: red; opacity: 0.65; transparent: true;"
+        "color:red;opacity:.7;transparent:true;"
       );
 
-      target.appendChild(
-        instagramZone
-      );
-
-      const instagramText =
+      const instaText =
         document.createElement(
           "a-text"
         );
 
-      instagramText.setAttribute(
+      instaText.setAttribute(
         "value",
         "دفترهای زنده اینجا 👈"
       );
 
-      instagramText.setAttribute(
+      instaText.setAttribute(
         "align",
         "center"
       );
 
-      instagramText.setAttribute(
+      instaText.setAttribute(
         "anchor",
         "center"
       );
 
-      instagramText.setAttribute(
+      instaText.setAttribute(
         "baseline",
         "center"
       );
 
-      instagramText.setAttribute(
-        "position",
-        "0 0 0.02"
-      );
-
-      instagramText.setAttribute(
+      instaText.setAttribute(
         "width",
         "1.2"
       );
 
-      instagramText.setAttribute(
+      instaText.setAttribute(
         "color",
-        "#ffffff"
+        "white"
       );
 
-      instagramZone.appendChild(
-        instagramText
+      insta.appendChild(
+        instaText
       );
 
-      // =====================================================
-      // SHARE RED TEST ZONE
-      // =====================================================
+      target.appendChild(insta);
 
-      const shareZone =
+      /* ================= SHARE ================= */
+
+      const share =
         document.createElement(
           "a-plane"
         );
 
-      shareZone.classList.add(
-        "share-zone",
-        "testTouch"
+      share.classList.add(
+        "share-zone"
       );
 
-      shareZone.setAttribute(
+      share.setAttribute(
         "width",
-        "0.72"
+        ".72"
       );
 
-      shareZone.setAttribute(
+      share.setAttribute(
         "height",
-        "0.18"
+        ".18"
       );
 
-      shareZone.setAttribute(
+      share.setAttribute(
         "position",
-        "0 -0.58 0.03"
+        "0 -.59 .03"
       );
 
-      // قرمز برای تست
-      shareZone.setAttribute(
+      share.setAttribute(
         "material",
-        "color: red; opacity: 0.65; transparent: true;"
-      );
-
-      target.appendChild(
-        shareZone
+        "color:red;opacity:.7;transparent:true;"
       );
 
       const shareText =
@@ -824,27 +634,22 @@ document.addEventListener("DOMContentLoaded", () => {
       );
 
       shareText.setAttribute(
-        "position",
-        "0 0 0.02"
-      );
-
-      shareText.setAttribute(
         "width",
         "1.2"
       );
 
       shareText.setAttribute(
         "color",
-        "#ffffff"
+        "white"
       );
 
-      shareZone.appendChild(
+      share.appendChild(
         shareText
       );
 
-      // =====================================================
-      // SURPRISE MESSAGE
-      // =====================================================
+      target.appendChild(share);
+
+      /* ================= SURPRISE ================= */
 
       const surprise =
         document.createElement(
@@ -852,7 +657,7 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
       surprise.classList.add(
-        "surprise-message"
+        "surprise"
       );
 
       surprise.setAttribute(
@@ -871,23 +676,18 @@ document.addEventListener("DOMContentLoaded", () => {
       );
 
       surprise.setAttribute(
-        "baseline",
-        "center"
-      );
-
-      surprise.setAttribute(
         "position",
-        "0 -0.76 0.03"
+        "0 -.78 .03"
       );
 
       surprise.setAttribute(
         "width",
-        "1.25"
+        "1.2"
       );
 
       surprise.setAttribute(
         "color",
-        "#ffffff"
+        "white"
       );
 
       surprise.setAttribute(
@@ -899,26 +699,19 @@ document.addEventListener("DOMContentLoaded", () => {
         surprise
       );
 
-      // =====================================================
-      // TARGET FOUND
-      // =====================================================
+      /* ================= FOUND ================= */
 
       target.addEventListener(
         "targetFound",
         () => {
 
-          console.log(
-            "TARGET FOUND:",
-            i
-          );
-
           activeTarget =
             target;
 
-          currentTargetIndex =
+          activeIndex =
             i;
 
-          hideAllVideos();
+          hideVideos();
 
           surprise.setAttribute(
             "visible",
@@ -927,41 +720,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
           loadVideo(
             i,
-            videoEntity,
+            v,
             surprise
           );
+
         }
       );
 
-      // =====================================================
-      // TARGET LOST
-      // =====================================================
+      /* ================= LOST ================= */
 
       target.addEventListener(
         "targetLost",
         () => {
 
-          console.log(
-            "TARGET LOST:",
-            i
-          );
-
-          if (
+          if(
             activeTarget ===
             target
-          ) {
+          ){
 
-            activeTarget =
-              null;
+            activeTarget = null;
+            activeIndex = -1;
 
-            currentTargetIndex =
-              -1;
-
-            try {
+            try{
               video.pause();
-            } catch(e){}
+            }catch(e){}
 
-            videoEntity.setAttribute(
+            v.setAttribute(
               "visible",
               "false"
             );
@@ -969,238 +753,143 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       );
 
-      scene.appendChild(
-        target
-      );
+      scene.appendChild(target);
     }
 
     console.log(
       "30 TARGETS CREATED:",
-      selectedGroup
+      group
     );
   }
 
-  // =========================================================
-  // VIDEO NUMBER
-  // =========================================================
+  /* =====================================================
+     HIDE VIDEOS
+  ===================================================== */
 
-  function getVideoNumber(
-    targetIndex
-  ) {
-
-    return (
-      groupConfig.firstVideo +
-      targetIndex
-    );
-  }
-
-  // =========================================================
-  // VIDEO PATH
-  // =========================================================
-
-  function getVideoPath(
-    targetIndex
-  ) {
-
-    const number =
-      String(
-        getVideoNumber(
-          targetIndex
-        )
-      ).padStart(2, "0");
-
-    return (
-      `${selectedGroup}/${number}.mp4`
-    );
-  }
-
-  // =========================================================
-  // HIDE ALL VIDEO PLANES
-  // =========================================================
-
-  function hideAllVideos() {
+  function hideVideos(){
 
     document
       .querySelectorAll(
-        ".ar-video-plane"
+        ".arVideoPlane"
       )
-      .forEach(
-        entity => {
+      .forEach(el => {
 
-          entity.setAttribute(
-            "visible",
-            "false"
-          );
-        }
-      );
+        el.setAttribute(
+          "visible",
+          "false"
+        );
+
+      });
   }
 
-  // =========================================================
-  // LOAD VIDEO - LAZY
-  // =========================================================
+  /* =====================================================
+     VIDEO PATH
+  ===================================================== */
 
-  function loadVideo(
-    targetIndex,
-    videoEntity,
-    surprise
-  ) {
+  function videoPath(index){
 
     const number =
-      getVideoNumber(
-        targetIndex
-      );
+      String(
+        config.startVideo + index
+      ).padStart(2,"0");
 
-    const path =
-      getVideoPath(
-        targetIndex
-      );
+    return (
+      `${group}/${number}.mp4`
+    );
+  }
 
-    // اگر همان ویدئو است
-    if (
-      currentVideoNumber ===
-      number
-    ) {
+  /* =====================================================
+     LAZY LOAD
+  ===================================================== */
 
-      videoEntity.setAttribute(
+  function loadVideo(
+    index,
+    entity,
+    surprise
+  ){
+
+    const number =
+      config.startVideo + index;
+
+    if(currentVideo === number){
+
+      entity.setAttribute(
         "visible",
         "true"
       );
 
+      video.play().catch(()=>{});
+
       return;
     }
 
-    // -----------------------------------------
-    // 1. مخفی و Pause
-    // -----------------------------------------
+    hideVideos();
 
-    hideAllVideos();
-
-    try {
+    try{
       video.pause();
-    } catch(e){}
+    }catch(e){}
 
-    // -----------------------------------------
-    // 2. صفر
-    // -----------------------------------------
-
-    try {
+    try{
       video.currentTime = 0;
-    } catch(e){}
+    }catch(e){}
 
-    // -----------------------------------------
-    // 3. حذف Source قبلی
-    // -----------------------------------------
-
-    video.removeAttribute(
-      "src"
-    );
-
-    while (
-      video.firstChild
-    ) {
-      video.removeChild(
-        video.firstChild
-      );
-    }
-
-    // -----------------------------------------
-    // 4. Source جدید
-    // -----------------------------------------
-
-    video.src =
-      path;
-
-    currentVideoNumber =
-      number;
-
-    // -----------------------------------------
-    // 5. Load
-    // -----------------------------------------
+    video.removeAttribute("src");
 
     video.load();
 
-    // -----------------------------------------
-    // 6. آماده شدن
-    // -----------------------------------------
+    currentVideo = number;
 
-    const showVideo =
-      () => {
+    video.src =
+      videoPath(index);
 
-        if (
-          !activeTarget ||
-          currentTargetIndex !==
-          targetIndex
-        ) {
-          return;
-        }
+    video.load();
 
-        try {
-          video.currentTime = 0;
-        } catch(e){}
+    const ready = () => {
 
-        videoEntity.setAttribute(
+      if(
+        activeTarget === null ||
+        activeIndex !== index
+      ){
+        return;
+      }
+
+      try{
+        video.currentTime = 0;
+      }catch(e){}
+
+      entity.setAttribute(
+        "visible",
+        "true"
+      );
+
+      video.play().catch(()=>{});
+
+    };
+
+    video.addEventListener(
+      "canplay",
+      ready,
+      {once:true}
+    );
+
+    video.onended = () => {
+
+      if(
+        activeTarget &&
+        activeIndex === index
+      ){
+
+        surprise.setAttribute(
           "visible",
           "true"
         );
-
-        const playPromise =
-          video.play();
-
-        if (
-          playPromise &&
-          playPromise.catch
-        ) {
-
-          playPromise.catch(
-            error => {
-              console.log(
-                "PLAY ERROR:",
-                error
-              );
-            }
-          );
-        }
-
-        // -------------------------------------
-        // بعد از یک دور
-        // -------------------------------------
-
-        video.onended =
-          () => {
-
-            if (
-              activeTarget &&
-              currentTargetIndex ===
-              targetIndex
-            ) {
-
-              surprise.setAttribute(
-                "visible",
-                "true"
-              );
-            }
-          };
-      };
-
-    if (
-      video.readyState >= 3
-    ) {
-
-      showVideo();
-
-    } else {
-
-      video.addEventListener(
-        "canplay",
-        showVideo,
-        {once:true}
-      );
-    }
+      }
+    };
   }
 
-  // =========================================================
-  // INSTAGRAM
-  // =========================================================
+  /* =====================================================
+     INSTAGRAM
+  ===================================================== */
 
   const intentURL =
     "intent://www.instagram.com/_u/SarzaminAr/#Intent;" +
@@ -1208,199 +897,134 @@ document.addEventListener("DOMContentLoaded", () => {
     "scheme=https;" +
     "end";
 
-  function openInstagram() {
+  function openInstagram(){
 
     console.log(
-      "INSTAGRAM TEST CLICK"
+      "INSTAGRAM TEST"
     );
 
     window.location.href =
       intentURL;
 
-    setTimeout(
-      () => {
+    setTimeout(() => {
 
-        window.location.href =
-          "https://www.instagram.com/SarzaminAr/";
+      window.location.href =
+        "https://www.instagram.com/SarzaminAr/";
 
-      },
-      1200
-    );
+    },1200);
   }
 
-  // =========================================================
-  // SHARE
-  // =========================================================
+  /* =====================================================
+     SHARE
+  ===================================================== */
 
-  async function shareSarzamin() {
+  async function sharePage(){
 
-    console.log(
-      "SHARE TEST CLICK"
-    );
+    const url =
+      location.href;
 
-    const shareURL =
-      window.location.href;
-
-    const data = {
-      title:
-        "سرزمین شگفت انگیز",
-
-      text:
-        "دفترهای زنده سرزمین شگفت انگیز 😍",
-
-      url:
-        shareURL
-    };
-
-    // -----------------------------------------
-    // Native Share
-    // -----------------------------------------
-
-    if (
+    if(
       navigator.share
-    ) {
+    ){
 
-      try {
+      try{
 
-        await navigator.share(
-          data
-        );
+        await navigator.share({
+          title:
+            "سرزمین شگفت انگیز",
+          text:
+            "دفترهای زنده سرزمین شگفت انگیز 😍",
+          url:url
+        });
 
         return;
 
-      } catch(e) {
-
-        console.log(
-          "Share cancelled"
-        );
-      }
+      }catch(e){}
     }
 
-    // -----------------------------------------
-    // Clipboard
-    // -----------------------------------------
+    try{
 
-    try {
-
-      if (
-        navigator.clipboard &&
-        navigator.clipboard.writeText
-      ) {
-
-        await navigator.clipboard.writeText(
-          shareURL
-        );
-
-        alert(
-          "لینک کپی شد؛ برای دوستات بفرست 😍"
-        );
-
-        return;
-      }
-
-    } catch(e) {
-
-      console.log(
-        "Clipboard error:",
-        e
+      await navigator.clipboard.writeText(
+        url
       );
-    }
 
-    // -----------------------------------------
-    // Prompt
-    // -----------------------------------------
+      alert(
+        "لینک کپی شد 😍"
+      );
 
-    window.prompt(
+      return;
+
+    }catch(e){}
+
+    prompt(
       "لینک را کپی کن:",
-      shareURL
+      url
     );
   }
 
-  // =========================================================
-  // TOUCH
-  // همان touchend + THREE.Raycaster + activeTarget
-  // =========================================================
+  /* =====================================================
+     TOUCH
+     touchend + THREE.Raycaster + activeTarget
+  ===================================================== */
 
   document.addEventListener(
     "touchend",
-    function(event) {
+    event => {
 
-      if (!activeTarget) {
+      if(!activeTarget)
         return;
-      }
 
-      if (!scene || !scene.canvas) {
+      if(
+        !scene ||
+        !scene.canvas ||
+        !scene.camera
+      )
         return;
-      }
 
       const touch =
         event.changedTouches[
           event.changedTouches.length - 1
         ];
 
-      if (!touch) {
+      if(!touch)
         return;
-      }
-
-      const canvas =
-        scene.canvas;
 
       const rect =
-        canvas.getBoundingClientRect();
+        scene.canvas.getBoundingClientRect();
 
       const mouse =
         new THREE.Vector2();
 
       mouse.x =
-        (
-          (touch.clientX - rect.left) /
-          rect.width
-        ) * 2 - 1;
+        ((touch.clientX - rect.left) /
+        rect.width) * 2 - 1;
 
       mouse.y =
-        -(
-          (touch.clientY - rect.top) /
-          rect.height
-        ) * 2 + 1;
+        -((touch.clientY - rect.top) /
+        rect.height) * 2 + 1;
 
       const raycaster =
         new THREE.Raycaster();
 
-      const camera =
-        scene.camera;
-
-      if (!camera) {
-        return;
-      }
-
       raycaster.setFromCamera(
         mouse,
-        camera
+        scene.camera
       );
 
-      // =====================================================
-      // INSTAGRAM
-      // =====================================================
-
-      const instagramZones =
-        activeTarget.querySelectorAll(
+      const insta =
+        activeTarget.querySelector(
           ".instagram-zone"
         );
 
-      for (
-        const zone of instagramZones
-      ) {
+      if(insta){
 
         const hits =
           raycaster.intersectObject(
-            zone.object3D,
+            insta.object3D,
             true
           );
 
-        if (
-          hits &&
-          hits.length > 0
-        ) {
+        if(hits.length){
 
           event.preventDefault();
 
@@ -1410,62 +1034,31 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
 
-      // =====================================================
-      // SHARE
-      // =====================================================
-
-      const shareZones =
-        activeTarget.querySelectorAll(
+      const share =
+        activeTarget.querySelector(
           ".share-zone"
         );
 
-      for (
-        const zone of shareZones
-      ) {
+      if(share){
 
         const hits =
           raycaster.intersectObject(
-            zone.object3D,
+            share.object3D,
             true
           );
 
-        if (
-          hits &&
-          hits.length > 0
-        ) {
+        if(hits.length){
 
           event.preventDefault();
 
-          shareSarzamin();
+          sharePage();
 
           return;
         }
       }
 
     },
-    {
-      passive:false
-    }
-  );
-
-  // =========================================================
-  // PAGE HIDDEN
-  // =========================================================
-
-  document.addEventListener(
-    "visibilitychange",
-    () => {
-
-      if (
-        document.hidden &&
-        video
-      ) {
-
-        try {
-          video.pause();
-        } catch(e){}
-      }
-    }
+    {passive:false}
   );
 
 });
