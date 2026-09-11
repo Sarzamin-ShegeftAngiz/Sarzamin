@@ -1,595 +1,387 @@
-document.addEventListener("DOMContentLoaded", () => {
+let selectedGroup = null;
+let scene = null;
+
+const GROUPS = {
+    1: {
+        folder: "Group1",
+        startNumber: 1,
+        count: 30
+    },
+
+    2: {
+        folder: "Group2",
+        startNumber: 31,
+        count: 30
+    }
+};
 
 
-    // =====================================================
-    // تنظیمات گروه‌ها
-    // =====================================================
+/* =========================
+   شروع گروه
+========================= */
 
-    const GROUPS = {
+window.startGroup = function (groupNumber) {
 
-        1: {
-            folder: "Group1",
-            startNumber: 1,
-            count: 30
-        },
+    if (!GROUPS[groupNumber]) return;
 
-        2: {
-            folder: "Group2",
-            startNumber: 31,
-            count: 30
-        }
+    selectedGroup = GROUPS[groupNumber];
 
-    };
+    const menu = document.getElementById("groupMenu");
+    const loadingText = document.getElementById("loadingText");
 
-
-    // =====================================================
-    // عناصر صفحه
-    // =====================================================
-
-    const menu =
-        document.querySelector("#group-menu");
-
-    const backButton =
-        document.querySelector("#back-button");
-
-
-    // =====================================================
-    // انتخاب گروه
-    // =====================================================
-
-    document
-        .querySelectorAll(".group-button")
-        .forEach((button) => {
-
-            button.addEventListener(
-                "click",
-                () => {
-
-                    const group =
-                        button.dataset.group;
-
-                    window.location.href =
-                        "?group=" + group;
-
-                }
-            );
-
-        });
-
-
-    // =====================================================
-    // گرفتن گروه از URL
-    // =====================================================
-
-    const params =
-        new URLSearchParams(
-            window.location.search
-        );
-
-
-    const groupNumber =
-        Number(params.get("group"));
-
-
-    // =====================================================
-    // اگر گروه انتخاب نشده
-    // =====================================================
-
-    if (!GROUPS[groupNumber]) {
-
-        menu.style.display = "flex";
-
-        return;
-
+    if (menu) {
+        menu.style.display = "none";
     }
 
+    if (loadingText) {
+        loadingText.style.display = "block";
+    }
 
-    // =====================================================
-    // اطلاعات گروه
-    // =====================================================
-
-    const group =
-        GROUPS[groupNumber];
-
-
-    menu.style.display = "none";
-
-    backButton.style.display = "block";
+    createARScene();
+};
 
 
-    backButton.addEventListener(
-        "click",
-        () => {
+/* =========================
+   ساخت Scene
+========================= */
 
-            window.location.href =
-                window.location.pathname;
+function createARScene() {
 
-        }
-    );
+    if (scene) return;
 
-
-    console.log(
-        "START GROUP:",
-        group.folder
-    );
-
-
-    // =====================================================
-    // ساخت A-SCENE
-    // =====================================================
-
-    const scene =
-        document.createElement(
-            "a-scene"
-        );
-
+    scene = document.createElement("a-scene");
 
     scene.setAttribute(
         "mindar-image",
         "imageTargetSrc: ./" +
-        group.folder +
-        "/targets.mind; " +
-        "warmupTolerance: 2; " +
-        "missTolerance: 1;"
+        selectedGroup.folder +
+        "/targets.mind; warmupTolerance: 2; missTolerance: 1;"
     );
 
-
-    scene.setAttribute(
-        "embedded",
-        ""
-    );
-
-
-    scene.setAttribute(
-        "vr-mode-ui",
-        "enabled:false"
-    );
-
-
+    scene.setAttribute("embedded", "");
+    scene.setAttribute("vr-mode-ui", "enabled:false");
     scene.setAttribute(
         "device-orientation-permission-ui",
         "enabled:false"
     );
-
 
     scene.setAttribute(
         "renderer",
         "colorManagement:true; alpha:true;"
     );
 
-
     document.body.appendChild(scene);
 
+    createAssets();
+    createCamera();
 
-    // =====================================================
-    // A-ASSETS
-    // =====================================================
+    /*
+     * خیلی مهم:
+     * فقط یک ویدئو برای کل ۳۰ Target
+     */
+    createTargets();
 
-    const assets =
-        document.createElement(
-            "a-assets"
-        );
+    setupAR();
 
+    scene.addEventListener("loaded", () => {
+
+        console.log("SCENE LOADED");
+
+        const loadingText =
+            document.getElementById("loadingText");
+
+        if (loadingText) {
+            loadingText.style.display = "none";
+        }
+
+    });
+}
+
+
+/* =========================
+   Assets
+========================= */
+
+function createAssets() {
+
+    const assets = document.createElement("a-assets");
+
+    /*
+     * هیچ src اولیه‌ای ندارد.
+     * بنابراین هنگام باز شدن دوربین
+     * هیچ ویدئویی دانلود نمی‌شود.
+     */
+
+    const video = document.createElement("video");
+
+    video.id = "arVideo";
+
+    video.setAttribute("preload", "none");
+    video.setAttribute("loop", "");
+    video.setAttribute("muted", "");
+    video.setAttribute("playsinline", "");
+    video.setAttribute("webkit-playsinline", "");
+
+    video.playsInline = true;
+    video.muted = true;
+
+    assets.appendChild(video);
 
     scene.appendChild(assets);
+}
 
 
-    // =====================================================
-    // ویدئوها
-    // =====================================================
+/* =========================
+   Camera
+========================= */
 
-    const videos = [];
+function createCamera() {
 
+    const camera = document.createElement("a-camera");
 
-    for (
-        let i = 0;
-        i < group.count;
-        i++
-    ) {
+    camera.setAttribute("position", "0 0 0");
+    camera.setAttribute(
+        "look-controls",
+        "enabled:false"
+    );
 
-
-        const number =
-            group.startNumber + i;
-
-
-        const fileNumber =
-            String(number).padStart(
-                2,
-                "0"
-            );
+    scene.appendChild(camera);
+}
 
 
-        const video =
-            document.createElement(
-                "video"
-            );
+/* =========================
+   ساخت ۳۰ Target
+========================= */
 
+function createTargets() {
 
-        video.id =
-            "video" + i;
+    for (let i = 0; i < selectedGroup.count; i++) {
 
-
-        video.src =
-            "./" +
-            group.folder +
-            "/" +
-            fileNumber +
-            ".mp4";
-
-
-        video.setAttribute(
-            "preload",
-            "auto"
+        const target = document.createElement(
+            "a-entity"
         );
-
-
-        video.setAttribute(
-            "loop",
-            ""
-        );
-
-
-        video.setAttribute(
-            "muted",
-            ""
-        );
-
-
-        video.setAttribute(
-            "playsinline",
-            ""
-        );
-
-
-        video.setAttribute(
-            "webkit-playsinline",
-            ""
-        );
-
-
-        video.muted = true;
-
-
-        assets.appendChild(video);
-
-
-        videos.push(video);
-
-
-        console.log(
-            "VIDEO",
-            i,
-            "→",
-            group.folder +
-            "/" +
-            fileNumber +
-            ".mp4"
-        );
-
-    }
-
-
-    // =====================================================
-    // TARGETها
-    // =====================================================
-
-    const targets = [];
-
-
-    for (
-        let i = 0;
-        i < group.count;
-        i++
-    ) {
-
-
-        const target =
-            document.createElement(
-                "a-entity"
-            );
-
 
         target.setAttribute(
             "mindar-image-target",
-            "targetIndex: " + i
+            "targetIndex:" + i
         );
 
 
-        // ---------------------------------------------
-        // ویدئو
-        // ---------------------------------------------
+        /* =========================
+           ویدئو
+        ========================= */
 
         const videoPlane =
-            document.createElement(
-                "a-video"
-            );
-
+            document.createElement("a-video");
 
         videoPlane.setAttribute(
             "src",
-            "#video" + i
+            "#arVideo"
         );
 
+        videoPlane.setAttribute("width", "1");
+        videoPlane.setAttribute("height", "1.42");
 
-        videoPlane.setAttribute(
-            "width",
-            "1"
-        );
-
-
-        videoPlane.setAttribute(
-            "height",
-            "1.42"
-        );
+        target.appendChild(videoPlane);
 
 
-        target.appendChild(
-            videoPlane
-        );
-
-
-        // ---------------------------------------------
-        // متن بعد از اولین دور
-        // ---------------------------------------------
+        /* =========================
+           متن بعد از اولین پخش
+        ========================= */
 
         const afterText =
-            document.createElement(
-                "a-text"
-            );
+            document.createElement("a-text");
 
-
-        afterText.classList.add(
-            "after-video-text"
-        );
-
+        afterText.classList.add("after-video-text");
 
         afterText.setAttribute(
             "value",
             "می‌خوای دوستاتو هم سورپرایز کنی؟ 😍👇"
         );
 
-
         afterText.setAttribute(
             "align",
             "center"
         );
-
-
-        afterText.setAttribute(
-            "width",
-            "1.5"
-        );
-
 
         afterText.setAttribute(
             "position",
             "0 -0.72 0.03"
         );
 
+        afterText.setAttribute(
+            "width",
+            "1.8"
+        );
 
         afterText.setAttribute(
             "color",
             "#FFFFFF"
         );
-
 
         afterText.setAttribute(
             "visible",
             "false"
         );
 
-
-        target.appendChild(
-            afterText
-        );
+        target.appendChild(afterText);
 
 
-        // ---------------------------------------------
-        // Instagram text
-        // ---------------------------------------------
+        /* =========================
+           Instagram Text
+        ========================= */
 
         const instagramText =
-            document.createElement(
-                "a-text"
-            );
-
+            document.createElement("a-text");
 
         instagramText.setAttribute(
             "value",
             "دفترهای زنده اینجا 👈"
         );
 
-
         instagramText.setAttribute(
             "align",
             "center"
         );
 
+        instagramText.setAttribute(
+            "position",
+            "0 -0.82 0.03"
+        );
 
         instagramText.setAttribute(
             "width",
-            "1.4"
+            "1.8"
         );
-
-
-        instagramText.setAttribute(
-            "position",
-            "-0.31 0.62 0.03"
-        );
-
 
         instagramText.setAttribute(
             "color",
             "#FFFFFF"
         );
 
-
-        target.appendChild(
-            instagramText
-        );
+        target.appendChild(instagramText);
 
 
-        // ---------------------------------------------
-        // Instagram Hitbox
-        // ---------------------------------------------
+        /* =========================
+           Instagram Invisible Zone
+        ========================= */
 
         const instagramZone =
-            document.createElement(
-                "a-plane"
-            );
-
+            document.createElement("a-plane");
 
         instagramZone.classList.add(
             "instagram-zone"
         );
-
 
         instagramZone.setAttribute(
             "width",
             "0.70"
         );
 
-
         instagramZone.setAttribute(
             "height",
             "0.16"
         );
 
-
         instagramZone.setAttribute(
             "position",
-            "-0.31 0.62 0.02"
+            "0 -0.82 0.04"
         );
-
 
         instagramZone.setAttribute(
             "material",
-            "transparent: true; opacity: 0;"
+            "transparent:true; opacity:0;"
         );
 
-
-        target.appendChild(
-            instagramZone
-        );
+        target.appendChild(instagramZone);
 
 
-        // ---------------------------------------------
-        // نام برند
-        // ---------------------------------------------
+        /* =========================
+           Brand Text
+        ========================= */
 
         const brandText =
-            document.createElement(
-                "a-text"
-            );
-
+            document.createElement("a-text");
 
         brandText.setAttribute(
             "value",
             "سرزمین شگفت‌انگیز"
         );
 
-
         brandText.setAttribute(
             "align",
             "center"
         );
 
+        brandText.setAttribute(
+            "position",
+            "0 -0.92 0.03"
+        );
 
         brandText.setAttribute(
             "width",
-            "1.5"
+            "1.8"
         );
-
-
-        brandText.setAttribute(
-            "position",
-            "0 -0.62 0.03"
-        );
-
 
         brandText.setAttribute(
             "color",
             "#FFFFFF"
         );
 
-
-        target.appendChild(
-            brandText
-        );
+        target.appendChild(brandText);
 
 
-        // ---------------------------------------------
-        // Share Hitbox
-        // ---------------------------------------------
+        /* =========================
+           Share Invisible Zone
+        ========================= */
 
         const shareZone =
-            document.createElement(
-                "a-plane"
-            );
-
+            document.createElement("a-plane");
 
         shareZone.classList.add(
             "share-zone"
         );
 
-
         shareZone.setAttribute(
             "width",
-            "0.90"
+            "1.25"
         );
-
 
         shareZone.setAttribute(
             "height",
-            "0.18"
+            "0.20"
         );
-
 
         shareZone.setAttribute(
             "position",
-            "0 -0.62 0.02"
+            "0 -0.92 0.04"
         );
-
 
         shareZone.setAttribute(
             "material",
-            "transparent: true; opacity: 0;"
+            "transparent:true; opacity:0;"
         );
 
-
-        target.appendChild(
-            shareZone
-        );
+        target.appendChild(shareZone);
 
 
-        // ---------------------------------------------
-        // اضافه کردن Target
-        // ---------------------------------------------
-
-        scene.appendChild(
-            target
-        );
-
-
-        targets.push(target);
-
+        scene.appendChild(target);
     }
+}
 
 
-    // =====================================================
-    // وضعیت فعلی
-    // =====================================================
+/* =========================
+   AR Events
+========================= */
+
+function setupAR() {
+
+    const video =
+        document.querySelector("#arVideo");
 
     let activeTarget = null;
-
-    let activeVideo = null;
-
+    let activeIndex = -1;
     let firstPlayFinished = false;
-
-
-    // =====================================================
-    // AR READY
-    // =====================================================
 
     scene.addEventListener(
         "arReady",
@@ -597,220 +389,186 @@ document.addEventListener("DOMContentLoaded", () => {
 
             console.log(
                 "AR READY -",
-                group.folder
+                selectedGroup.folder
             );
 
         }
     );
 
 
-    // =====================================================
-    // TARGET FOUND
-    // =====================================================
+    /* =========================
+       TARGET FOUND
+    ========================= */
 
     scene.addEventListener(
         "targetFound",
         async (event) => {
 
-
-            const target =
-                event.target;
-
+            const target = event.target;
 
             const data =
                 target.getAttribute(
                     "mindar-image-target"
                 );
 
-
             if (!data) return;
 
-
             const index =
-                Number(
-                    data.targetIndex
-                );
-
+                Number(data.targetIndex);
 
             console.log(
                 "TARGET FOUND:",
                 index
             );
 
+            activeTarget = target;
+            activeIndex = index;
 
-            activeTarget =
-                target;
+            firstPlayFinished = false;
 
 
-            // ---------------------------------------------
-            // توقف همه ویدئوهای دیگر
-            // ---------------------------------------------
+            /* همه چیز را متوقف کن */
 
-            videos.forEach(
-                (video, i) => {
+            video.pause();
 
-                    if (!video) return;
 
-                    if (i !== index) {
+            /*
+             * شماره واقعی فایل
+             *
+             * Group1:
+             * target 0 -> 01.mp4
+             *
+             * Group2:
+             * target 0 -> 31.mp4
+             */
 
-                        video.pause();
+            const fileNumber =
+                selectedGroup.startNumber + index;
 
-                    }
+            const fileName =
+                String(fileNumber).padStart(2, "0") +
+                ".mp4";
 
-                }
+            const videoPath =
+                "./" +
+                selectedGroup.folder +
+                "/" +
+                fileName;
+
+            console.log(
+                "VIDEO:",
+                videoPath
             );
 
 
-            const video =
-                videos[index];
-
-
-            if (!video) {
-
-                console.log(
-                    "VIDEO NOT FOUND:",
-                    index
-                );
-
-                return;
-
-            }
-
-
-            activeVideo =
-                video;
-
-
-            // ---------------------------------------------
-            // شروع از اول
-            // ---------------------------------------------
+            /*
+             * فقط همین ویدئو را لود کن
+             */
 
             try {
+
+                video.pause();
+
+                video.src = videoPath;
+
+                video.load();
+
+                await waitForVideo(video);
+
+                if (activeTarget !== target) {
+                    return;
+                }
 
                 video.currentTime = 0;
 
-            }
+                /*
+                 * اول با صدا
+                 */
 
-            catch (error) {
-
-                console.log(
-                    "CURRENT TIME ERROR:",
-                    error
-                );
-
-            }
-
-
-            // ---------------------------------------------
-            // پخش صدادار
-            // ---------------------------------------------
-
-            video.muted = false;
-
-
-            try {
-
-                await video.play();
-
-                console.log(
-                    "VIDEO PLAYING:",
-                    index
-                );
-
-            }
-
-            catch (error) {
-
-
-                console.log(
-                    "VIDEO PLAY ERROR:",
-                    error
-                );
-
-
-                // -----------------------------------------
-                // اگر صدادار اجازه نداد
-                // -----------------------------------------
-
-                video.muted = true;
-
+                video.muted = false;
 
                 try {
 
                     await video.play();
 
                     console.log(
-                        "VIDEO PLAYING MUTED:",
-                        index
+                        "VIDEO PLAYING:",
+                        fileName
                     );
 
-                }
-
-                catch (error2) {
+                } catch (error) {
 
                     console.log(
-                        "VIDEO STILL FAILED:",
-                        error2
+                        "UNMUTED PLAY FAILED"
                     );
 
+                    /*
+                     * اگر مرورگر اجازه صدا نداد،
+                     * بدون صدا اجرا شود.
+                     */
+
+                    video.muted = true;
+
+                    try {
+
+                        await video.play();
+
+                        console.log(
+                            "VIDEO PLAYING MUTED:",
+                            fileName
+                        );
+
+                    } catch (error2) {
+
+                        console.log(
+                            "VIDEO PLAY FAILED:",
+                            error2
+                        );
+
+                    }
                 }
 
+
+                hideAfterTexts(target);
+
+                watchFirstLoop(
+                    video,
+                    target
+                );
+
+            } catch (error) {
+
+                console.log(
+                    "VIDEO LOAD ERROR:",
+                    error
+                );
+
             }
-
-
-            // ---------------------------------------------
-            // متن را مخفی کن
-            // ---------------------------------------------
-
-            hideAfterTexts(
-                target
-            );
-
-
-            firstPlayFinished =
-                false;
-
-
-            // ---------------------------------------------
-            // بررسی اولین دور
-            // ---------------------------------------------
-
-            watchFirstLoop(
-                video,
-                target
-            );
 
         }
     );
 
 
-    // =====================================================
-    // TARGET LOST
-    // =====================================================
+    /* =========================
+       TARGET LOST
+    ========================= */
 
     scene.addEventListener(
         "targetLost",
         (event) => {
 
-
             const target =
                 event.target;
-
 
             const data =
                 target.getAttribute(
                     "mindar-image-target"
                 );
 
-
             if (!data) return;
 
-
             const index =
-                Number(
-                    data.targetIndex
-                );
-
+                Number(data.targetIndex);
 
             console.log(
                 "TARGET LOST:",
@@ -818,24 +576,19 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
 
-            const video =
-                videos[index];
+            /*
+             * فقط ویدئو را متوقف کن.
+             *
+             * src را حذف نمی‌کنیم
+             * تا اسکن دوباره سریع‌تر باشد.
+             */
 
-
-            if (video) {
+            if (activeTarget === target) {
 
                 video.pause();
 
-            }
-
-
-            if (
-                activeTarget === target
-            ) {
-
                 activeTarget = null;
-
-                activeVideo = null;
+                activeIndex = -1;
 
             }
 
@@ -843,202 +596,144 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 
-    // =====================================================
-    // تشخیص پایان اولین دور
-    // =====================================================
+    /* =========================
+       تشخیص پایان اولین دور
+    ========================= */
 
     function watchFirstLoop(
-        video,
+        currentVideo,
         target
     ) {
 
-
         function check() {
-
 
             if (
                 activeTarget !== target
             ) {
-
                 return;
-
             }
 
-
-            if (
-                firstPlayFinished
-            ) {
-
+            if (firstPlayFinished) {
                 return;
-
             }
 
-
             if (
-                video.duration &&
-                video.duration > 0 &&
-                video.currentTime >=
-                video.duration - 0.15
+                currentVideo.duration &&
+                currentVideo.duration > 0 &&
+                currentVideo.currentTime >=
+                currentVideo.duration - 0.15
             ) {
 
+                firstPlayFinished = true;
 
-                firstPlayFinished =
-                    true;
-
-
-                showAfterTexts(
-                    target
-                );
-
+                showAfterTexts(target);
 
                 console.log(
                     "FIRST LOOP FINISHED"
                 );
 
-
                 return;
-
             }
 
-
-            requestAnimationFrame(
-                check
-            );
-
+            requestAnimationFrame(check);
         }
 
-
-        requestAnimationFrame(
-            check
-        );
-
+        requestAnimationFrame(check);
     }
 
 
-    // =====================================================
-    // مخفی کردن متن
-    // =====================================================
+    /* =========================
+       مخفی کردن متن‌ها
+    ========================= */
 
-    function hideAfterTexts(
-        target
-    ) {
-
+    function hideAfterTexts(target) {
 
         const texts =
             target.querySelectorAll(
                 ".after-video-text"
             );
 
-
         texts.forEach(
             (text) => {
-
                 text.setAttribute(
                     "visible",
                     "false"
                 );
-
             }
         );
-
     }
 
 
-    // =====================================================
-    // نمایش متن
-    // =====================================================
+    /* =========================
+       نمایش متن‌ها
+    ========================= */
 
-    function showAfterTexts(
-        target
-    ) {
-
+    function showAfterTexts(target) {
 
         const texts =
             target.querySelectorAll(
                 ".after-video-text"
             );
 
-
         texts.forEach(
             (text) => {
-
                 text.setAttribute(
                     "visible",
                     "true"
                 );
-
             }
         );
-
     }
 
 
-    // =====================================================
-    // لمس صفحه
-    // =====================================================
+    /* =========================
+       Touch
+    ========================= */
 
     document.addEventListener(
         "touchend",
         async (event) => {
 
-
             if (!activeTarget) {
-
                 return;
-
             }
-
 
             if (
                 !scene.camera ||
                 !scene.renderer
             ) {
-
                 return;
-
             }
-
 
             const touch =
                 event.changedTouches[0];
 
-
-            if (!touch) {
-
-                return;
-
-            }
-
+            if (!touch) return;
 
             const canvas =
                 scene.renderer.domElement;
 
-
             const rect =
                 canvas.getBoundingClientRect();
-
 
             const mouse =
                 new THREE.Vector2();
 
-
             mouse.x =
                 (
-                    (touch.clientX - rect.left)
-                    / rect.width
+                    (touch.clientX - rect.left) /
+                    rect.width
                 ) * 2 - 1;
-
 
             mouse.y =
                 -(
-                    (touch.clientY - rect.top)
-                    / rect.height
+                    (touch.clientY - rect.top) /
+                    rect.height
                 ) * 2 + 1;
 
 
             const raycaster =
                 new THREE.Raycaster();
-
 
             raycaster.setFromCamera(
                 mouse,
@@ -1046,27 +741,23 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
 
-            // =================================================
-            // INSTAGRAM
-            // =================================================
+            /* =========================
+               Instagram
+            ========================= */
 
             const instagramZone =
                 activeTarget.querySelector(
                     ".instagram-zone"
                 );
 
-
             if (instagramZone) {
-
 
                 const mesh =
                     instagramZone.getObject3D(
                         "mesh"
                     );
 
-
                 if (mesh) {
-
 
                     const hits =
                         raycaster.intersectObject(
@@ -1074,11 +765,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             true
                         );
 
-
-                    if (
-                        hits.length > 0
-                    ) {
-
+                    if (hits.length > 0) {
 
                         const intentURL =
                             "intent://www.instagram.com/_u/SarzaminAr/#Intent;" +
@@ -1086,41 +773,32 @@ document.addEventListener("DOMContentLoaded", () => {
                             "scheme=https;" +
                             "end";
 
-
                         window.location.href =
                             intentURL;
 
-
                         return;
-
                     }
-
                 }
-
             }
 
 
-            // =================================================
-            // SHARE
-            // =================================================
+            /* =========================
+               Share
+            ========================= */
 
             const shareZone =
                 activeTarget.querySelector(
                     ".share-zone"
                 );
 
-
             if (shareZone) {
-
 
                 const mesh =
                     shareZone.getObject3D(
                         "mesh"
                     );
 
-
                 if (mesh) {
-
 
                     const hits =
                         raycaster.intersectObject(
@@ -1128,11 +806,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             true
                         );
 
-
-                    if (
-                        hits.length > 0
-                    ) {
-
+                    if (hits.length > 0) {
 
                         const shareText =
                             "یه چیز خیلی باحال پیدا کردم! 😍📚 " +
@@ -1142,67 +816,39 @@ document.addEventListener("DOMContentLoaded", () => {
                             "بعدش حتماً یکی از دوستات رو هم سورپرایز کن! 😉🔥";
 
 
-                        if (
-                            navigator.share
-                        ) {
-
+                        if (navigator.share) {
 
                             try {
 
-
                                 await navigator.share({
-
-                                    title:
-                                        "Sarzamin AR",
-
-                                    text:
-                                        shareText,
-
-                                    url:
-                                        window.location.href
-
+                                    title: "Sarzamin AR",
+                                    text: shareText,
+                                    url: window.location.href
                                 });
 
-
-                            }
-
-                            catch (error) {
-
+                            } catch (error) {
 
                                 console.log(
-                                    "Share cancelled:",
-                                    error
+                                    "Share cancelled"
                                 );
 
                             }
 
-
-                        }
-
-                        else {
-
+                        } else {
 
                             try {
 
-
                                 await navigator.clipboard.writeText(
-
                                     shareText +
                                     "\n" +
                                     window.location.href
-
                                 );
-
 
                                 alert(
                                     "متن آماده شد و کپی شد 😊"
                                 );
 
-
-                            }
-
-                            catch (error) {
-
+                            } catch (error) {
 
                                 console.log(
                                     "Clipboard error:",
@@ -1210,25 +856,115 @@ document.addEventListener("DOMContentLoaded", () => {
                                 );
 
                             }
-
                         }
 
-
                         return;
-
                     }
-
                 }
-
             }
 
         },
-
         {
             passive: true
         }
-
     );
+}
 
 
-});
+/* =========================
+   منتظر آماده شدن ویدئو
+========================= */
+
+function waitForVideo(video) {
+
+    return new Promise(
+        (resolve, reject) => {
+
+            /*
+             * اگر قبلاً آماده است
+             */
+
+            if (video.readyState >= 2) {
+
+                resolve();
+                return;
+            }
+
+
+            let finished = false;
+
+
+            function done() {
+
+                if (finished) return;
+
+                finished = true;
+
+                cleanup();
+
+                resolve();
+            }
+
+
+            function error() {
+
+                if (finished) return;
+
+                finished = true;
+
+                cleanup();
+
+                reject(
+                    new Error(
+                        "Video failed to load"
+                    )
+                );
+            }
+
+
+            function cleanup() {
+
+                video.removeEventListener(
+                    "loadeddata",
+                    done
+                );
+
+                video.removeEventListener(
+                    "canplay",
+                    done
+                );
+
+                video.removeEventListener(
+                    "error",
+                    error
+                );
+            }
+
+
+            video.addEventListener(
+                "loadeddata",
+                done,
+                {
+                    once: true
+                }
+            );
+
+            video.addEventListener(
+                "canplay",
+                done,
+                {
+                    once: true
+                }
+            );
+
+            video.addEventListener(
+                "error",
+                error,
+                {
+                    once: true
+                }
+            );
+
+        }
+    );
+}
