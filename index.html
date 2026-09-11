@@ -1,46 +1,36 @@
 <!DOCTYPE html>
 <html lang="fa">
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport"
-          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+          content="width=device-width,
+                   initial-scale=1.0,
+                   maximum-scale=1.0,
+                   user-scalable=no">
 
     <title>Sarzamin AR</title>
 
-    <link rel="stylesheet" href="./style.css?v=124">
+    <link rel="stylesheet"
+          href="./style.css?v=125">
 
+    <!-- A-FRAME -->
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+
+    <!-- MINDAR -->
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+
 </head>
 
 <body>
 
-    <!-- انتخاب گروه -->
-    <div id="groupMenu">
+    <!--
+        هیچ groupMenu یا loadingText قدیمی اینجا نباشد.
+        همه‌چیز توسط app.js ساخته می‌شود.
+    -->
 
-        <div class="menu-title">
-            سرزمین شگفت‌انگیز
-        </div>
-
-        <div class="menu-subtitle">
-            گروه دفترها را انتخاب کنید
-        </div>
-
-        <button onclick="startGroup(1)">
-            📚 دفترهای ۰۱ تا ۳۰
-        </button>
-
-        <button onclick="startGroup(2)">
-            📚 دفترهای ۳۱ تا ۶۰
-        </button>
-
-    </div>
-
-    <div id="loadingText">
-        در حال آماده‌سازی دوربین...
-    </div>
-
-    <script src="./app.js?v=122"></script>
+    <script src="./app.js?v=125"></script>
 
 </body>
 </html>
