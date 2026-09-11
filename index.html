@@ -1,175 +1,46 @@
 <!DOCTYPE html>
 <html lang="fa">
-
 <head>
-
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-    >
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
     <title>Sarzamin AR</title>
 
-
-    <!-- A-Frame 1.4.2 -->
+    <link rel="stylesheet" href="./style.css?v=122">
 
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
-
-
-    <!-- MindAR 1.2.5 -->
-
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
-
-
-    <!-- CSS -->
-
-    <link rel="stylesheet" href="./style.css?v=121">
-
-
-    <style>
-
-        /* =========================
-           صفحه انتخاب گروه
-           ========================= */
-
-        #group-menu {
-
-            position: fixed;
-
-            inset: 0;
-
-            z-index: 99999;
-
-            display: flex;
-
-            flex-direction: column;
-
-            justify-content: center;
-
-            align-items: center;
-
-            gap: 18px;
-
-            background: white;
-
-            direction: rtl;
-
-            font-family: sans-serif;
-
-        }
-
-
-        #group-menu h1 {
-
-            margin: 0 0 15px 0;
-
-            font-size: 28px;
-
-        }
-
-
-        .group-button {
-
-            width: 280px;
-
-            padding: 18px 20px;
-
-            border: none;
-
-            border-radius: 16px;
-
-            font-size: 20px;
-
-            font-weight: bold;
-
-            cursor: pointer;
-
-        }
-
-
-        #back-button {
-
-            position: fixed;
-
-            top: 15px;
-
-            right: 15px;
-
-            z-index: 999999;
-
-            padding: 10px 16px;
-
-            border: none;
-
-            border-radius: 12px;
-
-            font-size: 15px;
-
-            display: none;
-
-        }
-
-    </style>
-
 </head>
-
 
 <body>
 
+    <!-- انتخاب گروه -->
+    <div id="groupMenu">
 
-    <!-- =========================
-         انتخاب گروه
-         ========================= -->
-
-    <div id="group-menu">
-
-        <h1>
-            ✨ سرزمین شگفت‌انگیز ✨
-        </h1>
-
-        <div>
-            دفترت کدوم گروهه؟
+        <div class="menu-title">
+            سرزمین شگفت‌انگیز
         </div>
 
+        <div class="menu-subtitle">
+            گروه دفترها را انتخاب کنید
+        </div>
 
-        <button
-            class="group-button"
-            data-group="1">
-
+        <button onclick="startGroup(1)">
             📚 دفترهای ۰۱ تا ۳۰
-
         </button>
 
-
-        <button
-            class="group-button"
-            data-group="2">
-
+        <button onclick="startGroup(2)">
             📚 دفترهای ۳۱ تا ۶۰
-
         </button>
 
     </div>
 
+    <div id="loadingText">
+        در حال آماده‌سازی دوربین...
+    </div>
 
-    <!-- =========================
-         بازگشت به انتخاب گروه
-         ========================= -->
-
-    <button id="back-button">
-        ← انتخاب گروه
-    </button>
-
-
-    <!-- =========================
-         برنامه اصلی
-         ========================= -->
-
-    <script src="./app.js?v=121"></script>
-
+    <script src="./app.js?v=122"></script>
 
 </body>
-
 </html>
