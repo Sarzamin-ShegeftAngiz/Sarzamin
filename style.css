@@ -1,10 +1,22 @@
+/* =========================================
+   RESET
+========================================= */
+
 html,
 body {
     margin: 0;
     padding: 0;
+
     width: 100%;
+    height: 100%;
+
+    min-width: 100%;
     min-height: 100%;
-    background: #ffffff;
+
+    overflow: hidden;
+
+    background: #000;
+
     font-family: Arial, sans-serif;
 }
 
@@ -21,48 +33,78 @@ body {
 
 
 /* =========================================
-   CATEGORY PAGE
+   GROUP SELECTION
 ========================================= */
 
 .category-page {
-    padding: 25px 15px 40px;
-    box-sizing: border-box;
+    width: 100%;
     min-height: 100vh;
+
+    box-sizing: border-box;
+
+    padding: 25px 15px 40px;
+
+    background: #ffffff;
+
+    overflow-y: auto;
+
+    -webkit-overflow-scrolling: touch;
 }
 
 
 .main-title {
     text-align: center;
+
     font-size: 27px;
+
     font-weight: bold;
+
     margin: 20px 0 8px;
 }
 
 
 .main-subtitle {
     text-align: center;
+
     font-size: 16px;
+
     margin-bottom: 25px;
 }
 
 
 .group-buttons {
     width: 100%;
+
     max-width: 500px;
+
     margin: auto;
 }
 
 
 .group-button {
+    display: block;
+
     width: 100%;
+
     padding: 18px;
+
     margin: 10px 0;
+
     border: none;
+
     border-radius: 18px;
-    background: #111;
+
+    background: #111111;
+
     color: white;
+
     font-size: 19px;
+
     font-weight: bold;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
 }
 
 
@@ -72,6 +114,7 @@ body {
 
 .gallery-page {
     width: 100%;
+
     min-height: 100vh;
 
     box-sizing: border-box;
@@ -81,28 +124,41 @@ body {
         12px
         100px;
 
+    background: #ffffff;
+
     overflow-y: auto;
 
-    -webkit-overflow-scrolling: touch;
+    overflow-x: hidden;
 
-    background: #ffffff;
+    -webkit-overflow-scrolling: touch;
 }
 
 
 .gallery-header {
+    width: 100%;
+
     text-align: center;
-    padding: 10px 0 20px;
+
+    padding:
+        10px
+        0
+        20px;
 }
 
 
 .gallery-title {
+    text-align: center;
+
     font-size: 29px;
+
     font-weight: bold;
+
+    margin: 0;
 }
 
 
 /* =========================================
-   IMAGE GRID
+   GALLERY GRID
 ========================================= */
 
 .gallery-grid {
@@ -114,11 +170,15 @@ body {
         repeat(2, minmax(0, 1fr));
 
     gap: 12px;
+
+    box-sizing: border-box;
 }
 
 
 .image-card {
     width: 100%;
+
+    box-sizing: border-box;
 }
 
 
@@ -137,7 +197,7 @@ body {
 
     box-shadow:
         0 3px 12px
-        rgba(0,0,0,0.15);
+        rgba(0, 0, 0, 0.15);
 
     user-select: none;
 
@@ -157,10 +217,16 @@ body {
     position: fixed;
 
     left: 12px;
+
     right: 12px;
+
     bottom: 14px;
 
+    width: calc(100% - 24px);
+
     height: 58px;
+
+    box-sizing: border-box;
 
     border: none;
 
@@ -178,36 +244,112 @@ body {
 
     box-shadow:
         0 5px 20px
-        rgba(0,0,0,0.25);
+        rgba(0, 0, 0, 0.25);
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
 }
 
 
 /* =========================================
-   AR
+   AR SCENE
 ========================================= */
 
 a-scene {
     position: fixed !important;
+
     top: 0 !important;
+
     left: 0 !important;
+
+    right: 0 !important;
+
+    bottom: 0 !important;
+
     width: 100vw !important;
+
     height: 100vh !important;
+
+    min-width: 100vw !important;
+
+    min-height: 100vh !important;
+
+    max-width: 100vw !important;
+
+    max-height: 100vh !important;
+
     margin: 0 !important;
+
     padding: 0 !important;
-    z-index: 9999 !important;
+
+    border: 0 !important;
+
+    z-index: 99999 !important;
+
+    display: block !important;
+
     background: transparent !important;
 }
 
-a-scene canvas {
+
+/* =========================================
+   AR CANVAS
+========================================= */
+
+a-scene canvas,
+a-scene .a-canvas,
+.a-canvas {
     position: fixed !important;
+
     top: 0 !important;
+
     left: 0 !important;
+
+    right: 0 !important;
+
+    bottom: 0 !important;
+
     width: 100vw !important;
+
     height: 100vh !important;
+
+    min-width: 100vw !important;
+
+    min-height: 100vh !important;
+
+    max-width: 100vw !important;
+
+    max-height: 100vh !important;
+
     margin: 0 !important;
+
     padding: 0 !important;
+
+    border: 0 !important;
+
+    z-index: 99999 !important;
+
+    display: block !important;
 }
 
+
+/* =========================================
+   CANVAS TOUCH
+========================================= */
+
+canvas {
+    touch-action: none;
+
+    -webkit-user-select: none;
+
+    user-select: none;
+}
+
+
+/* =========================================
+   HIDE A-FRAME BUTTONS
+========================================= */
 
 .a-enter-vr,
 .a-enter-ar {
@@ -223,9 +365,10 @@ a-scene canvas {
     position: fixed;
 
     top: 15px;
+
     right: 15px;
 
-    z-index: 100000;
+    z-index: 100000 !important;
 
     border: none;
 
@@ -234,13 +377,17 @@ a-scene canvas {
     padding: 10px 14px;
 
     background:
-        rgba(0,0,0,0.72);
+        rgba(0, 0, 0, 0.72);
 
     color: white;
 
     font-size: 14px;
 
     font-weight: bold;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
 }
 
 
@@ -250,6 +397,80 @@ a-scene canvas {
 
 .instagram-zone,
 .share-zone {
-    opacity: 0;
-    visibility: hidden;
+    opacity: 0 !important;
+
+    visibility: hidden !important;
+
+    pointer-events: auto !important;
+}
+
+
+/* =========================================
+   AFTER VIDEO TEXT
+========================================= */
+
+.after-video-text {
+    visibility: hidden !important;
+}
+
+
+/* =========================================
+   AR VIDEO
+========================================= */
+
+#arVideo {
+    position: fixed !important;
+
+    width: 1px !important;
+
+    height: 1px !important;
+
+    left: -20px !important;
+
+    top: -20px !important;
+
+    opacity: 0 !important;
+
+    pointer-events: none !important;
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 600px) {
+
+    .gallery-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 10px;
+    }
+
+    .gallery-page {
+        padding-left: 10px;
+        padding-right: 10px;
+        padding-bottom: 95px;
+    }
+
+    .gallery-image {
+        border-radius: 13px;
+    }
+
+}
+
+
+/* =========================================
+   SAFE AREA FOR PHONES
+========================================= */
+
+#openCamera {
+    bottom:
+        calc(14px + env(safe-area-inset-bottom));
+}
+
+#changeGroup {
+    top:
+        calc(15px + env(safe-area-inset-top));
 }
