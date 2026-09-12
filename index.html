@@ -1,359 +1,327 @@
-<!DOCTYPE html>
-<html lang="fa">
+document.addEventListener("DOMContentLoaded", () => {
 
-<head>
+    const scene = document.querySelector("a-scene");
 
-    <meta charset="UTF-8">
+    const videos = [];
 
-    <meta name="viewport"
-          content="width=device-width,
-                   initial-scale=1.0,
-                   maximum-scale=1.0,
-                   user-scalable=no">
+    for (let i = 0; i < 30; i++) {
+        videos.push(document.querySelector("#video" + i));
+    }
 
-    <title>Sarzamin AR</title>
+    let activeTarget = null;
+    let activeIndex = -1;
 
-    <link rel="stylesheet" href="./style.css?v=132">
 
-    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    // =========================
+    // AR READY
+    // =========================
 
-    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+    scene.addEventListener("arReady", () => {
+        console.log("AR READY");
+    });
 
-    <script defer src="app.js?v=132"></script>
 
-</head>
+    // =========================
+    // TARGET FOUND
+    // =========================
 
+    scene.addEventListener("targetFound", async (e) => {
 
-<body>
+        const target = e.target;
 
+        const data = target.getAttribute("mindar-image-target");
 
-<a-scene
+        const index = data.targetIndex;
 
-    id="arScene"
+        console.log("TARGET FOUND:", index);
 
-    mindar-image="
-        imageTargetSrc: ./Group1/targets.mind;
-        autoStart: true;
-        uiLoading: yes;
-        uiScanning: yes;
-        uiError: yes;
-        warmupTolerance: 2;
-        missTolerance: 1;
-        filterMinCF: 0.0001;
-        filterBeta: 0.001;
-    "
 
-    embedded
+        activeTarget = target;
+        activeIndex = index;
 
-    color-space="sRGB"
 
-    renderer="
-        colorManagement: true;
-        alpha: true;
-    "
+        // -------------------------
+        // فقط ویدیوهای دیگر را متوقف و مخفی کن
+        // -------------------------
 
-    vr-mode-ui="enabled:false"
+        const allTargets = scene.querySelectorAll(
+            "[mindar-image-target]"
+        );
 
-    device-orientation-permission-ui="enabled:false"
+        allTargets.forEach((t) => {
 
->
+            const plane = t.querySelector("a-video");
 
+            if (plane && t !== target) {
 
-    <a-assets>
+                plane.setAttribute("visible", false);
 
-        <video
-            id="arVideo"
-            preload="none"
-            loop
-            playsinline
-            webkit-playsinline>
-        </video>
+                // اطمینان از مخفی شدن واقعی
+                if (plane.object3D) {
+                    plane.object3D.visible = false;
+                }
+            }
 
-    </a-assets>
+        });
 
 
-    <a-camera
-        position="0 0 0"
-        look-controls="enabled:false">
-    </a-camera>
+        // -------------------------
+        // همه ویدیوها را متوقف کن
+        // -------------------------
 
+        videos.forEach((video, i) => {
 
-    <!-- TARGET 0 -->
-    <a-entity mindar-image-target="targetIndex:0">
-        <a-video
-            class="arVideoPlane"
-            src="#arVideo"
-            width="1"
-            height="1.42"
-            position="0 0 0"
-            visible="false">
-        </a-video>
-    </a-entity>
+            if (!video) return;
 
+            if (i !== index) {
 
-    <!-- TARGET 1 -->
-    <a-entity mindar-image-target="targetIndex:1">
-        <a-video class="arVideoPlane" src="#arVideo"
-            width="1" height="1.42"
-            position="0 0 0" visible="false">
-        </a-video>
-    </a-entity>
+                video.pause();
 
+                try {
+                    video.currentTime = 0;
+                } catch (err) {}
 
-    <!-- TARGET 2 -->
-    <a-entity mindar-image-target="targetIndex:2">
-        <a-video class="arVideoPlane" src="#arVideo"
-            width="1" height="1.42"
-            position="0 0 0" visible="false">
-        </a-video>
-    </a-entity>
-
-
-    <!-- TARGET 3 -->
-    <a-entity mindar-image-target="targetIndex:3">
-        <a-video class="arVideoPlane" src="#arVideo"
-            width="1" height="1.42"
-            position="0 0 0" visible="false">
-        </a-video>
-    </a-entity>
-
-
-    <!-- TARGET 4 -->
-    <a-entity mindar-image-target="targetIndex:4">
-        <a-video class="arVideoPlane" src="#arVideo"
-            width="1" height="1.42"
-            position="0 0 0" visible="false">
-        </a-video>
-    </a-entity>
-
-
-    <!-- TARGET 5 -->
-    <a-entity mindar-image-target="targetIndex:5">
-        <a-video class="arVideoPlane" src="#arVideo"
-            width="1" height="1.42"
-            position="0 0 0" visible="false">
-        </a-video>
-    </a-entity>
-
-
-    <!-- TARGET 6 -->
-    <a-entity mindar-image-target="targetIndex:6">
-        <a-video class="arVideoPlane" src="#arVideo"
-            width="1" height="1.42"
-            position="0 0 0" visible="false">
-        </a-video>
-    </a-entity>
-
-
-    <!-- TARGET 7 -->
-    <a-entity mindar-image-target="targetIndex:7">
-        <a-video class="arVideoPlane" src="#arVideo"
-            width="1" height="1.42"
-            position="0 0 0" visible="false">
-        </a-video>
-    </a-entity>
-
-
-    <!-- TARGET 8 -->
-    <a-entity mindar-image-target="targetIndex:8">
-        <a-video class="arVideoPlane" src="#arVideo"
-            width="1" height="1.42"
-            position="0 0 0" visible="false">
-        </a-video>
-    </a-entity>
-
-
-    <!-- TARGET 9 -->
-    <a-entity mindar-image-target="targetIndex:9">
-        <a-video class="arVideoPlane" src="#arVideo"
-            width="1" height="1.42"
-            position="0 0 0" visible="false">
-        </a-video>
-    </a-entity>
-
-
-    <!-- TARGET 10 -->
-    <a-entity mindar-image-target="targetIndex:10">
-        <a-video class="arVideoPlane" src="#arVideo"
-            width="1" height="1.42"
-            position="0 0 0" visible="false">
-        </a-video>
-    </a-entity>
-
-
-    <!-- TARGET 11 -->
-    <a-entity mindar-image-target="targetIndex:11">
-        <a-video class="arVideoPlane" src="#arVideo"
-            width="1" height="1.42"
-            position="0 0 0" visible="false">
-        </a-video>
-    </a-entity>
-
-
-    <!-- TARGET 12 -->
-    <a-entity mindar-image-target="targetIndex:12">
-        <a-video class="arVideoPlane" src="#arVideo"
-            width="1" height="1.42"
-            position="0 0 0" visible="false">
-        </a-video>
-    </a-entity>
-
-
-    <!-- TARGET 13 -->
-    <a-entity mindar-image-target="targetIndex:13">
-        <a-video class="arVideoPlane" src="#arVideo"
-            width="1" height="1.42"
-            position="0 0 0" visible="false">
-        </a-video>
-    </a-entity>
-
-
-    <!-- TARGET 14 -->
-    <a-entity mindar-image-target="targetIndex:14">
-        <a-video class="arVideoPlane" src="#arVideo"
-            width="1" height="1.42"
-            position="0 0 0" visible="false">
-        </a-video>
-    </a-entity>
-
-
-    <!-- TARGET 15 -->
-    <a-entity mindar-image-target="targetIndex:15">
-        <a-video class="arVideoPlane" src="#arVideo"
-            width="1" height="1.42"
-            position="0 0 0" visible="false">
-        </a-video>
-    </a-entity>
-
-
-    <!-- TARGET 16 -->
-    <a-entity mindar-image-target="targetIndex:16">
-        <a-video class="arVideoPlane" src="#arVideo"
-            width="1" height="1.42"
-            position="0 0 0" visible="false">
-        </a-video>
-    </a-entity>
-
-
-    <!-- TARGET 17 -->
-    <a-entity mindar-image-target="targetIndex:17">
-        <a-video class="arVideoPlane" src="#arVideo"
-            width="1" height="1.42"
-            position="0 0 0" visible="false">
-        </a-video>
-    </a-entity>
-
-
-    <!-- TARGET 18 -->
-    <a-entity mindar-image-target="targetIndex:18">
-        <a-video class="arVideoPlane" src="#arVideo"
-            width="1" height="1.42"
-            position="0 0 0" visible="false">
-        </a-video>
-    </a-entity>
-
-
-    <!-- TARGET 19 -->
-    <a-entity mindar-image-target="targetIndex:19">
-        <a-video class="arVideoPlane" src="#arVideo"
-            width="1" height="1.42"
-            position="0 0 0" visible="false">
-        </a-video>
-    </a-entity>
-
-
-    <!-- TARGET 20 -->
-    <a-entity mindar-image-target="targetIndex:20">
-        <a-video class="arVideoPlane" src="#arVideo"
-            width="1" height="1.42"
-            position="0 0 0" visible="false">
-        </a-video>
-    </a-entity>
-
-
-    <!-- TARGET 21 -->
-    <a-entity mindar-image-target="targetIndex:21">
-        <a-video class="arVideoPlane" src="#arVideo"
-            width="1" height="1.42"
-            position="0 0 0" visible="false">
-        </a-video>
-    </a-entity>
-
-
-    <!-- TARGET 22 -->
-    <a-entity mindar-image-target="targetIndex:22">
-        <a-video class="arVideoPlane" src="#arVideo"
-            width="1" height="1.42"
-            position="0 0 0" visible="false">
-        </a-video>
-    </a-entity>
-
-
-    <!-- TARGET 23 -->
-    <a-entity mindar-image-target="targetIndex:23">
-        <a-video class="arVideoPlane" src="#arVideo"
-            width="1" height="1.42"
-            position="0 0 0" visible="false">
-        </a-video>
-    </a-entity>
-
-
-    <!-- TARGET 24 -->
-    <a-entity mindar-image-target="targetIndex:24">
-        <a-video class="arVideoPlane" src="#arVideo"
-            width="1" height="1.42"
-            position="0 0 0" visible="false">
-        </a-video>
-    </a-entity>
-
-
-    <!-- TARGET 25 -->
-    <a-entity mindar-image-target="targetIndex:25">
-        <a-video class="arVideoPlane" src="#arVideo"
-            width="1" height="1.42"
-            position="0 0 0" visible="false">
-        </a-video>
-    </a-entity>
-
-
-    <!-- TARGET 26 -->
-    <a-entity mindar-image-target="targetIndex:26">
-        <a-video class="arVideoPlane" src="#arVideo"
-            width="1" height="1.42"
-            position="0 0 0" visible="false">
-        </a-video>
-    </a-entity>
-
-
-    <!-- TARGET 27 -->
-    <a-entity mindar-image-target="targetIndex:27">
-        <a-video class="arVideoPlane" src="#arVideo"
-            width="1" height="1.42"
-            position="0 0 0" visible="false">
-        </a-video>
-    </a-entity>
-
-
-    <!-- TARGET 28 -->
-    <a-entity mindar-image-target="targetIndex:28">
-        <a-video class="arVideoPlane" src="#arVideo"
-            width="1" height="1.42"
-            position="0 0 0" visible="false">
-        </a-video>
-    </a-entity>
-
-
-    <!-- TARGET 29 -->
-    <a-entity mindar-image-target="targetIndex:29">
-        <a-video class="arVideoPlane" src="#arVideo"
-            width="1" height="1.42"
-            position="0 0 0" visible="false">
-        </a-video>
-    </a-entity>
-
-
-</a-scene>
-
-</body>
-
-</html>
+            }
+
+        });
+
+
+        // -------------------------
+        // ویدیوی مربوط به تارگت
+        // -------------------------
+
+        const video = videos[index];
+
+        if (!video) {
+
+            console.log("VIDEO NOT FOUND:", index);
+
+            return;
+        }
+
+
+        console.log(
+            "VIDEO:",
+            index,
+            "READY STATE:",
+            video.readyState
+        );
+
+
+        // از اول ویدیو
+        try {
+            video.currentTime = 0;
+        } catch (err) {}
+
+
+        // صدا مثل نسخه قبلی
+        video.muted = false;
+        video.volume = 1;
+
+
+        // -------------------------
+        // اگر ویدیو هنوز داده ندارد
+        // -------------------------
+
+        if (video.readyState < 2) {
+
+            console.log("WAITING FOR VIDEO DATA...");
+
+
+            await new Promise((resolve) => {
+
+                let finished = false;
+
+                const done = () => {
+
+                    if (finished) return;
+
+                    finished = true;
+
+                    video.removeEventListener(
+                        "loadeddata",
+                        done
+                    );
+
+                    video.removeEventListener(
+                        "canplay",
+                        done
+                    );
+
+                    console.log(
+                        "VIDEO DATA READY:",
+                        video.readyState
+                    );
+
+                    resolve();
+                };
+
+
+                video.addEventListener(
+                    "loadeddata",
+                    done,
+                    { once: true }
+                );
+
+                video.addEventListener(
+                    "canplay",
+                    done,
+                    { once: true }
+                );
+
+
+                // اگر قبلاً آماده شد
+                if (video.readyState >= 2) {
+                    done();
+                }
+
+
+                // حداکثر 10 ثانیه
+                setTimeout(done, 10000);
+
+            });
+
+        }
+
+
+        // -------------------------
+        // بررسی اینکه هنوز همین تارگت است
+        // -------------------------
+
+        if (
+            activeTarget !== target ||
+            activeIndex !== index
+        ) {
+
+            console.log("TARGET CHANGED - CANCEL");
+
+            return;
+        }
+
+
+        // -------------------------
+        // حالا پلین همین تارگت را نشان بده
+        // -------------------------
+
+        const plane = target.querySelector("a-video");
+
+        if (!plane) {
+
+            console.log("A-VIDEO NOT FOUND:", index);
+
+            return;
+        }
+
+
+        plane.setAttribute("visible", true);
+
+        if (plane.object3D) {
+            plane.object3D.visible = true;
+        }
+
+
+        console.log("VIDEO PLANE VISIBLE:", index);
+
+
+        // -------------------------
+        // PLAY
+        // -------------------------
+
+        try {
+
+            await video.play();
+
+            console.log(
+                "VIDEO PLAYING:",
+                index
+            );
+
+        } catch (error) {
+
+            console.log(
+                "PLAY WITH SOUND FAILED:",
+                error
+            );
+
+
+            // تلاش دوم بدون صدا
+            video.muted = true;
+
+            try {
+
+                await video.play();
+
+                console.log(
+                    "VIDEO PLAYING MUTED:",
+                    index
+                );
+
+            } catch (error2) {
+
+                console.log(
+                    "VIDEO PLAY FAILED:",
+                    error2
+                );
+
+            }
+
+        }
+
+    });
+
+
+    // =========================
+    // TARGET LOST
+    // =========================
+
+    scene.addEventListener("targetLost", (e) => {
+
+        const target = e.target;
+
+        const data =
+            target.getAttribute("mindar-image-target");
+
+        const index = data.targetIndex;
+
+        console.log("TARGET LOST:", index);
+
+
+        const video = videos[index];
+
+        if (video) {
+
+            video.pause();
+
+            try {
+                video.currentTime = 0;
+            } catch (err) {}
+
+        }
+
+
+        // فوراً ویدیو را مخفی کن
+
+        const plane = target.querySelector("a-video");
+
+        if (plane) {
+
+            plane.setAttribute("visible", false);
+
+            if (plane.object3D) {
+                plane.object3D.visible = false;
+            }
+
+        }
+
+
+        // فقط اگر همین تارگت فعال بود
+        if (activeTarget === target) {
+
+            activeTarget = null;
+            activeIndex = -1;
+
+        }
+
+    });
+
+});
