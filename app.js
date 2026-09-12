@@ -413,22 +413,19 @@ function createTarget(
 
 
     videoPlane.setAttribute(
-        "width",
-        "1"
-    );
+    "width",
+    "1"
+);
 
+videoPlane.setAttribute(
+    "height",
+    "1.405"
+);
 
-    videoPlane.setAttribute(
-        "height",
-        "1.42"
-    );
-
-
-    videoPlane.setAttribute(
-        "position",
-        "0 0 0"
-    );
-
+videoPlane.setAttribute(
+    "position",
+    "0 0 0"
+);
 
     videoPlane.setAttribute(
         "visible",
