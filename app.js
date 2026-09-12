@@ -25,109 +25,29 @@ const GROUPS = {
 
 
 let currentGroup = null;
-
 let currentScene = null;
-
 let currentVideo = null;
+let activeTarget = null;
 
 
-/* =========================================
-   شروع برنامه
-========================================= */
+/* =====================================
+   شروع
+===================================== */
 
 document.addEventListener("DOMContentLoaded", () => {
-
-    createMain();
 
     showCategories();
 
 });
 
 
-/* =========================================
-   ساخت صفحه اصلی
-========================================= */
-
-function createMain() {
-
-    const old = document.getElementById("mainApp");
-
-    if (old) {
-        old.remove();
-    }
-
-    const main = document.createElement("div");
-
-    main.id = "mainApp";
-
-    document.body.appendChild(main);
-
-}
-
-
-/* =========================================
-   پاک کردن صفحه
-========================================= */
-
-function clearPage() {
-
-    const main = document.getElementById("mainApp");
-
-    if (main) {
-
-        main.innerHTML = "";
-
-        main.style.display = "block";
-
-    }
-
-
-    const oldScene = document.querySelector("a-scene");
-
-    if (oldScene) {
-
-        try {
-            oldScene.remove();
-        } catch (e) {}
-
-    }
-
-
-    const oldVideo = document.getElementById("arVideo");
-
-    if (oldVideo) {
-
-        try {
-            oldVideo.pause();
-        } catch (e) {}
-
-        oldVideo.remove();
-
-    }
-
-
-    const oldChange =
-        document.getElementById("changeGroup");
-
-    if (oldChange) {
-        oldChange.remove();
-    }
-
-
-    currentScene = null;
-
-    currentVideo = null;
-
-}
-
-
-/* =========================================
+/* =====================================
    صفحه انتخاب گروه
-========================================= */
+===================================== */
 
 function showCategories() {
 
-    clearPage();
+    stopAR();
 
 
     const main =
@@ -139,139 +59,120 @@ function showCategories() {
     main.style.display = "block";
 
 
-    const page =
-        document.createElement("div");
+    main.innerHTML = `
 
-    page.className = "category-page";
+        <div class="category-page">
 
+            <div class="main-title">
+                سرزمین شگفت‌انگیز ✨
+            </div>
 
-    page.innerHTML = `
+            <div class="main-subtitle">
+                گروه دفترها را انتخاب کنید
+            </div>
 
-        <div class="main-title">
-            سرزمین شگفت‌انگیز ✨
-        </div>
+            <div class="group-buttons">
 
-        <div class="main-subtitle">
-            گروه دفترها را انتخاب کنید
-        </div>
+                <button
+                    class="group-button"
+                    data-group="Group1">
 
-        <div class="group-buttons">
+                    📚 گروه ۱
 
-            <button
-                class="group-button"
-                data-group="Group1">
-
-                📚 گروه ۱
-
-            </button>
+                </button>
 
 
-            <button
-                class="group-button"
-                data-group="Group2">
+                <button
+                    class="group-button"
+                    data-group="Group2">
 
-                📚 گروه ۲
+                    📚 گروه ۲
 
-            </button>
+                </button>
 
 
-            <button
-                class="group-button"
-                data-group="Group3">
+                <button
+                    class="group-button"
+                    data-group="Group3">
 
-                📚 گروه ۳
+                    📚 گروه ۳
 
-            </button>
+                </button>
+
+            </div>
 
         </div>
 
     `;
 
 
-    main.appendChild(page);
-
-
-    page
+    main
         .querySelectorAll(".group-button")
         .forEach(button => {
 
-            button.addEventListener("click", () => {
+            button.addEventListener(
+                "click",
+                () => {
 
-                const group =
-                    button.dataset.group;
+                    startAR(
+                        button.dataset.group
+                    );
 
-                startAR(group);
-
-            });
+                }
+            );
 
         });
 
 }
 
 
-/* =========================================
+/* =====================================
    شروع AR
-========================================= */
+===================================== */
 
 function startAR(groupName) {
 
-    const config = GROUPS[groupName];
+    const config =
+        GROUPS[groupName];
 
     if (!config) return;
 
 
-    currentGroup = groupName;
+    currentGroup =
+        groupName;
 
+    activeTarget = null;
+
+
+    /* صفحه انتخاب گروه مخفی */
 
     const main =
         document.getElementById("mainApp");
 
     if (main) {
 
-        main.style.display = "none";
+        main.style.display =
+            "none";
 
     }
 
 
-    /* حذف Scene قبلی */
+    /* پاک کردن AR قبلی */
 
-    const oldScene =
-        document.querySelector("a-scene");
-
-    if (oldScene) {
-
-        try {
-            oldScene.remove();
-        } catch (e) {}
-
-    }
+    stopAR();
 
 
-    /* حذف Video قبلی */
-
-    const oldVideo =
-        document.getElementById("arVideo");
-
-    if (oldVideo) {
-
-        try {
-            oldVideo.pause();
-        } catch (e) {}
-
-        oldVideo.remove();
-
-    }
-
-
-    /* =====================================
-       ساخت ویدئوی اصلی
-    ===================================== */
+    /*
+       ساخت VIDEO اصلی
+       این فقط منبع a-video است
+    */
 
     const video =
         document.createElement("video");
 
 
-    video.id = "arVideo";
+    video.id =
+        "arVideo";
 
 
     video.setAttribute(
@@ -287,81 +188,61 @@ function startAR(groupName) {
 
 
     video.setAttribute(
-        "muted",
+        "preload",
+        "auto"
+    );
+
+
+    video.setAttribute(
+        "loop",
         ""
     );
 
 
-    video.muted = true;
+    video.muted =
+        true;
 
 
-    video.loop = false;
+    document.body.appendChild(
+        video
+    );
 
 
-    video.preload = "auto";
-
-
-    document.body.appendChild(video);
-
-
-    currentVideo = video;
-
-
-    /* =====================================
-       ساخت A-Frame Scene
-    ===================================== */
-
-    const scene =
-        document.createElement("a-scene");
+    currentVideo =
+        video;
 
 
     /*
-       embedded را نگه می‌داریم
+       ساخت Scene
     */
 
-    scene.setAttribute(
-        "embedded",
-        ""
-    );
+    const scene =
+        document.createElement(
+            "a-scene"
+        );
 
 
-    /* =====================================
-       MindAR
-    ===================================== */
+    /*
+       دقیقاً همان تنظیم اصلی
+       که قبلاً دوربین با آن کار می‌کرد
+    */
 
     scene.setAttribute(
         "mindar-image",
         `
         imageTargetSrc: ${config.mind};
-        autoStart: true;
+        warmupTolerance: 2;
+        missTolerance: 1;
         uiLoading: no;
         uiScanning: yes;
         uiError: yes;
-        warmupTolerance: 3;
-        missTolerance: 2;
-        filterMinCF: 0.0001;
-        filterBeta: 0.001;
-        `
-    );
-
-
-    /* =====================================
-       Renderer
-    ===================================== */
-
-    scene.setAttribute(
-        "renderer",
-        `
-        alpha: true;
-        colorManagement: true;
-        physicallyCorrectLights: true;
         `
     );
 
 
     scene.setAttribute(
-        "color-space",
-        "sRGB"
+        "embedded",
+        ""
     );
 
 
@@ -377,12 +258,20 @@ function startAR(groupName) {
     );
 
 
-    /* =====================================
-       Camera
-    ===================================== */
+    scene.setAttribute(
+        "renderer",
+        "colorManagement: true;"
+    );
+
+
+    /*
+       CAMERA
+    */
 
     const camera =
-        document.createElement("a-camera");
+        document.createElement(
+            "a-camera"
+        );
 
 
     camera.setAttribute(
@@ -397,32 +286,20 @@ function startAR(groupName) {
     );
 
 
-    camera.setAttribute(
-        "active",
-        "true"
+    scene.appendChild(
+        camera
     );
 
 
-    camera.setAttribute(
-        "cursor",
-        "fuse: false; rayOrigin: mouse;"
-    );
+    /*
+       ۳۰ تارگت
+    */
 
-
-    camera.setAttribute(
-        "raycaster",
-        "near: 0; far: 100; objects: .arLink;"
-    );
-
-
-    scene.appendChild(camera);
-
-
-    /* =====================================
-       ساخت ۳۰ Target
-    ===================================== */
-
-    for (let i = 0; i < 30; i++) {
+    for (
+        let i = 0;
+        i < 30;
+        i++
+    ) {
 
         createTarget(
             scene,
@@ -433,12 +310,27 @@ function startAR(groupName) {
     }
 
 
-    /* =====================================
+    /*
+       اضافه کردن Scene
+    */
+
+    document.body.appendChild(
+        scene
+    );
+
+
+    currentScene =
+        scene;
+
+
+    /*
        دکمه تغییر گروه
-    ===================================== */
+    */
 
     const changeButton =
-        document.createElement("button");
+        document.createElement(
+            "button"
+        );
 
 
     changeButton.id =
@@ -453,50 +345,38 @@ function startAR(groupName) {
         "click",
         () => {
 
-            stopAR();
-
             showCategories();
 
         }
     );
 
 
-    /* =====================================
-       اضافه کردن به صفحه
-    ===================================== */
-
-    document.body.appendChild(scene);
-
-    document.body.appendChild(changeButton);
-
-
-    currentScene = scene;
+    document.body.appendChild(
+        changeButton
+    );
 
 
     /*
-       کمی زمان می‌دهیم تا MindAR
-       خودش اندازه دوربین را تنظیم کند.
+       وقتی AR آماده شد
     */
 
-    setTimeout(() => {
+    scene.addEventListener(
+        "arReady",
+        () => {
 
-        resizeAR();
+            console.log(
+                "AR READY"
+            );
 
-    }, 500);
-
-
-    setTimeout(() => {
-
-        resizeAR();
-
-    }, 1500);
+        }
+    );
 
 }
 
 
-/* =========================================
-   ساخت Target
-========================================= */
+/* =====================================
+   ساخت هر Target
+===================================== */
 
 function createTarget(
     scene,
@@ -505,7 +385,9 @@ function createTarget(
 ) {
 
     const target =
-        document.createElement("a-entity");
+        document.createElement(
+            "a-entity"
+        );
 
 
     target.setAttribute(
@@ -514,12 +396,14 @@ function createTarget(
     );
 
 
-    /* =====================================
-       Video Plane
-    ===================================== */
+    /*
+       VIDEO PLANE
+    */
 
     const videoPlane =
-        document.createElement("a-video");
+        document.createElement(
+            "a-video"
+        );
 
 
     videoPlane.setAttribute(
@@ -542,7 +426,7 @@ function createTarget(
 
     videoPlane.setAttribute(
         "position",
-        "0 0 0.01"
+        "0 0 0"
     );
 
 
@@ -552,18 +436,22 @@ function createTarget(
     );
 
 
-    target.appendChild(videoPlane);
+    target.appendChild(
+        videoPlane
+    );
 
 
-    /* =====================================
+    /*
+       =========================
        Instagram
-    ===================================== */
+       =========================
+    */
 
     const instagram =
-        document.createElement("a-plane");
+        document.createElement(
+            "a-plane"
+        );
 
-
-    instagram.classList.add("arLink");
 
     instagram.classList.add(
         "instagram-zone"
@@ -572,7 +460,7 @@ function createTarget(
 
     instagram.setAttribute(
         "width",
-        "0.55"
+        "0.70"
     );
 
 
@@ -584,96 +472,32 @@ function createTarget(
 
     instagram.setAttribute(
         "position",
-        "-0.28 0.61 0.06"
+        "-0.31 0.62 0.02"
     );
 
 
     instagram.setAttribute(
         "material",
-        "transparent: true; opacity: 0; side: double;"
+        "shader: flat; color: red; opacity: 0; transparent: true;"
     );
 
 
-    instagram.addEventListener(
-        "click",
-        () => {
-
-            const appURL =
-                "instagram://user?username=SarzaminAr";
-
-
-            const webURL =
-                "https://www.instagram.com/SarzaminAr/";
-
-
-            window.location.href =
-                appURL;
-
-
-            setTimeout(() => {
-
-                window.location.href =
-                    webURL;
-
-            }, 1500);
-
-        }
+    target.appendChild(
+        instagram
     );
 
 
-    target.appendChild(instagram);
-
-
-    /* =====================================
-       متن پایین دفتر
-    ===================================== */
-
-    const shareText =
-        document.createElement("a-text");
-
-
-    shareText.setAttribute(
-        "value",
-        "سرزمین شگفت‌انگیز"
-    );
-
-
-    shareText.setAttribute(
-        "align",
-        "center"
-    );
-
-
-    shareText.setAttribute(
-        "width",
-        "1.8"
-    );
-
-
-    shareText.setAttribute(
-        "position",
-        "0 -0.88 0.06"
-    );
-
-
-    shareText.setAttribute(
-        "color",
-        "#ffffff"
-    );
-
-
-    target.appendChild(shareText);
-
-
-    /* =====================================
-       ناحیه اشتراک‌گذاری
-    ===================================== */
+    /*
+       =========================
+       Share
+       =========================
+    */
 
     const share =
-        document.createElement("a-plane");
+        document.createElement(
+            "a-plane"
+        );
 
-
-    share.classList.add("arLink");
 
     share.classList.add(
         "share-zone"
@@ -682,120 +506,60 @@ function createTarget(
 
     share.setAttribute(
         "width",
-        "1.05"
+        "0.70"
     );
 
 
     share.setAttribute(
         "height",
-        "0.20"
+        "0.16"
     );
 
 
     share.setAttribute(
         "position",
-        "0 -0.88 0.08"
+        "0 -0.62 0.02"
     );
 
 
     share.setAttribute(
         "material",
-        "transparent: true; opacity: 0; side: double;"
+        "shader: flat; color: white; opacity: 0; transparent: true;"
     );
 
 
-    share.addEventListener(
-        "click",
-        async () => {
-
-            const message =
-`😍 من یه دفتر جادویی پیدا کردم!
-
-دوربین گوشیت رو روی دفتر بگیر تا ببینی چطور زنده میشه! ✨📚
-
-سرزمین شگفت‌انگیز ✨
-@SarzaminAr`;
-
-
-            const shareData = {
-
-                title:
-                    "سرزمین شگفت‌انگیز ✨",
-
-                text:
-                    message,
-
-                url:
-                    "https://www.instagram.com/SarzaminAr/"
-
-            };
-
-
-            if (navigator.share) {
-
-                try {
-
-                    await navigator.share(
-                        shareData
-                    );
-
-                    return;
-
-                } catch (error) {
-
-                    if (
-                        error &&
-                        error.name ===
-                        "AbortError"
-                    ) {
-
-                        return;
-
-                    }
-
-                }
-
-            }
-
-
-            try {
-
-                await navigator.clipboard.writeText(
-                    message
-                );
-
-
-                alert(
-                    "متن آماده اشتراک‌گذاری کپی شد ✨"
-                );
-
-            } catch (error) {
-
-                alert(message);
-
-            }
-
-        }
+    target.appendChild(
+        share
     );
 
 
-    target.appendChild(share);
-
-
-    /* =====================================
-       وقتی دفتر پیدا شد
-    ===================================== */
+    /*
+       =========================
+       TARGET FOUND
+       =========================
+    */
 
     target.addEventListener(
         "targetFound",
-        () => {
+        async () => {
+
+            console.log(
+                "TARGET FOUND:",
+                index
+            );
+
+
+            activeTarget =
+                target;
+
 
             const config =
                 GROUPS[groupName];
 
 
             const number =
-                config.start + index;
+                config.start +
+                index;
 
 
             const filename =
@@ -808,7 +572,9 @@ function createTarget(
                 `./${groupName}/${filename}.mp4`;
 
 
-            /* توقف ویدئوی قبلی */
+            /*
+               توقف ویدئوی قبلی
+            */
 
             if (currentVideo) {
 
@@ -821,37 +587,49 @@ function createTarget(
             }
 
 
-            /* مخفی کردن همه Plane ها */
+            /*
+               مخفی کردن Plane های قبلی
+            */
 
             if (currentScene) {
 
                 currentScene
-                    .querySelectorAll("a-video")
-                    .forEach(element => {
+                    .querySelectorAll(
+                        "a-video"
+                    )
+                    .forEach(
+                        element => {
 
-                        element.setAttribute(
-                            "visible",
-                            "false"
-                        );
+                            element.setAttribute(
+                                "visible",
+                                "false"
+                            );
 
-                    });
+                        }
+                    );
 
             }
 
 
-            if (!currentVideo) return;
+            /*
+               ویدئوی جدید
+            */
 
+            if (!currentVideo) {
+                return;
+            }
 
-            /* قرار دادن ویدئوی جدید */
 
             currentVideo.src =
                 videoURL;
 
 
+            currentVideo.currentTime =
+                0;
+
+
             currentVideo.load();
 
-
-            /* نمایش Plane */
 
             videoPlane.setAttribute(
                 "visible",
@@ -859,19 +637,20 @@ function createTarget(
             );
 
 
-            /* پخش */
+            try {
 
-            const playPromise =
-                currentVideo.play();
+                await currentVideo.play();
 
+                console.log(
+                    "VIDEO PLAYING:",
+                    number
+                );
 
-            if (
-                playPromise &&
-                playPromise.catch
-            ) {
+            } catch (error) {
 
-                playPromise.catch(
-                    () => {}
+                console.log(
+                    "VIDEO ERROR:",
+                    error
                 );
 
             }
@@ -880,13 +659,21 @@ function createTarget(
     );
 
 
-    /* =====================================
-       وقتی دفتر گم شد
-    ===================================== */
+    /*
+       =========================
+       TARGET LOST
+       =========================
+    */
 
     target.addEventListener(
         "targetLost",
         () => {
+
+            console.log(
+                "TARGET LOST:",
+                index
+            );
+
 
             videoPlane.setAttribute(
                 "visible",
@@ -904,20 +691,320 @@ function createTarget(
 
             }
 
+
+            if (
+                activeTarget ===
+                target
+            ) {
+
+                activeTarget =
+                    null;
+
+            }
+
         }
     );
 
 
-    scene.appendChild(target);
+    scene.appendChild(
+        target
+    );
 
 }
 
 
-/* =========================================
+/* =====================================
+   لمس Instagram و Share
+   همان روش نسخه قدیمی تو
+===================================== */
+
+document.addEventListener(
+    "touchend",
+    event => {
+
+        if (!activeTarget) {
+            return;
+        }
+
+
+        if (
+            !currentScene ||
+            !currentScene.camera ||
+            !currentScene.renderer
+        ) {
+
+            return;
+
+        }
+
+
+        const touch =
+            event.changedTouches[0];
+
+
+        if (!touch) {
+            return;
+        }
+
+
+        const canvas =
+            currentScene
+                .renderer
+                .domElement;
+
+
+        const rect =
+            canvas.getBoundingClientRect();
+
+
+        const mouse =
+            new THREE.Vector2();
+
+
+        mouse.x =
+            (
+                (touch.clientX - rect.left)
+                /
+                rect.width
+            ) * 2 - 1;
+
+
+        mouse.y =
+            -(
+                (touch.clientY - rect.top)
+                /
+                rect.height
+            ) * 2 + 1;
+
+
+        const raycaster =
+            new THREE.Raycaster();
+
+
+        raycaster.setFromCamera(
+            mouse,
+            currentScene.camera
+        );
+
+
+        /*
+           =========================
+           INSTAGRAM
+        =========================
+        */
+
+        const instagramZone =
+            activeTarget.querySelector(
+                ".instagram-zone"
+            );
+
+
+        if (instagramZone) {
+
+            const mesh =
+                instagramZone
+                    .getObject3D(
+                        "mesh"
+                    );
+
+
+            if (mesh) {
+
+                const hits =
+                    raycaster.intersectObject(
+                        mesh,
+                        true
+                    );
+
+
+                if (
+                    hits.length > 0
+                ) {
+
+                    console.log(
+                        "INSTAGRAM PRESSED"
+                    );
+
+
+                    const intentURL =
+                        "intent://www.instagram.com/_u/SarzaminAr/#Intent;" +
+                        "package=com.instagram.android;" +
+                        "scheme=https;" +
+                        "end";
+
+
+                    window.location.href =
+                        intentURL;
+
+
+                    return;
+
+                }
+
+            }
+
+        }
+
+
+        /*
+           =========================
+           SHARE
+        =========================
+        */
+
+        const shareZone =
+            activeTarget.querySelector(
+                ".share-zone"
+            );
+
+
+        if (!shareZone) {
+            return;
+        }
+
+
+        const shareMesh =
+            shareZone.getObject3D(
+                "mesh"
+            );
+
+
+        if (!shareMesh) {
+            return;
+        }
+
+
+        const shareHits =
+            raycaster.intersectObject(
+                shareMesh,
+                true
+            );
+
+
+        if (
+            shareHits.length === 0
+        ) {
+
+            return;
+
+        }
+
+
+        console.log(
+            "SHARE PRESSED"
+        );
+
+
+        const shareURL =
+            window.location.href;
+
+
+        const shareText =
+`📚✨ این فقط یه دفتر معمولی نیست!
+
+این دفتر می‌تونه زنده بشه! 😱
+
+دوربین گوشیت رو بگیر روی جلد و خودت ببین چه اتفاقی می‌افته! 👀
+
+🔥 حالا اگه دوست داری طرح‌های زنده‌ی دیگه رو هم ببینی، این لینک رو بزن و بیا آیدی اینستاگرام سرزمین شگفت‌انگیز رو ببین!
+
+شاید طرح مورد علاقه‌ات اونجا منتظرت باشه 😍📚
+
+اگه دفترت هنوز زنده نشده، درخواست زنده‌شدنش رو بده! 😉✨`;
+
+
+        /*
+           Share گوشی
+        */
+
+        if (
+            navigator.share
+        ) {
+
+            navigator.share({
+
+                title:
+                    "سرزمین شگفت‌انگیز 📚✨",
+
+                text:
+                    shareText,
+
+                url:
+                    shareURL
+
+            })
+            .then(() => {
+
+                console.log(
+                    "SHARE SUCCESS"
+                );
+
+            })
+            .catch(error => {
+
+                console.log(
+                    "SHARE CANCELLED",
+                    error
+                );
+
+            });
+
+
+            return;
+
+        }
+
+
+        /*
+           Clipboard
+        */
+
+        if (
+            navigator.clipboard
+        ) {
+
+            navigator.clipboard
+                .writeText(
+                    shareText +
+                    "\n\n" +
+                    shareURL
+                )
+                .then(() => {
+
+                    alert(
+                        "متن و لینک کپی شد ❤️\nبرای دوستت بفرست"
+                    );
+
+                })
+                .catch(() => {
+
+                    prompt(
+                        "این متن و لینک را برای دوستت بفرست:",
+                        shareText +
+                        "\n\n" +
+                        shareURL
+                    );
+
+                });
+
+        }
+
+    },
+    {
+        passive: true
+    }
+);
+
+
+/* =====================================
    توقف AR
-========================================= */
+===================================== */
 
 function stopAR() {
+
+    activeTarget =
+        null;
+
 
     if (currentVideo) {
 
@@ -931,7 +1018,9 @@ function stopAR() {
 
 
     const scene =
-        document.querySelector("a-scene");
+        document.querySelector(
+            "a-scene"
+        );
 
 
     if (scene) {
@@ -946,7 +1035,9 @@ function stopAR() {
 
 
     const video =
-        document.getElementById("arVideo");
+        document.getElementById(
+            "arVideo"
+        );
 
 
     if (video) {
@@ -962,92 +1053,24 @@ function stopAR() {
     }
 
 
-    const changeButton =
-        document.getElementById("changeGroup");
-
-
-    if (changeButton) {
-
-        changeButton.remove();
-
-    }
-
-
-    currentScene = null;
-
-    currentVideo = null;
-
-}
-
-
-/* =========================================
-   تغییر اندازه AR
-========================================= */
-
-function resizeAR() {
-
-    const scene =
-        document.querySelector("a-scene");
-
-
-    if (!scene) return;
-
-
-    const width =
-        window.innerWidth;
-
-
-    const height =
-        window.innerHeight;
-
-
-    /*
-       فقط اندازه Scene را تنظیم می‌کنیم.
-       به ویدئوی دوربین MindAR دست نمی‌زنیم.
-    */
-
-    scene.style.width =
-        width + "px";
-
-
-    scene.style.height =
-        height + "px";
-
-}
-
-
-/* =========================================
-   Resize
-========================================= */
-
-window.addEventListener(
-    "resize",
-    () => {
-
-        resizeAR();
-
-    }
-);
-
-
-/* =========================================
-   Orientation
-========================================= */
-
-window.addEventListener(
-    "orientationchange",
-    () => {
-
-        setTimeout(
-            resizeAR,
-            500
+    const button =
+        document.getElementById(
+            "changeGroup"
         );
 
 
-        setTimeout(
-            resizeAR,
-            1200
-        );
+    if (button) {
+
+        button.remove();
 
     }
-);
+
+
+    currentScene =
+        null;
+
+
+    currentVideo =
+        null;
+
+}
