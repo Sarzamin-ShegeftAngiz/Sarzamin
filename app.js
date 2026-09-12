@@ -1,9 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-  /* =====================================================
-     GROUPS
-  ===================================================== */
-
   const GROUPS = {
     Group1: {
       mind: "./Group1/targets.mind",
@@ -20,155 +16,42 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-
-  let selectedGroup = null;
-
   let scene = null;
   let video = null;
-
   let activeTarget = null;
-  let activeIndex = -1;
-  let currentVideo = -1;
+  let activePlane = null;
 
-
-  /* =====================================================
+  /* =========================
      STYLE
-  ===================================================== */
+  ========================= */
 
   const style = document.createElement("style");
 
   style.textContent = `
-
-    html,
-    body {
-      margin: 0 !important;
-      padding: 0 !important;
+    html, body {
+      margin: 0;
+      padding: 0;
       width: 100%;
       height: 100%;
       overflow: hidden;
       background: #000;
+      font-family: Tahoma, Arial, sans-serif;
     }
 
-
-    /* =========================
-       MAIN MENU
-    ========================= */
-
-    #mainMenu {
-      position: fixed;
-      inset: 0;
-
-      z-index: 999999;
-
-      display: flex;
-      justify-content: center;
-      align-items: center;
-
-      background:
-        linear-gradient(
-          145deg,
-          #7048ff 0%,
-          #40218a 55%,
-          #211044 100%
-        );
-
-      direction: rtl;
-
-      font-family:
-        Tahoma,
-        Arial,
-        sans-serif;
-    }
-
-
-    .mainCard {
-      width: 86%;
-      max-width: 410px;
-
-      padding: 38px 24px;
-
-      box-sizing: border-box;
-
-      border-radius: 30px;
-
-      text-align: center;
-
-      background:
-        rgba(255,255,255,.15);
-
-      box-shadow:
-        0 20px 60px rgba(0,0,0,.35);
-
-      backdrop-filter:
-        blur(18px);
-    }
-
-
-    .mainTitle {
-      margin: 0;
-
-      color: #fff;
-
-      font-size: 34px;
-
-      font-weight: 900;
-
-      line-height: 1.4;
-
-      text-shadow:
-        0 4px 15px rgba(0,0,0,.3);
-    }
-
-
-    .mainViewButton {
-      width: 100%;
-
-      margin-top: 30px;
-
-      padding: 19px 15px;
-
-      border: 0;
-
-      border-radius: 19px;
-
-      background: #fff;
-
-      color: #271354;
-
-      font-family:
-        Tahoma,
-        Arial,
-        sans-serif;
-
-      font-size: 21px;
-
-      font-weight: 900;
-
-      box-shadow:
-        0 9px 25px rgba(0,0,0,.25);
-
+    button {
+      font-family: Tahoma, Arial, sans-serif;
       touch-action: manipulation;
     }
 
-
-    .mainViewButton:active {
-      transform: scale(.97);
-    }
-
-
-    /* =========================
-       CATEGORY PAGE
-    ========================= */
-
+    #mainMenu,
     #categoryPage {
       position: fixed;
       inset: 0;
-
       z-index: 999999;
-
       display: flex;
       justify-content: center;
       align-items: center;
+      direction: rtl;
 
       background:
         linear-gradient(
@@ -177,595 +60,326 @@ document.addEventListener("DOMContentLoaded", () => {
           #40218a 55%,
           #211044 100%
         );
-
-      direction: rtl;
-
-      font-family:
-        Tahoma,
-        Arial,
-        sans-serif;
     }
 
-
+    .mainCard,
     .categoryCard {
       width: 86%;
       max-width: 410px;
-
       padding: 35px 23px;
-
       box-sizing: border-box;
-
       border-radius: 30px;
-
       text-align: center;
-
-      background:
-        rgba(255,255,255,.15);
-
-      box-shadow:
-        0 20px 60px rgba(0,0,0,.35);
-
-      backdrop-filter:
-        blur(18px);
-    }
-
-
-    .categoryTitle {
-      color: white;
-
-      font-size: 29px;
-
-      font-weight: 900;
-
-      margin-bottom: 28px;
-    }
-
-
-    .categoryButton {
-      width: 100%;
-
-      min-height: 58px;
-
-      margin: 9px 0;
-
-      border: 0;
-
-      border-radius: 18px;
-
-      background: white;
-
-      color: #29135a;
-
-      font-family:
-        Tahoma,
-        Arial,
-        sans-serif;
-
-      font-size: 20px;
-
-      font-weight: 900;
-
-      box-shadow:
-        0 8px 22px rgba(0,0,0,.22);
-
-      touch-action: manipulation;
-    }
-
-
-    .categoryButton:active {
-      transform: scale(.97);
-    }
-
-
-    .categoryButton.disabled {
-      opacity: .30;
-
-      background: #ddd;
-
-      color: #777;
-
-      pointer-events: none;
-
-      box-shadow: none;
-    }
-
-
-    /* =========================
-       GALLERY
-    ========================= */
-
-    #galleryPage {
-      position: fixed;
-      inset: 0;
-
-      z-index: 999999;
-
-      overflow-y: auto;
-
-      box-sizing: border-box;
-
-      padding:
-        25px 12px 105px;
-
-      background:
-        linear-gradient(
-          145deg,
-          #7048ff 0%,
-          #40218a 55%,
-          #211044 100%
-        );
-
-      direction: rtl;
-
-      font-family:
-        Tahoma,
-        Arial,
-        sans-serif;
-    }
-
-
-    .galleryHeader {
-      text-align: center;
-
-      color: white;
-
-      margin-bottom: 20px;
-    }
-
-
-    .galleryHeader h2 {
-      margin: 0 0 7px;
-
-      font-size: 28px;
-
-      font-weight: 900;
-    }
-
-
-    .galleryHeader p {
-      margin: 0;
-
-      font-size: 16px;
-
-      opacity: .9;
-    }
-
-
-    .galleryGrid {
-      width: 100%;
-
-      max-width: 600px;
-
-      margin: 0 auto;
-
-      display: grid;
-
-      grid-template-columns:
-        repeat(3, 1fr);
-
-      gap: 9px;
-    }
-
-
-    .galleryItem {
-      width: 100%;
-
-      aspect-ratio: 3 / 4;
-
-      overflow: hidden;
-
-      border-radius: 13px;
 
       background: rgba(255,255,255,.15);
 
       box-shadow:
-        0 5px 15px rgba(0,0,0,.25);
+        0 20px 60px rgba(0,0,0,.35);
+
+      backdrop-filter: blur(18px);
     }
 
+    .mainTitle {
+      margin: 0;
+      color: white;
+      font-size: 34px;
+      font-weight: 900;
+    }
+
+    .mainViewButton,
+    .categoryButton {
+      width: 100%;
+      border: 0;
+      border-radius: 19px;
+      background: white;
+      color: #29135a;
+      font-size: 20px;
+      font-weight: 900;
+      box-shadow: 0 9px 25px rgba(0,0,0,.25);
+    }
+
+    .mainViewButton {
+      margin-top: 30px;
+      padding: 19px 15px;
+    }
+
+    .categoryTitle {
+      color: white;
+      font-size: 29px;
+      font-weight: 900;
+      margin-bottom: 25px;
+    }
+
+    .categoryButton {
+      min-height: 58px;
+      margin: 9px 0;
+    }
+
+    .categoryButton.disabled {
+      opacity: .3;
+      pointer-events: none;
+    }
+
+    #galleryPage {
+      position: fixed;
+      inset: 0;
+      z-index: 999999;
+      overflow-y: auto;
+      box-sizing: border-box;
+      padding: 25px 12px 110px;
+      direction: rtl;
+
+      background:
+        linear-gradient(
+          145deg,
+          #7048ff 0%,
+          #40218a 55%,
+          #211044 100%
+        );
+    }
+
+    .galleryHeader {
+      text-align: center;
+      color: white;
+      margin-bottom: 20px;
+    }
+
+    .galleryHeader h2 {
+      margin: 0 0 7px;
+      font-size: 28px;
+    }
+
+    .galleryHeader p {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .galleryGrid {
+      width: 100%;
+      max-width: 600px;
+      margin: auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 9px;
+    }
+
+    .galleryItem {
+      width: 100%;
+      aspect-ratio: 3 / 4;
+      overflow: hidden;
+      border-radius: 13px;
+      background: rgba(255,255,255,.15);
+    }
 
     .galleryItem img {
       width: 100%;
       height: 100%;
-
-      display: block;
-
       object-fit: cover;
-
-      pointer-events: none;
-
-      user-select: none;
-
-      -webkit-user-drag: none;
+      display: block;
     }
-
 
     .galleryBottom {
       width: 100%;
-
       max-width: 500px;
-
       margin: 25px auto 0;
-
       display: flex;
-
       flex-direction: column;
-
       gap: 10px;
     }
 
-
-    .cameraButton {
-      width: 100%;
-
-      min-height: 60px;
-
-      border: 0;
-
-      border-radius: 19px;
-
-      background: white;
-
-      color: #281252;
-
-      font-family:
-        Tahoma,
-        Arial,
-        sans-serif;
-
-      font-size: 20px;
-
-      font-weight: 900;
-
-      box-shadow:
-        0 9px 25px rgba(0,0,0,.25);
-    }
-
-
+    .cameraButton,
     .backButton {
       width: 100%;
-
-      min-height: 48px;
-
+      min-height: 58px;
       border: 0;
-
-      border-radius: 16px;
-
-      background:
-        rgba(255,255,255,.18);
-
-      color: white;
-
-      font-family:
-        Tahoma,
-        Arial,
-        sans-serif;
-
-      font-size: 17px;
-
-      font-weight: 700;
+      border-radius: 18px;
+      font-size: 20px;
+      font-weight: 900;
     }
 
+    .cameraButton {
+      background: white;
+      color: #281252;
+    }
 
-    /* =========================
-       CHANGE GROUP
-    ========================= */
+    .backButton {
+      background: rgba(255,255,255,.18);
+      color: white;
+      font-size: 17px;
+    }
 
     #changeGroup {
       position: fixed;
-
       top: 15px;
       right: 15px;
-
-      z-index: 99999;
+      z-index: 9999999;
 
       padding: 11px 16px;
-
       border: 0;
-
       border-radius: 15px;
 
-      background:
-        rgba(0,0,0,.60);
-
+      background: rgba(0,0,0,.65);
       color: white;
 
-      font-family:
-        Tahoma,
-        Arial,
-        sans-serif;
-
       font-size: 14px;
-
       font-weight: 700;
-
-      direction: rtl;
-
-      touch-action: manipulation;
     }
 
-
-    /* =========================
-       HIDE HITBOXES
-    ========================= */
-
-    .instagram-zone,
-    .share-zone {
-      opacity: 0 !important;
+    .arLink {
+      cursor: pointer;
     }
-
   `;
 
   document.head.appendChild(style);
 
 
-  /* =====================================================
-     CLEAN PAGE
-  ===================================================== */
+  /* =========================
+     CLEAN
+  ========================= */
 
   function clearPage() {
 
-    document.body.innerHTML = "";
+    try {
+      if (scene &&
+          scene.systems &&
+          scene.systems["mindar-image"]) {
+        scene.systems["mindar-image"].stop();
+      }
+    } catch (e) {}
 
-    activeTarget = null;
-    activeIndex = -1;
-    currentVideo = -1;
+    if (video) {
+      try {
+        video.pause();
+        video.removeAttribute("src");
+        video.load();
+      } catch (e) {}
+    }
+
+    document.body.innerHTML = "";
 
     scene = null;
     video = null;
+    activeTarget = null;
+    activePlane = null;
   }
 
 
-  /* =====================================================
-     MAIN PAGE
-  ===================================================== */
+  /* =========================
+     MAIN
+  ========================= */
 
   function showMainMenu() {
 
     clearPage();
 
-    const page =
-      document.createElement("div");
-
+    const page = document.createElement("div");
     page.id = "mainMenu";
 
-
-    const card =
-      document.createElement("div");
-
+    const card = document.createElement("div");
     card.className = "mainCard";
 
-
-    const title =
-      document.createElement("h1");
-
+    const title = document.createElement("h1");
     title.className = "mainTitle";
+    title.textContent = "سرزمین شگفت انگیز";
 
-    title.textContent =
-      "سرزمین شگفت انگیز";
+    const button = document.createElement("button");
+    button.className = "mainViewButton";
+    button.textContent = "مشاهده دفترها ›";
 
-
-    const button =
-      document.createElement("button");
-
-    button.className =
-      "mainViewButton";
-
-    button.textContent =
-      "مشاهده دفترها ›";
-
-
-    button.addEventListener(
-      "click",
-      () => {
-
-        showCategories();
-
-      }
-    );
-
+    button.onclick = showCategories;
 
     card.appendChild(title);
     card.appendChild(button);
-
     page.appendChild(card);
-
     document.body.appendChild(page);
   }
 
 
-  /* =====================================================
-     CATEGORY PAGE
-  ===================================================== */
+  /* =========================
+     CATEGORIES
+  ========================= */
 
   function showCategories() {
 
     clearPage();
 
-    const page =
-      document.createElement("div");
+    const page = document.createElement("div");
+    page.id = "categoryPage";
 
-    page.id =
-      "categoryPage";
+    const card = document.createElement("div");
+    card.className = "categoryCard";
 
-
-    const card =
-      document.createElement("div");
-
-    card.className =
-      "categoryCard";
-
-
-    const title =
-      document.createElement("div");
-
-    title.className =
-      "categoryTitle";
-
-    title.textContent =
-      "انتخاب دسته";
-
+    const title = document.createElement("div");
+    title.className = "categoryTitle";
+    title.textContent = "انتخاب دسته";
 
     card.appendChild(title);
 
 
-    /* =========================
-       CATEGORY 1
-    ========================= */
+    for (let i = 1; i <= 5; i++) {
 
-    const category1 =
-      document.createElement("button");
+      const button = document.createElement("button");
+      button.className = "categoryButton";
 
-    category1.className =
-      "categoryButton";
+      button.textContent =
+        i <= 2
+          ? `دسته ${persianNumber(i)}`
+          : `دسته ${persianNumber(i)}`;
 
-    category1.textContent =
-      "دسته یک";
+      if (i <= 2) {
 
-    category1.addEventListener(
-      "click",
-      () => {
+        button.onclick = () => {
+          showGallery(`Group${i}`);
+        };
 
-        showGallery(
-          "Group1"
-        );
+      } else {
 
+        button.classList.add("disabled");
+        button.disabled = true;
       }
-    );
 
-    card.appendChild(category1);
-
-
-    /* =========================
-       CATEGORY 2
-    ========================= */
-
-    const category2 =
-      document.createElement("button");
-
-    category2.className =
-      "categoryButton";
-
-    category2.textContent =
-      "دسته دو";
-
-    category2.addEventListener(
-      "click",
-      () => {
-
-        showGallery(
-          "Group2"
-        );
-
-      }
-    );
-
-    card.appendChild(category2);
-
-
-    /* =========================
-       FUTURE CATEGORIES
-    ========================= */
-
-    for (
-      let i = 3;
-      i <= 5;
-      i++
-    ) {
-
-      const disabled =
-        document.createElement(
-          "button"
-        );
-
-      disabled.className =
-        "categoryButton disabled";
-
-      disabled.textContent =
-        `دسته ${persianNumber(i)}`;
-
-      disabled.disabled = true;
-
-      card.appendChild(disabled);
+      card.appendChild(button);
     }
 
-
     page.appendChild(card);
-
     document.body.appendChild(page);
   }
 
 
-  /* =====================================================
-     PERSIAN NUMBERS
-  ===================================================== */
+  /* =========================
+     PERSIAN NUMBER
+  ========================= */
 
-  function persianNumber(number) {
+  function persianNumber(n) {
 
-    const numbers = [
-      "۰",
-      "۱",
-      "۲",
-      "۳",
-      "۴",
-      "۵",
-      "۶",
-      "۷",
-      "۸",
-      "۹"
-    ];
-
-    return String(number)
-      .split("")
-      .map(n => numbers[n])
-      .join("");
+    return String(n).replace(
+      /\d/g,
+      d => "۰۱۲۳۴۵۶۷۸۹"[d]
+    );
   }
 
 
-  /* =====================================================
+  /* =========================
      GALLERY
-     عکس‌ها فقط برای مشاهده هستند.
-     هیچ عکس قابل کلیک نیست.
-  ===================================================== */
+  ========================= */
 
   function showGallery(groupName) {
 
     clearPage();
 
-    selectedGroup =
-      groupName;
+    const config = GROUPS[groupName];
 
+    const page = document.createElement("div");
+    page.id = "galleryPage";
 
-    const config =
-      GROUPS[groupName];
+    const header = document.createElement("div");
+    header.className = "galleryHeader";
 
+    const title = document.createElement("h2");
+    title.textContent = config.title;
 
-    const page =
-      document.createElement("div");
-
-    page.id =
-      "galleryPage";
-
-
-    const header =
-      document.createElement("div");
-
-    header.className =
-      "galleryHeader";
-
-
-    const title =
-      document.createElement("h2");
-
-    title.textContent =
-      config.title;
-
-
-    const subtitle =
-      document.createElement("p");
-
-    subtitle.textContent =
-      "دفترهای این دسته";
-
+    const subtitle = document.createElement("p");
+    subtitle.textContent = "دفترهای این دسته";
 
     header.appendChild(title);
     header.appendChild(subtitle);
@@ -773,77 +387,50 @@ document.addEventListener("DOMContentLoaded", () => {
     page.appendChild(header);
 
 
-    /* =========================
-       GRID
-    ========================= */
-
-    const grid =
-      document.createElement("div");
-
-    grid.className =
-      "galleryGrid";
+    const grid = document.createElement("div");
+    grid.className = "galleryGrid";
 
 
     for (
-      let number =
-        config.first;
+      let number = config.first;
       number <= config.last;
       number++
     ) {
 
-      const item =
-        document.createElement("div");
+      const item = document.createElement("div");
+      item.className = "galleryItem";
 
-      item.className =
-        "galleryItem";
-
-
-      const img =
-        document.createElement("img");
-
+      const img = document.createElement("img");
 
       const fileNumber =
-        String(number)
-          .padStart(2, "0");
-
+        String(number).padStart(2, "0");
 
       /*
-        فقط 19، 24 و 26 PNG هستند.
+        فایل‌های عکس مستقیماً داخل Group هستند:
+        Group1/01.jpg
+        Group1/02.jpg
+        ...
       */
 
-      let extension =
-        "jpg";
-
+      let extension = "jpg";
 
       if (
         number === 19 ||
         number === 24 ||
         number === 26
       ) {
-
-        extension =
-          "png";
+        extension = "png";
       }
 
-
       img.src =
-        `./${groupName}/${fileNumber}/${fileNumber}.${extension}`;
-
+        `./${groupName}/${fileNumber}.${extension}`;
 
       img.alt =
         `دفتر ${fileNumber}`;
 
-
-      /*
-        عکس فقط نمایش داده می‌شود.
-      */
-
-      img.draggable =
-        false;
-
+      img.draggable = false;
 
       item.appendChild(img);
-
       grid.appendChild(item);
     }
 
@@ -851,57 +438,24 @@ document.addEventListener("DOMContentLoaded", () => {
     page.appendChild(grid);
 
 
-    /* =========================
-       BOTTOM BUTTONS
-    ========================= */
-
-    const bottom =
-      document.createElement("div");
-
-    bottom.className =
-      "galleryBottom";
+    const bottom = document.createElement("div");
+    bottom.className = "galleryBottom";
 
 
-    const camera =
-      document.createElement("button");
+    const camera = document.createElement("button");
+    camera.className = "cameraButton";
+    camera.textContent = "📷 ورود به دوربین";
 
-    camera.className =
-      "cameraButton";
-
-    camera.textContent =
-      "📷 ورود به دوربین";
-
-
-    camera.addEventListener(
-      "click",
-      () => {
-
-        startAR(
-          groupName
-        );
-
-      }
-    );
+    camera.onclick = () => {
+      startAR(groupName);
+    };
 
 
-    const back =
-      document.createElement("button");
+    const back = document.createElement("button");
+    back.className = "backButton";
+    back.textContent = "‹ بازگشت به انتخاب دسته";
 
-    back.className =
-      "backButton";
-
-    back.textContent =
-      "‹ بازگشت به انتخاب دسته";
-
-
-    back.addEventListener(
-      "click",
-      () => {
-
-        showCategories();
-
-      }
-    );
+    back.onclick = showCategories;
 
 
     bottom.appendChild(camera);
@@ -913,94 +467,47 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 
-  /* =====================================================
+  /* =========================
      START AR
-  ===================================================== */
+  ========================= */
 
   function startAR(groupName) {
 
     clearPage();
 
-    selectedGroup =
-      groupName;
+    const config = GROUPS[groupName];
 
 
-    const config =
-      GROUPS[groupName];
+    /* =========================
+       VIDEO ELEMENT
+    ========================= */
 
+    video = document.createElement("video");
 
-    /* =================================================
-       VIDEO
-    ================================================= */
+    video.id = "arVideo";
 
-    video =
-      document.createElement(
-        "video"
-      );
+    video.setAttribute("playsinline", "");
+    video.setAttribute("webkit-playsinline", "");
 
+    video.autoplay = false;
+    video.loop = true;
+    video.muted = true;
+    video.preload = "auto";
 
-    video.id =
-      "arVideo";
-
-
-    video.preload =
-      "none";
-
-
-    video.loop =
-      true;
-
-
-    video.muted =
-      true;
-
-
-    video.playsInline =
-      true;
-
-
-    video.setAttribute(
-      "webkit-playsinline",
-      ""
-    );
-
-
-    video.style.position =
-      "fixed";
-
-
-    video.style.width =
-      "1px";
-
-
-    video.style.height =
-      "1px";
-
-
-    video.style.opacity =
-      "0";
-
-
-    video.style.pointerEvents =
-      "none";
-
+    video.style.position = "fixed";
+    video.style.width = "1px";
+    video.style.height = "1px";
+    video.style.opacity = "0";
+    video.style.pointerEvents = "none";
 
     document.body.appendChild(video);
 
 
-    /* =================================================
+    /* =========================
        SCENE
-    ================================================= */
+    ========================= */
 
-    scene =
-      document.createElement(
-        "a-scene"
-      );
-
-
-    scene.id =
-      "arScene";
-
+    scene = document.createElement("a-scene");
 
     scene.setAttribute(
       "mindar-image",
@@ -1009,88 +516,65 @@ document.addEventListener("DOMContentLoaded", () => {
         autoStart: true;
         uiLoading: no;
         uiScanning: yes;
-        uiError: no;
-        warmupTolerance: 2;
-        missTolerance: 1;
+        uiError: yes;
+        warmupTolerance: 3;
+        missTolerance: 2;
         filterMinCF: 0.0001;
         filterBeta: 0.001;
       `
     );
 
-
-    scene.setAttribute(
-      "embedded",
-      ""
-    );
-
-
-    scene.setAttribute(
-      "color-space",
-      "sRGB"
-    );
-
-
+    scene.setAttribute("embedded", "");
     scene.setAttribute(
       "renderer",
-      "colorManagement: true;"
+      "colorManagement: true; physicallyCorrectLights: true;"
     );
-
 
     scene.setAttribute(
       "vr-mode-ui",
       "enabled: false"
     );
 
-
     scene.setAttribute(
       "device-orientation-permission-ui",
       "enabled: false"
     );
 
+    scene.style.position = "fixed";
+    scene.style.top = "0";
+    scene.style.left = "0";
+    scene.style.width = "100%";
+    scene.style.height = "100%";
+    scene.style.zIndex = "1";
 
-    /* =================================================
+
+    /* =========================
        CAMERA
-    ================================================= */
+    ========================= */
 
-    const camera =
-      document.createElement(
-        "a-camera"
-      );
-
+    const camera = document.createElement("a-camera");
 
     camera.setAttribute(
       "position",
       "0 0 0"
     );
 
-
     camera.setAttribute(
       "look-controls",
       "enabled: false"
     );
 
-
     scene.appendChild(camera);
 
 
-    /* =================================================
-       CREATE 30 TARGETS
-    ================================================= */
+    /* =========================
+       TARGETS
+    ========================= */
 
-    const targetData = [];
-
-
-    for (
-      let i = 0;
-      i < 30;
-      i++
-    ) {
+    for (let i = 0; i < 30; i++) {
 
       const target =
-        document.createElement(
-          "a-entity"
-        );
-
+        document.createElement("a-entity");
 
       target.setAttribute(
         "mindar-image-target",
@@ -1098,606 +582,353 @@ document.addEventListener("DOMContentLoaded", () => {
       );
 
 
-      /* =========================
-         VIDEO
-      ========================= */
+      /* =====================
+         VIDEO PLANE
+      ===================== */
 
       const plane =
-        document.createElement(
-          "a-video"
-        );
+        document.createElement("a-video");
 
-
-      plane.classList.add(
-        "arVideoPlane"
-      );
-
+      plane.classList.add("arVideoPlane");
 
       plane.setAttribute(
         "src",
         "#arVideo"
       );
 
-
-      /*
-        نسبت قبلی و سالم دفتر
-      */
-
       plane.setAttribute(
         "width",
         "1"
       );
-
 
       plane.setAttribute(
         "height",
         "1.42"
       );
 
-
       plane.setAttribute(
         "position",
-        "0 0 0"
+        "0 0 0.01"
       );
-
-
-      plane.setAttribute(
-        "rotation",
-        "0 0 0"
-      );
-
 
       plane.setAttribute(
         "visible",
         "false"
       );
 
-
-      target.appendChild(
-        plane
-      );
+      target.appendChild(plane);
 
 
-      /* =========================
-         INSTAGRAM ZONE
-      ========================= */
+      /* =====================
+         INSTAGRAM LINK
+      ===================== */
 
       const insta =
-        document.createElement(
-          "a-plane"
-        );
+        document.createElement("a-text");
 
-
-      insta.classList.add(
-        "instagram-zone"
-      );
-
+      insta.classList.add("arLink");
 
       insta.setAttribute(
-        "width",
-        "0.70"
-      );
-
-
-      insta.setAttribute(
-        "height",
-        "0.16"
-      );
-
-
-      insta.setAttribute(
-        "position",
-        "0 -0.82 0.04"
-      );
-
-
-      insta.setAttribute(
-        "material",
-        "transparent: true; opacity: 0; side: double;"
-      );
-
-
-      target.appendChild(
-        insta
-      );
-
-
-      /* =========================
-         INSTAGRAM TEXT
-      ========================= */
-
-      const instaText =
-        document.createElement(
-          "a-text"
-        );
-
-
-      instaText.setAttribute(
         "value",
-        "دفترهای زنده اینجا 👈"
+        "@SarzaminAr"
       );
 
-
-      instaText.setAttribute(
+      insta.setAttribute(
         "align",
         "center"
       );
 
-
-      instaText.setAttribute(
+      insta.setAttribute(
         "anchor",
         "center"
       );
 
-
-      instaText.setAttribute(
+      insta.setAttribute(
         "baseline",
         "center"
       );
 
-
-      instaText.setAttribute(
+      insta.setAttribute(
         "position",
-        "0 -0.82 0.03"
+        "0 -0.78 0.05"
       );
 
-
-      instaText.setAttribute(
+      insta.setAttribute(
         "width",
-        "1.8"
+        "2"
       );
 
-
-      instaText.setAttribute(
+      insta.setAttribute(
         "color",
         "white"
       );
 
+      target.appendChild(insta);
 
-      target.appendChild(
-        instaText
+
+      insta.addEventListener(
+        "click",
+        () => {
+
+          window.open(
+            "https://instagram.com/SarzaminAr",
+            "_blank"
+          );
+
+        }
       );
 
 
-      /* =========================
-         SHARE ZONE
-      ========================= */
+      /* =====================
+         STORE LINK
+      ===================== */
 
-      const share =
-        document.createElement(
-          "a-plane"
-        );
+      const store =
+        document.createElement("a-text");
 
+      store.classList.add("arLink");
 
-      share.classList.add(
-        "share-zone"
-      );
-
-
-      share.setAttribute(
-        "width",
-        "0.82"
-      );
-
-
-      share.setAttribute(
-        "height",
-        "0.17"
-      );
-
-
-      share.setAttribute(
-        "position",
-        "0 -0.96 0.04"
-      );
-
-
-      share.setAttribute(
-        "material",
-        "transparent: true; opacity: 0; side: double;"
-      );
-
-
-      target.appendChild(
-        share
-      );
-
-
-      /* =========================
-         SHARE TEXT
-      ========================= */
-
-      const shareText =
-        document.createElement(
-          "a-text"
-        );
-
-
-      shareText.setAttribute(
+      store.setAttribute(
         "value",
         "سرزمین شگفت‌انگیز"
       );
 
-
-      shareText.setAttribute(
+      store.setAttribute(
         "align",
         "center"
       );
 
-
-      shareText.setAttribute(
+      store.setAttribute(
         "anchor",
         "center"
       );
 
-
-      shareText.setAttribute(
+      store.setAttribute(
         "baseline",
         "center"
       );
 
-
-      shareText.setAttribute(
+      store.setAttribute(
         "position",
-        "0 -0.96 0.03"
+        "0 -0.95 0.05"
       );
 
-
-      shareText.setAttribute(
+      store.setAttribute(
         "width",
         "1.8"
       );
 
-
-      shareText.setAttribute(
+      store.setAttribute(
         "color",
         "white"
       );
 
+      target.appendChild(store);
 
-      target.appendChild(
-        shareText
+
+      store.addEventListener(
+        "click",
+        () => {
+
+          window.open(
+            "https://instagram.com/SarzaminAr",
+            "_blank"
+          );
+
+        }
       );
 
 
-      /* =========================
-         SURPRISE
-      ========================= */
+      /* =====================
+         TARGET FOUND
+      ===================== */
 
-      const surprise =
-        document.createElement(
-          "a-text"
-        );
+      target.addEventListener(
+        "targetFound",
+        () => {
 
+          console.log(
+            "TARGET FOUND:",
+            i
+          );
 
-      surprise.setAttribute(
-        "value",
-        "می‌خوای دوستاتو هم سورپرایز کنی؟ 😍👇"
-      );
-
-
-      surprise.setAttribute(
-        "align",
-        "center"
-      );
+          activeTarget = target;
+          activePlane = plane;
 
 
-      surprise.setAttribute(
-        "anchor",
-        "center"
-      );
+          /* همه ویدئوها مخفی */
+
+          document
+            .querySelectorAll(".arVideoPlane")
+            .forEach(p => {
+              p.setAttribute(
+                "visible",
+                "false"
+              );
+            });
 
 
-      surprise.setAttribute(
-        "baseline",
-        "center"
-      );
+          try {
+            video.pause();
+            video.currentTime = 0;
+          } catch (e) {}
 
 
-      surprise.setAttribute(
-        "position",
-        "0 -0.70 0.03"
-      );
+          const videoNumber =
+            config.first + i;
+
+          const filename =
+            String(videoNumber)
+              .padStart(2, "0");
 
 
-      surprise.setAttribute(
-        "width",
-        "1.8"
-      );
+          const src =
+            `./${groupName}/${filename}.mp4`;
 
 
-      surprise.setAttribute(
-        "color",
-        "white"
-      );
+          console.log(
+            "VIDEO:",
+            src
+          );
 
 
-      surprise.setAttribute(
-        "visible",
-        "false"
-      );
+          video.src = src;
+          video.load();
 
 
-      target.appendChild(
-        surprise
-      );
+          const playVideo = () => {
+
+            if (
+              activeTarget !== target
+            ) {
+              return;
+            }
+
+            video.play()
+              .then(() => {
+
+                if (
+                  activeTarget === target
+                ) {
+
+                  plane.setAttribute(
+                    "visible",
+                    "true"
+                  );
+
+                }
+
+              })
+              .catch(error => {
+
+                console.log(
+                  "PLAY ERROR:",
+                  error
+                );
+
+              });
+          };
 
 
-      targetData.push({
-        target,
-        plane,
-        surprise
-      });
+          if (
+            video.readyState >= 3
+          ) {
 
+            playVideo();
 
-      scene.appendChild(
-        target
-      );
-    }
+          } else {
 
-
-    /* =================================================
-       PUT SCENE ON PAGE
-    ================================================= */
-
-    document.body.appendChild(
-      scene
-    );
-
-
-    /* =================================================
-       CHANGE GROUP BUTTON
-    ================================================= */
-
-    createChangeGroupButton();
-
-
-    /* =================================================
-       TARGET EVENTS
-    ================================================= */
-
-    targetData.forEach(
-      (data, index) => {
-
-        const target =
-          data.target;
-
-        const plane =
-          data.plane;
-
-        const surprise =
-          data.surprise;
-
-
-        /* =====================
-           FOUND
-        ===================== */
-
-        target.addEventListener(
-          "targetFound",
-          () => {
-
-            console.log(
-              "TARGET FOUND:",
-              index
+            video.addEventListener(
+              "canplay",
+              playVideo,
+              { once: true }
             );
+          }
+
+        }
+      );
 
 
-            activeTarget =
-              target;
+      /* =====================
+         TARGET LOST
+      ===================== */
 
-            activeIndex =
-              index;
+      target.addEventListener(
+        "targetLost",
+        () => {
 
+          console.log(
+            "TARGET LOST:",
+            i
+          );
 
-            hideAllPlanes();
+          if (
+            activeTarget === target
+          ) {
 
+            activeTarget = null;
 
-            surprise.setAttribute(
-              "visible",
-              "false"
-            );
-
+            if (activePlane) {
+              activePlane.setAttribute(
+                "visible",
+                "false"
+              );
+            }
 
             try {
               video.pause();
             } catch (e) {}
 
-
-            try {
-              video.currentTime = 0;
-            } catch (e) {}
-
-
-            video.removeAttribute(
-              "src"
-            );
-
-
-            video.load();
-
-
-            const videoNumber =
-              config.first + index;
-
-
-            const filename =
-              String(videoNumber)
-                .padStart(2, "0");
-
-
-            const src =
-              `./${groupName}/${filename}.mp4`;
-
-
-            currentVideo =
-              videoNumber;
-
-
-            video.muted =
-              true;
-
-
-            video.src =
-              src;
-
-
-            video.load();
-
-
-            const playWhenReady =
-              () => {
-
-                if (
-                  activeTarget !== target ||
-                  activeIndex !== index
-                ) {
-                  return;
-                }
-
-
-                try {
-                  video.currentTime = 0;
-                } catch (e) {}
-
-
-                video.play()
-                  .then(() => {
-
-                    if (
-                      activeTarget === target &&
-                      activeIndex === index
-                    ) {
-
-                      plane.setAttribute(
-                        "visible",
-                        "true"
-                      );
-                    }
-
-                  })
-                  .catch(err => {
-
-                    console.log(
-                      "VIDEO PLAY ERROR:",
-                      err
-                    );
-
-
-                    video.muted =
-                      true;
-
-
-                    video.play()
-                      .then(() => {
-
-                        if (
-                          activeTarget === target &&
-                          activeIndex === index
-                        ) {
-
-                          plane.setAttribute(
-                            "visible",
-                            "true"
-                          );
-                        }
-
-                      })
-                      .catch(() => {});
-                  });
-              };
-
-
-            if (
-              video.readyState >= 3
-            ) {
-
-              playWhenReady();
-
-            } else {
-
-              video.addEventListener(
-                "canplay",
-                playWhenReady,
-                {
-                  once: true
-                }
-              );
-            }
-
-
-            /* =====================
-               SURPRISE AFTER LOOP
-            ===================== */
-
-            video.onended =
-              () => {
-
-                if (
-                  activeTarget === target &&
-                  activeIndex === index
-                ) {
-
-                  surprise.setAttribute(
-                    "visible",
-                    "true"
-                  );
-                }
-              };
           }
-        );
+
+        }
+      );
 
 
-        /* =====================
-           LOST
-        ===================== */
-
-        target.addEventListener(
-          "targetLost",
-          () => {
-
-            console.log(
-              "TARGET LOST:",
-              index
-            );
+      scene.appendChild(target);
+    }
 
 
-            if (
-              activeTarget === target
-            ) {
-
-              activeTarget =
-                null;
-
-              activeIndex =
-                -1;
+    document.body.appendChild(scene);
 
 
-              try {
-                video.pause();
-              } catch (e) {}
+    /* =========================
+       CHANGE GROUP
+    ========================= */
+
+    const change =
+      document.createElement("button");
+
+    change.id = "changeGroup";
+
+    change.textContent =
+      "🔄 تغییر گروه";
+
+    change.onclick = () => {
+
+      try {
+
+        if (scene &&
+            scene.systems &&
+            scene.systems["mindar-image"]) {
+
+          scene.systems[
+            "mindar-image"
+          ].stop();
+
+        }
+
+      } catch (e) {}
+
+      showCategories();
+    };
+
+    document.body.appendChild(change);
 
 
-              plane.setAttribute(
-                "visible",
-                "false"
-              );
-
-
-              surprise.setAttribute(
-                "visible",
-                "false"
-              );
-            }
-          }
-        );
-      }
-    );
-
-
-    /* =================================================
-       AR READY
-    ================================================= */
+    /* =========================
+       AR EVENTS
+    ========================= */
 
     scene.addEventListener(
       "arReady",
@@ -1714,11 +945,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     scene.addEventListener(
       "arError",
-      e => {
+      event => {
 
         console.log(
           "AR ERROR:",
-          e
+          event
         );
 
       }
@@ -1726,114 +957,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 
-  /* =====================================================
-     HIDE PLANES
-  ===================================================== */
-
-  function hideAllPlanes() {
-
-    document
-      .querySelectorAll(
-        ".arVideoPlane"
-      )
-      .forEach(
-        el => {
-
-          el.setAttribute(
-            "visible",
-            "false"
-          );
-
-        }
-      );
-  }
-
-
-  /* =====================================================
-     CHANGE GROUP BUTTON
-     → مستقیم انتخاب دسته
-  ===================================================== */
-
-  function createChangeGroupButton() {
-
-    const btn =
-      document.createElement(
-        "button"
-      );
-
-
-    btn.id =
-      "changeGroup";
-
-
-    btn.textContent =
-      "🔄 تغییر گروه";
-
-
-    btn.addEventListener(
-      "click",
-      () => {
-
-        try {
-
-          if (video) {
-
-            video.pause();
-
-            video.removeAttribute(
-              "src"
-            );
-
-            video.load();
-          }
-
-        } catch (e) {}
-
-
-        try {
-
-          if (
-            scene &&
-            scene.systems &&
-            scene.systems["mindar-image"]
-          ) {
-
-            scene.systems[
-              "mindar-image"
-            ].stop();
-          }
-
-        } catch (e) {}
-
-
-        activeTarget =
-          null;
-
-        activeIndex =
-          -1;
-
-        currentVideo =
-          -1;
-
-
-        /*
-          مستقیم برگرد به انتخاب دسته
-        */
-
-        showCategories();
-      }
-    );
-
-
-    document.body.appendChild(
-      btn
-    );
-  }
-
-
-  /* =====================================================
-     START
-  ===================================================== */
+  /* =========================
+     START APP
+  ========================= */
 
   showMainMenu();
 
