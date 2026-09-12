@@ -62,17 +62,27 @@ function showDebug(message) {
         panel.style.left = "0";
         panel.style.right = "0";
         panel.style.bottom = "0";
-        panel.style.maxHeight = "40vh";
+        panel.style.maxHeight = "16vh";
         panel.style.overflowY = "auto";
         panel.style.background = "rgba(200,0,0,0.92)";
         panel.style.color = "white";
-        panel.style.fontSize = "13px";
+        panel.style.fontSize = "11px";
         panel.style.fontFamily = "monospace";
-        panel.style.padding = "8px";
+        panel.style.padding = "6px 30px 6px 8px";
         panel.style.zIndex = "999999";
         panel.style.whiteSpace = "pre-wrap";
         panel.style.direction = "ltr";
         panel.style.textAlign = "left";
+
+        const closeBtn = document.createElement("div");
+        closeBtn.textContent = "✕";
+        closeBtn.style.position = "absolute";
+        closeBtn.style.top = "4px";
+        closeBtn.style.right = "8px";
+        closeBtn.style.cursor = "pointer";
+        closeBtn.style.fontSize = "16px";
+        closeBtn.onclick = () => panel.remove();
+        panel.appendChild(closeBtn);
 
         document.body.appendChild(panel);
 
@@ -142,7 +152,35 @@ function createMain() {
 
 function clearPage() {
 
-    // Stop AR
+    // ------------------------------------------
+    // 1) Stop every camera/video track FIRST,
+    //    while the elements are still in the DOM.
+    //    (mindAR's own hidden camera <video> lives
+    //    inside <a-scene>, so if we remove the scene
+    //    before stopping tracks, the stream keeps
+    //    running in the background — that's what
+    //    caused the camera icon to stay on.)
+    // ------------------------------------------
+
+    document.querySelectorAll("video").forEach(v => {
+
+        try {
+
+            if (v.srcObject) {
+
+                v.srcObject.getTracks().forEach(t => t.stop());
+                v.srcObject = null;
+
+            }
+
+            v.pause();
+
+        } catch (e) {}
+
+    });
+
+
+    // Stop mindAR itself
     try {
 
         if (
@@ -166,26 +204,18 @@ function clearPage() {
     activePlane = null;
 
 
-    // Remove scene
+    // Now it's safe to remove the scene/video elements
     if (scene) {
 
-        try {
-
-            scene.remove();
-
-        } catch (e) {}
-
+        try { scene.remove(); } catch (e) {}
         scene = null;
 
     }
 
-
-    // Remove video
     if (video) {
 
         try {
 
-            video.pause();
             video.removeAttribute("src");
             video.load();
             video.remove();
@@ -216,26 +246,8 @@ function clearPage() {
     }
 
 
-    // Make sure old AR elements / camera streams are fully gone.
-    // Stopping every <video> track manually avoids getUserMedia
-    // conflicts that cause a blank/white screen on the next open.
-    document.querySelectorAll("video").forEach(v => {
-
-        try {
-
-            if (v.srcObject) {
-
-                v.srcObject.getTracks().forEach(t => t.stop());
-                v.srcObject = null;
-
-            }
-
-        } catch (e) {}
-
-    });
-
     document
-        .querySelectorAll("a-scene, #arVideo, #debugPanel")
+        .querySelectorAll("a-scene, #arVideo")
         .forEach(el => {
 
             try { el.remove(); } catch (e) {}
