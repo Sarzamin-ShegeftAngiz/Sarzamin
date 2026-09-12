@@ -1,56 +1,135 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-    const scene = document.querySelector("a-scene");
-
-    const videos = [];
-
-    for (let i = 0; i < 30; i++) {
-        videos.push(
-            document.querySelector("#video" + i)
-        );
-    }
+    const scene = document.querySelector("#arScene");
+    const video = document.querySelector("#arVideo");
 
     let activeTarget = null;
+    let activeIndex = -1;
+    let currentVideo = -1;
 
+
+    // =========================
+    // AR READY
+    // =========================
 
     scene.addEventListener("arReady", () => {
-        console.log("AR READY - 30 TARGETS");
+
+        console.log("✅ AR READY");
+
     });
 
 
-    scene.addEventListener("targetFound", async (e) => {
+    // =========================
+    // TARGET FOUND
+    // =========================
 
-        const target = e.target;
+    scene.addEventListener("targetFound", async (event) => {
+
+        const target = event.target;
 
         const data =
             target.getAttribute("mindar-image-target");
 
-        const index = data.targetIndex;
+        const index =
+            Number(data.targetIndex);
 
-        console.log("TARGET FOUND:", index);
+        console.log("🎯 TARGET FOUND:", index);
+
 
         activeTarget = target;
+        activeIndex = index;
 
 
-        videos.forEach((video, i) => {
+        // همه ویدیوپلین‌ها مخفی
+        document
+            .querySelectorAll(".arVideoPlane")
+            .forEach((plane) => {
 
-            if (video && i !== index) {
-                video.pause();
-            }
+                plane.setAttribute(
+                    "visible",
+                    "false"
+                );
 
-        });
+            });
 
 
-        const video = videos[index];
+        const plane =
+            target.querySelector(".arVideoPlane");
 
-        if (!video) {
-            console.log("VIDEO NOT FOUND:", index);
+
+        if (!plane) {
+
+            console.log(
+                "❌ VIDEO PLANE NOT FOUND"
+            );
+
             return;
+
         }
 
 
-        video.currentTime = 0;
-        video.muted = false;
+        // =========================
+        // ویدیوی مربوط به تارگت
+        // =========================
+
+        const videoNumber =
+            index + 1;
+
+        const filename =
+            String(videoNumber)
+                .padStart(2, "0");
+
+
+        const videoURL =
+            `./Group1/${filename}.mp4`;
+
+
+        console.log(
+            "🎬 VIDEO:",
+            videoURL
+        );
+
+
+        // اگر همان ویدیوست دوباره لود نکن
+        if (currentVideo !== index) {
+
+            video.pause();
+
+            video.removeAttribute("src");
+
+            video.load();
+
+
+            video.src =
+                videoURL;
+
+            video.loop = true;
+
+            video.muted = true;
+
+            video.playsInline = true;
+
+            video.setAttribute(
+                "playsinline",
+                ""
+            );
+
+            video.setAttribute(
+                "webkit-playsinline",
+                ""
+            );
+
+
+            currentVideo = index;
+
+        }
+
+
+        // پلین را نشان بده
+        plane.setAttribute(
+            "visible",
+            "true"
+        );
 
 
         try {
@@ -58,16 +137,17 @@ document.addEventListener("DOMContentLoaded", () => {
             await video.play();
 
             console.log(
-                "VIDEO PLAYING:",
-                index
+                "▶️ VIDEO PLAYING:",
+                videoNumber
             );
 
-        } catch (err) {
+        }
+
+        catch (error) {
 
             console.log(
-                "VIDEO ERROR:",
-                index,
-                err
+                "❌ VIDEO PLAY ERROR:",
+                error
             );
 
         }
@@ -75,260 +155,39 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 
-    scene.addEventListener("targetLost", (e) => {
+    // =========================
+    // TARGET LOST
+    // =========================
 
-        const target = e.target;
+    scene.addEventListener("targetLost", (event) => {
+
+        const target = event.target;
 
         const data =
-            target.getAttribute("mindar-image-target");
+            target.getAttribute(
+                "mindar-image-target"
+            );
 
-        const index = data.targetIndex;
+        const index =
+            Number(data.targetIndex);
+
 
         console.log(
-            "TARGET LOST:",
+            "👋 TARGET LOST:",
             index
         );
 
 
-        const video = videos[index];
-
-        if (video) {
-            video.pause();
-        }
-
-
         if (activeTarget === target) {
+
+            // فعلاً ویدیو را متوقف نمی‌کنیم
+            // تا لرزش و قطع و وصل کمتر شود
+
             activeTarget = null;
+
         }
 
     });
 
-
-    document.addEventListener(
-        "touchend",
-        (event) => {
-
-            if (!activeTarget) {
-                return;
-            }
-
-
-            if (
-                !scene.camera ||
-                !scene.renderer
-            ) {
-                return;
-            }
-
-
-            const touch =
-                event.changedTouches[0];
-
-            if (!touch) {
-                return;
-            }
-
-
-            const canvas =
-                scene.renderer.domElement;
-
-            const rect =
-                canvas.getBoundingClientRect();
-
-
-            const mouse =
-                new THREE.Vector2();
-
-
-            mouse.x =
-                (
-                    (
-                        touch.clientX -
-                        rect.left
-                    ) /
-                    rect.width
-                ) * 2 - 1;
-
-
-            mouse.y =
-                -(
-                    (
-                        touch.clientY -
-                        rect.top
-                    ) /
-                    rect.height
-                ) * 2 + 1;
-
-
-            const raycaster =
-                new THREE.Raycaster();
-
-
-            raycaster.setFromCamera(
-                mouse,
-                scene.camera
-            );
-
-
-            // =============================
-            // INSTAGRAM
-            // =============================
-
-            const instagramZone =
-                activeTarget.querySelector(
-                    ".instagram-zone"
-                );
-
-
-            if (instagramZone) {
-
-                const instagramMesh =
-                    instagramZone.getObject3D("mesh");
-
-
-                if (instagramMesh) {
-
-                    const hits =
-                        raycaster.intersectObject(
-                            instagramMesh,
-                            true
-                        );
-
-
-                    if (hits.length > 0) {
-
-                        console.log(
-                            "INSTAGRAM PRESSED"
-                        );
-
-
-                        const intentURL =
-                            "intent://www.instagram.com/_u/SarzaminAr/#Intent;" +
-                            "package=com.instagram.android;" +
-                            "scheme=https;" +
-                            "end";
-
-
-                        window.location.href =
-                            intentURL;
-
-
-                        return;
-                    }
-
-                }
-
-            }
-
-
-            // =============================
-            // SHARE
-            // =============================
-
-            const shareZone =
-                activeTarget.querySelector(
-                    ".share-zone"
-                );
-
-
-            if (!shareZone) {
-                return;
-            }
-
-
-            const shareMesh =
-                shareZone.getObject3D("mesh");
-
-
-            if (!shareMesh) {
-                return;
-            }
-
-
-            const shareHits =
-                raycaster.intersectObject(
-                    shareMesh,
-                    true
-                );
-
-
-            if (shareHits.length > 0) {
-
-                console.log(
-                    "SHARE PRESSED"
-                );
-
-
-                const shareURL =
-                    window.location.href;
-
-
-                const shareText =
-                    "📚✨ این فقط یه دفتر معمولی نیست!\n\n" +
-                    "این دفتر می‌تونه زنده بشه! 😱\n" +
-                    "دوربین گوشیت رو بگیر روی جلد و خودت ببین چه اتفاقی می‌افته! 👀\n\n" +
-                    "🔥 طرح‌های زنده‌ی دیگه رو هم ببین!\n" +
-                    "سرزمین شگفت‌انگیز 😍📚";
-
-
-                if (navigator.share) {
-
-                    navigator.share({
-
-                        title:
-                            "سرزمین شگفت‌انگیز 📚✨",
-
-                        text:
-                            shareText,
-
-                        url:
-                            shareURL
-
-                    }).catch((err) => {
-
-                        console.log(
-                            "SHARE CANCELLED",
-                            err
-                        );
-
-                    });
-
-                } else {
-
-                    navigator.clipboard
-                        .writeText(
-                            shareText +
-                            "\n\n" +
-                            shareURL
-                        )
-
-                        .then(() => {
-
-                            alert(
-                                "متن و لینک کپی شد ❤️"
-                            );
-
-                        })
-
-                        .catch(() => {
-
-                            prompt(
-                                "این متن و لینک را بفرست:",
-                                shareText +
-                                "\n\n" +
-                                shareURL
-                            );
-
-                        });
-
-                }
-
-            }
-
-        },
-        {
-            passive: true
-        }
-    );
 
 });
