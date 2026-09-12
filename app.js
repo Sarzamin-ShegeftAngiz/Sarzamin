@@ -407,31 +407,10 @@ async function startAR(groupName) {
 
 
     // ------------------------------------------
-    // 0) Check camera permission / availability
-    //    BEFORE touching A-Frame at all, so we get
-    //    a clear message instead of a blank screen.
-    // ------------------------------------------
-
-    try {
-
-        const testStream = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: "environment" }
-        });
-
-        testStream.getTracks().forEach(t => t.stop());
-
-    } catch (camErr) {
-
-        arStarting = false;
-        showDebug("دوربین در دسترس نیست: " + camErr.name + " - " + camErr.message);
-        return;
-
-    }
-
-
-    // ------------------------------------------
-    // 1) Check that the .mind file actually exists
-    //    at that path/case BEFORE starting AR.
+    // Check that the .mind file actually exists
+    // at that path/case BEFORE starting AR.
+    // (This is just a file fetch, it does not
+    // touch the camera, so it's safe to do first.)
     // ------------------------------------------
 
     try {
@@ -581,9 +560,25 @@ async function startAR(groupName) {
 
 
     // EVENTS
+    let arSettled = false;
+
+    const settleTimeout = setTimeout(() => {
+
+        if (!arSettled) {
+
+            arSettled = true;
+            arStarting = false;
+            showDebug("AR بعد از ۱۰ ثانیه شروع نشد — دوباره روی دکمه دوربین بزن.");
+
+        }
+
+    }, 10000);
+
     scene.addEventListener("renderstart", () => {
 
         showDebug("Scene render started OK.");
+        arSettled = true;
+        clearTimeout(settleTimeout);
         arStarting = false;
 
     });
@@ -591,6 +586,9 @@ async function startAR(groupName) {
     scene.addEventListener("arReady", () => {
 
         showDebug("AR READY: " + groupName);
+        arSettled = true;
+        clearTimeout(settleTimeout);
+        arStarting = false;
 
     });
 
@@ -598,6 +596,8 @@ async function startAR(groupName) {
 
         showDebug("AR ERROR — دوربین/AR راه‌اندازی نشد. جزئیات در کنسول.");
         console.log("AR ERROR:", event);
+        arSettled = true;
+        clearTimeout(settleTimeout);
         arStarting = false;
 
     });
