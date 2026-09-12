@@ -2,52 +2,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const scene = document.querySelector("a-scene");
 
+    const videos = [];
 
-    // ==========================================
-    // VIDEOS
-    // ==========================================
-
-    const videos = [
-        document.querySelector("#video0"),
-        document.querySelector("#video1"),
-        document.querySelector("#video2"),
-        document.querySelector("#video3"),
-        document.querySelector("#video4"),
-        document.querySelector("#video5")
-    ];
-
-
-    // ==========================================
-    // TARGETS
-    // ==========================================
-
-    const targets = [
-        document.querySelector('[mindar-image-target="targetIndex:0"]'),
-        document.querySelector('[mindar-image-target="targetIndex:1"]'),
-        document.querySelector('[mindar-image-target="targetIndex:2"]'),
-        document.querySelector('[mindar-image-target="targetIndex:3"]'),
-        document.querySelector('[mindar-image-target="targetIndex:4"]'),
-        document.querySelector('[mindar-image-target="targetIndex:5"]')
-    ];
-
+    for (let i = 0; i < 30; i++) {
+        videos.push(
+            document.querySelector("#video" + i)
+        );
+    }
 
     let activeTarget = null;
 
 
-    // ==========================================
-    // AR READY
-    // ==========================================
-
     scene.addEventListener("arReady", () => {
-
-        console.log("AR READY");
-
+        console.log("AR READY - 30 TARGETS");
     });
 
-
-    // ==========================================
-    // TARGET FOUND
-    // ==========================================
 
     scene.addEventListener("targetFound", async (e) => {
 
@@ -56,21 +25,17 @@ document.addEventListener("DOMContentLoaded", () => {
         const data =
             target.getAttribute("mindar-image-target");
 
-        const index =
-            data.targetIndex;
+        const index = data.targetIndex;
 
         console.log("TARGET FOUND:", index);
 
         activeTarget = target;
 
 
-        // توقف همه ویدئوهای دیگر
         videos.forEach((video, i) => {
 
             if (video && i !== index) {
-
                 video.pause();
-
             }
 
         });
@@ -79,18 +44,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const video = videos[index];
 
         if (!video) {
-
             console.log("VIDEO NOT FOUND:", index);
-
             return;
-
         }
 
 
-        // شروع از اول
         video.currentTime = 0;
-
-        // برای پخش صدادار
         video.muted = false;
 
 
@@ -103,9 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 index
             );
 
-        }
-
-        catch (err) {
+        } catch (err) {
 
             console.log(
                 "VIDEO ERROR:",
@@ -118,10 +75,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 
-    // ==========================================
-    // TARGET LOST
-    // ==========================================
-
     scene.addEventListener("targetLost", (e) => {
 
         const target = e.target;
@@ -129,8 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const data =
             target.getAttribute("mindar-image-target");
 
-        const index =
-            data.targetIndex;
+        const index = data.targetIndex;
 
         console.log(
             "TARGET LOST:",
@@ -141,33 +93,23 @@ document.addEventListener("DOMContentLoaded", () => {
         const video = videos[index];
 
         if (video) {
-
             video.pause();
-
         }
 
 
         if (activeTarget === target) {
-
             activeTarget = null;
-
         }
 
     });
 
-
-    // ==========================================
-    // TOUCH
-    // ==========================================
 
     document.addEventListener(
         "touchend",
         (event) => {
 
             if (!activeTarget) {
-
                 return;
-
             }
 
 
@@ -175,9 +117,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 !scene.camera ||
                 !scene.renderer
             ) {
-
                 return;
-
             }
 
 
@@ -185,15 +125,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 event.changedTouches[0];
 
             if (!touch) {
-
                 return;
-
             }
 
-
-            // ==================================
-            // صفحه دوربین
-            // ==================================
 
             const canvas =
                 scene.renderer.domElement;
@@ -201,10 +135,6 @@ document.addEventListener("DOMContentLoaded", () => {
             const rect =
                 canvas.getBoundingClientRect();
 
-
-            // ==================================
-            // مختصات لمس
-            // ==================================
 
             const mouse =
                 new THREE.Vector2();
@@ -215,8 +145,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     (
                         touch.clientX -
                         rect.left
-                    )
-                    /
+                    ) /
                     rect.width
                 ) * 2 - 1;
 
@@ -226,15 +155,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     (
                         touch.clientY -
                         rect.top
-                    )
-                    /
+                    ) /
                     rect.height
                 ) * 2 + 1;
 
-
-            // ==================================
-            // RAYCASTER
-            // ==================================
 
             const raycaster =
                 new THREE.Raycaster();
@@ -246,9 +170,9 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
 
-            // ==================================
+            // =============================
             // INSTAGRAM
-            // ==================================
+            // =============================
 
             const instagramZone =
                 activeTarget.querySelector(
@@ -259,23 +183,19 @@ document.addEventListener("DOMContentLoaded", () => {
             if (instagramZone) {
 
                 const instagramMesh =
-                    instagramZone.getObject3D(
-                        "mesh"
-                    );
+                    instagramZone.getObject3D("mesh");
 
 
                 if (instagramMesh) {
 
-                    const instagramHits =
+                    const hits =
                         raycaster.intersectObject(
                             instagramMesh,
                             true
                         );
 
 
-                    if (
-                        instagramHits.length > 0
-                    ) {
+                    if (hits.length > 0) {
 
                         console.log(
                             "INSTAGRAM PRESSED"
@@ -294,7 +214,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
                         return;
-
                     }
 
                 }
@@ -302,9 +221,9 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
 
-            // ==================================
+            // =============================
             // SHARE
-            // ==================================
+            // =============================
 
             const shareZone =
                 activeTarget.querySelector(
@@ -313,22 +232,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             if (!shareZone) {
-
                 return;
-
             }
 
 
             const shareMesh =
-                shareZone.getObject3D(
-                    "mesh"
-                );
+                shareZone.getObject3D("mesh");
 
 
             if (!shareMesh) {
-
                 return;
-
             }
 
 
@@ -339,9 +252,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
 
 
-            if (
-                shareHits.length > 0
-            ) {
+            if (shareHits.length > 0) {
 
                 console.log(
                     "SHARE PRESSED"
@@ -356,15 +267,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     "📚✨ این فقط یه دفتر معمولی نیست!\n\n" +
                     "این دفتر می‌تونه زنده بشه! 😱\n" +
                     "دوربین گوشیت رو بگیر روی جلد و خودت ببین چه اتفاقی می‌افته! 👀\n\n" +
-                    "🔥 حالا اگه دوست داری طرح‌های زنده‌ی دیگه رو هم ببینی، " +
-                    "این لینک رو بزن و بیا آیدی اینستاگرام سرزمین شگفت‌انگیز رو ببین!\n" +
-                    "شاید طرح مورد علاقه‌ات اونجا منتظرت باشه 😍📚\n\n" +
-                    "اگه دفترت هنوز زنده نشده، درخواست زنده‌شدنش رو بده! 😉✨";
+                    "🔥 طرح‌های زنده‌ی دیگه رو هم ببین!\n" +
+                    "سرزمین شگفت‌انگیز 😍📚";
 
-
-                // ==================================
-                // SHARE API
-                // ==================================
 
                 if (navigator.share) {
 
@@ -379,17 +284,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         url:
                             shareURL
 
-                    })
-
-                    .then(() => {
-
-                        console.log(
-                            "SHARE SUCCESS"
-                        );
-
-                    })
-
-                    .catch((err) => {
+                    }).catch((err) => {
 
                         console.log(
                             "SHARE CANCELLED",
@@ -398,14 +293,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     });
 
-                }
-
-
-                // ==================================
-                // FALLBACK
-                // ==================================
-
-                else {
+                } else {
 
                     navigator.clipboard
                         .writeText(
@@ -417,7 +305,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         .then(() => {
 
                             alert(
-                                "متن و لینک کپی شد ❤️\nبرای دوستت بفرست"
+                                "متن و لینک کپی شد ❤️"
                             );
 
                         })
@@ -425,8 +313,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         .catch(() => {
 
                             prompt(
-                                "این متن و لینک را برای دوستت بفرست:",
-
+                                "این متن و لینک را بفرست:",
                                 shareText +
                                 "\n\n" +
                                 shareURL
@@ -439,11 +326,9 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
         },
-
         {
             passive: true
         }
-
     );
 
 });
