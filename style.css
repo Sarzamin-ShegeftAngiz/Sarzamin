@@ -1,545 +1,161 @@
-/* =========================================================
-   SARZAMIN AR
-   style.css
-   ========================================================= */
-
 html,
 body {
     margin: 0;
     padding: 0;
-
     width: 100%;
     height: 100%;
-
-    background: #ffffff;
-
-    font-family:
-        Arial,
-        sans-serif;
-
     overflow: hidden;
+    background: #000;
+    font-family: Arial, sans-serif;
 }
 
-
-/* =========================================================
-   MAIN APP
-   ========================================================= */
-
+/* صفحه انتخاب گروه */
 #mainApp {
     width: 100%;
-    height: 100vh;
-    height: 100dvh;
-
-    min-height: 100vh;
-
-    box-sizing: border-box;
-
-    overflow: hidden;
-
+    height: 100%;
     position: relative;
+    z-index: 10;
 }
-
-
-/* =========================================================
-   CATEGORY PAGE
-   ========================================================= */
 
 .category-page {
-
     width: 100%;
-
-    height: 100vh;
-    height: 100dvh;
-
+    height: 100%;
     box-sizing: border-box;
-
-    padding:
-        25px
-        15px
-        40px;
-
-    background: #ffffff;
-
+    padding: 25px 15px;
+    background: #fff;
     overflow-y: auto;
-    overflow-x: hidden;
-
-    -webkit-overflow-scrolling: touch;
-
-    overscroll-behavior-y: contain;
 }
-
-
-/* =========================================================
-   MAIN TITLE
-   ========================================================= */
 
 .main-title {
-
     text-align: center;
-
     font-size: 27px;
-
     font-weight: bold;
-
-    margin:
-        20px
-        0
-        8px;
+    margin: 20px 0 8px;
 }
 
-
-/* =========================================================
-   MAIN SUBTITLE
-   ========================================================= */
-
 .main-subtitle {
-
     text-align: center;
-
     font-size: 16px;
-
     margin-bottom: 25px;
 }
 
-
-/* =========================================================
-   GROUP BUTTONS
-   ========================================================= */
-
 .group-buttons {
-
     width: 100%;
-
     max-width: 500px;
-
     margin: 0 auto;
 }
 
-
-/* =========================================================
-   GROUP BUTTON
-   ========================================================= */
-
 .group-button {
-
     display: block;
-
     width: 100%;
-
     padding: 18px;
-
     margin: 10px 0;
-
     border: none;
-
     border-radius: 18px;
-
-    background: #111111;
-
-    color: #ffffff;
-
+    background: #111;
+    color: #fff;
     font-size: 19px;
-
     font-weight: bold;
-
     cursor: pointer;
-
-    -webkit-tap-highlight-color: transparent;
 }
 
-
-/* =========================================================
-   GALLERY PAGE
-   ========================================================= */
-
-.gallery-page {
-
-    width: 100%;
-
-    height: 100vh;
-    height: 100dvh;
-
-    min-height: 0;
-
-    box-sizing: border-box;
-
-    padding:
-        15px
-        12px
-        110px;
-
-    background: #ffffff;
-
-    overflow-x: hidden;
-
-    overflow-y: scroll;
-
-    -webkit-overflow-scrolling: touch;
-
-    overscroll-behavior-y: contain;
-
-    touch-action: pan-y;
-
-    position: relative;
-}
-
-
-/* =========================================================
-   GALLERY HEADER
-   ========================================================= */
-
-.gallery-header {
-
-    width: 100%;
-
-    text-align: center;
-
-    padding:
-        10px
-        0
-        20px;
-
-    box-sizing: border-box;
-}
-
-
-/* =========================================================
-   GALLERY TITLE
-   ========================================================= */
-
-.gallery-title {
-
-    text-align: center;
-
-    font-size: 29px;
-
-    font-weight: bold;
-
-    margin: 0;
-}
-
-
-/* =========================================================
-   GALLERY GRID
-   ========================================================= */
-
-.gallery-grid {
-
-    width: 100%;
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(
-            2,
-            minmax(0, 1fr)
-        );
-
-    gap: 12px;
-
-    box-sizing: border-box;
-}
-
-
-/* =========================================================
-   IMAGE CARD
-   ========================================================= */
-
-.image-card {
-
-    width: 100%;
-
-    box-sizing: border-box;
-
-    min-width: 0;
-}
-
-
-/* =========================================================
-   GALLERY IMAGE
-   ========================================================= */
-
-.gallery-image {
-
-    display: block;
-
-    width: 100%;
-
-    height: auto;
-
-    aspect-ratio: 0.70;
-
-    object-fit: cover;
-
-    border-radius: 15px;
-
-    box-shadow:
-        0 3px 12px
-        rgba(
-            0,
-            0,
-            0,
-            0.15
-        );
-
-    user-select: none;
-
-    -webkit-user-select: none;
-
-    -webkit-user-drag: none;
-
-    pointer-events: none;
-}
-
-
-/* =========================================================
-   CAMERA BUTTON
-   ========================================================= */
-
-#openCamera {
-
-    position: fixed;
-
-    left: 12px;
-
-    right: 12px;
-
-    bottom:
-        calc(
-            14px +
-            env(
-                safe-area-inset-bottom
-            )
-        );
-
-    width:
-        calc(
-            100% - 24px
-        );
-
-    height: 58px;
-
-    border: none;
-
-    border-radius: 18px;
-
-    background: #111111;
-
-    color: #ffffff;
-
-    font-size: 18px;
-
-    font-weight: bold;
-
-    z-index: 5000;
-
-    box-shadow:
-        0 5px 20px
-        rgba(
-            0,
-            0,
-            0,
-            0.25
-        );
-
-    cursor: pointer;
-
-    -webkit-tap-highlight-color: transparent;
-}
-
-
-/* =========================================================
-   AR SCENE
-   ========================================================= */
+/* =========================
+   MINDAR / CAMERA
+========================= */
 
 a-scene {
-
     position: fixed !important;
-
-    top: 0 !important;
-
-    left: 0 !important;
-
+    inset: 0 !important;
     width: 100vw !important;
-
     height: 100vh !important;
-
     margin: 0 !important;
-
     padding: 0 !important;
-
-    z-index: 99999 !important;
-
-    background:
-        transparent !important;
-
+    z-index: 100 !important;
+    background: transparent !important;
     overflow: hidden !important;
 }
 
+/* ویدئوی دوربین MindAR */
+video.mindar-video {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    object-fit: cover !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    z-index: 0 !important;
+    background: #000 !important;
+}
 
-/* =========================================================
-   AR CANVAS
-   ========================================================= */
-
+/* Canvas مربوط به A-Frame */
 a-scene canvas,
 a-scene .a-canvas,
 .a-canvas {
-
-    background:
-        transparent !important;
-
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
     margin: 0 !important;
-
     padding: 0 !important;
-
+    background: transparent !important;
+    z-index: 1 !important;
 }
 
-
-/* =========================================================
-   CANVAS
-   ========================================================= */
-
-canvas {
-
-    touch-action: none;
-
-    -webkit-user-select: none;
-
-    user-select: none;
+/* جلوگیری از لایه سفید پیش‌فرض */
+.a-canvas {
+    background-color: transparent !important;
 }
 
-
-/* =========================================================
-   HIDE VR BUTTON
-   ========================================================= */
-
+/* مخفی کردن دکمه VR */
 .a-enter-vr,
 .a-enter-ar {
-
     display: none !important;
 }
 
-
-/* =========================================================
-   CHANGE GROUP
-   ========================================================= */
-
+/* دکمه تغییر گروه */
 #changeGroup {
-
-    position: fixed;
-
-    top:
-        calc(
-            15px +
-            env(
-                safe-area-inset-top
-            )
-        );
-
-    right: 15px;
-
-    z-index: 100000 !important;
+    position: fixed !important;
+    top: calc(15px + env(safe-area-inset-top)) !important;
+    right: 15px !important;
+    z-index: 1000 !important;
 
     border: none;
-
     border-radius: 14px;
+    padding: 10px 14px;
 
-    padding:
-        10px
-        14px;
-
-    background:
-        rgba(
-            0,
-            0,
-            0,
-            0.72
-        );
-
-    color: #ffffff;
+    background: rgba(0, 0, 0, 0.72);
+    color: #fff;
 
     font-size: 14px;
-
     font-weight: bold;
-
-    cursor: pointer;
-
-    -webkit-tap-highlight-color: transparent;
 }
 
+/* ویدئوی اصلی AR که فقط منبع ویدئو است */
+#arVideo {
+    position: fixed !important;
+    width: 1px !important;
+    height: 1px !important;
+    left: -20px !important;
+    top: -20px !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
+}
 
-/* =========================================================
-   INVISIBLE AR BUTTONS
-   ========================================================= */
-
+/* لینک‌های نامرئی روی دفتر */
 .instagram-zone,
 .share-zone {
-
     opacity: 0 !important;
-
     visibility: hidden !important;
-
-    background:
-        transparent !important;
+    background: transparent !important;
 }
 
-
-/* =========================================================
-   AR VIDEO ELEMENT
-   ========================================================= */
-
-#arVideo {
-
-    position: fixed !important;
-
-    width: 1px !important;
-
-    height: 1px !important;
-
-    left: -20px !important;
-
-    top: -20px !important;
-
-    opacity: 0 !important;
-
-    pointer-events: none !important;
-
-    visibility: hidden !important;
-}
-
-
-/* =========================================================
-   MOBILE
-   ========================================================= */
-
-@media (max-width: 600px) {
-
-    .gallery-grid {
-
-        grid-template-columns:
-            repeat(
-                2,
-                minmax(0, 1fr)
-            );
-
-        gap: 10px;
-    }
-
-
-    .gallery-page {
-
-        padding-left: 10px;
-
-        padding-right: 10px;
-
-        padding-bottom: 100px;
-
-    }
-
-
-    .gallery-image {
-
-        border-radius: 13px;
-
-    }
+/* جلوگیری از اسکرول */
+canvas {
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
 }
