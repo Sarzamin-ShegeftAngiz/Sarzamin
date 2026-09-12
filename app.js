@@ -579,12 +579,6 @@ function startAR(groupName) {
 
 
     scene.setAttribute(
-        "embedded",
-        ""
-    );
-
-
-    scene.setAttribute(
         "renderer",
         "colorManagement: true; physicallyCorrectLights: true;"
     );
