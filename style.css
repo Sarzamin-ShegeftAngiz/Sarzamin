@@ -1,3 +1,8 @@
+/* =========================================================
+   SARZAMIN AR
+   style.css
+   ========================================================= */
+
 html,
 body {
     margin: 0;
@@ -8,54 +13,87 @@ body {
 
     background: #ffffff;
 
-    font-family: Arial, sans-serif;
+    font-family:
+        Arial,
+        sans-serif;
+
+    overflow: hidden;
 }
 
 
-/* =========================================
+/* =========================================================
    MAIN APP
-========================================= */
+   ========================================================= */
 
 #mainApp {
     width: 100%;
     height: 100vh;
+    height: 100dvh;
+
     min-height: 100vh;
 
     box-sizing: border-box;
+
+    overflow: hidden;
+
+    position: relative;
 }
 
 
-/* =========================================
-   CATEGORY
-========================================= */
+/* =========================================================
+   CATEGORY PAGE
+   ========================================================= */
 
 .category-page {
+
     width: 100%;
+
     height: 100vh;
+    height: 100dvh;
 
     box-sizing: border-box;
 
-    padding: 25px 15px 40px;
+    padding:
+        25px
+        15px
+        40px;
 
     background: #ffffff;
 
     overflow-y: auto;
+    overflow-x: hidden;
 
     -webkit-overflow-scrolling: touch;
+
+    overscroll-behavior-y: contain;
 }
 
 
+/* =========================================================
+   MAIN TITLE
+   ========================================================= */
+
 .main-title {
+
     text-align: center;
 
     font-size: 27px;
+
     font-weight: bold;
 
-    margin: 20px 0 8px;
+    margin:
+        20px
+        0
+        8px;
 }
 
 
+/* =========================================================
+   MAIN SUBTITLE
+   ========================================================= */
+
 .main-subtitle {
+
     text-align: center;
 
     font-size: 16px;
@@ -64,15 +102,26 @@ body {
 }
 
 
+/* =========================================================
+   GROUP BUTTONS
+   ========================================================= */
+
 .group-buttons {
+
     width: 100%;
+
     max-width: 500px;
 
-    margin: auto;
+    margin: 0 auto;
 }
 
 
+/* =========================================================
+   GROUP BUTTON
+   ========================================================= */
+
 .group-button {
+
     display: block;
 
     width: 100%;
@@ -87,24 +136,30 @@ body {
 
     background: #111111;
 
-    color: white;
+    color: #ffffff;
 
     font-size: 19px;
 
     font-weight: bold;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
 }
 
 
-/* =========================================
-   GALLERY
-========================================= */
+/* =========================================================
+   GALLERY PAGE
+   ========================================================= */
 
 .gallery-page {
+
     width: 100%;
 
     height: 100vh;
+    height: 100dvh;
 
-    min-height: 100vh;
+    min-height: 0;
 
     box-sizing: border-box;
 
@@ -117,15 +172,24 @@ body {
 
     overflow-x: hidden;
 
-    overflow-y: auto;
+    overflow-y: scroll;
 
     -webkit-overflow-scrolling: touch;
 
     overscroll-behavior-y: contain;
+
+    touch-action: pan-y;
+
+    position: relative;
 }
 
 
+/* =========================================================
+   GALLERY HEADER
+   ========================================================= */
+
 .gallery-header {
+
     width: 100%;
 
     text-align: center;
@@ -134,10 +198,17 @@ body {
         10px
         0
         20px;
+
+    box-sizing: border-box;
 }
 
 
+/* =========================================================
+   GALLERY TITLE
+   ========================================================= */
+
 .gallery-title {
+
     text-align: center;
 
     font-size: 29px;
@@ -148,17 +219,21 @@ body {
 }
 
 
-/* =========================================
-   IMAGE GRID
-========================================= */
+/* =========================================================
+   GALLERY GRID
+   ========================================================= */
 
 .gallery-grid {
+
     width: 100%;
 
     display: grid;
 
     grid-template-columns:
-        repeat(2, minmax(0, 1fr));
+        repeat(
+            2,
+            minmax(0, 1fr)
+        );
 
     gap: 12px;
 
@@ -166,14 +241,26 @@ body {
 }
 
 
+/* =========================================================
+   IMAGE CARD
+   ========================================================= */
+
 .image-card {
+
     width: 100%;
 
     box-sizing: border-box;
+
+    min-width: 0;
 }
 
 
+/* =========================================================
+   GALLERY IMAGE
+   ========================================================= */
+
 .gallery-image {
+
     display: block;
 
     width: 100%;
@@ -188,7 +275,12 @@ body {
 
     box-shadow:
         0 3px 12px
-        rgba(0, 0, 0, 0.15);
+        rgba(
+            0,
+            0,
+            0,
+            0.15
+        );
 
     user-select: none;
 
@@ -200,20 +292,30 @@ body {
 }
 
 
-/* =========================================
+/* =========================================================
    CAMERA BUTTON
-========================================= */
+   ========================================================= */
 
 #openCamera {
+
     position: fixed;
 
     left: 12px;
+
     right: 12px;
 
     bottom:
-        calc(14px + env(safe-area-inset-bottom));
+        calc(
+            14px +
+            env(
+                safe-area-inset-bottom
+            )
+        );
 
-    width: calc(100% - 24px);
+    width:
+        calc(
+            100% - 24px
+        );
 
     height: 58px;
 
@@ -223,7 +325,7 @@ body {
 
     background: #111111;
 
-    color: white;
+    color: #ffffff;
 
     font-size: 18px;
 
@@ -233,89 +335,106 @@ body {
 
     box-shadow:
         0 5px 20px
-        rgba(0, 0, 0, 0.25);
+        rgba(
+            0,
+            0,
+            0,
+            0.25
+        );
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
 }
 
 
-/* =========================================
+/* =========================================================
    AR SCENE
-========================================= */
+   ========================================================= */
 
 a-scene {
+
     position: fixed !important;
 
     top: 0 !important;
+
     left: 0 !important;
 
-    width: 100% !important;
-    height: 100% !important;
+    width: 100vw !important;
+
+    height: 100vh !important;
 
     margin: 0 !important;
+
     padding: 0 !important;
 
     z-index: 99999 !important;
 
-    display: block !important;
+    background:
+        transparent !important;
 
-    background: transparent !important;
+    overflow: hidden !important;
 }
 
 
-/* =========================================
+/* =========================================================
    AR CANVAS
-========================================= */
+   ========================================================= */
 
 a-scene canvas,
 a-scene .a-canvas,
 .a-canvas {
-    position: absolute !important;
 
-    top: 0 !important;
-    left: 0 !important;
-
-    width: 100% !important;
-    height: 100% !important;
+    background:
+        transparent !important;
 
     margin: 0 !important;
+
     padding: 0 !important;
 
-    display: block !important;
-
-    z-index: 99999 !important;
 }
 
 
-/* =========================================
+/* =========================================================
    CANVAS
-========================================= */
+   ========================================================= */
 
 canvas {
+
     touch-action: none;
 
     -webkit-user-select: none;
+
     user-select: none;
 }
 
 
-/* =========================================
-   HIDE A-FRAME BUTTONS
-========================================= */
+/* =========================================================
+   HIDE VR BUTTON
+   ========================================================= */
 
 .a-enter-vr,
 .a-enter-ar {
+
     display: none !important;
 }
 
 
-/* =========================================
+/* =========================================================
    CHANGE GROUP
-========================================= */
+   ========================================================= */
 
 #changeGroup {
+
     position: fixed;
 
     top:
-        calc(15px + env(safe-area-inset-top));
+        calc(
+            15px +
+            env(
+                safe-area-inset-top
+            )
+        );
 
     right: 15px;
 
@@ -325,71 +444,102 @@ canvas {
 
     border-radius: 14px;
 
-    padding: 10px 14px;
+    padding:
+        10px
+        14px;
 
     background:
-        rgba(0, 0, 0, 0.72);
+        rgba(
+            0,
+            0,
+            0,
+            0.72
+        );
 
-    color: white;
+    color: #ffffff;
 
     font-size: 14px;
 
     font-weight: bold;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
 }
 
 
-/* =========================================
-   INVISIBLE AR LINKS
-========================================= */
+/* =========================================================
+   INVISIBLE AR BUTTONS
+   ========================================================= */
 
 .instagram-zone,
 .share-zone {
+
     opacity: 0 !important;
 
     visibility: hidden !important;
+
+    background:
+        transparent !important;
 }
 
 
-/* =========================================
-   HIDDEN VIDEO
-========================================= */
+/* =========================================================
+   AR VIDEO ELEMENT
+   ========================================================= */
 
 #arVideo {
+
     position: fixed !important;
 
     width: 1px !important;
+
     height: 1px !important;
 
     left: -20px !important;
+
     top: -20px !important;
 
     opacity: 0 !important;
 
     pointer-events: none !important;
+
+    visibility: hidden !important;
 }
 
 
-/* =========================================
+/* =========================================================
    MOBILE
-========================================= */
+   ========================================================= */
 
 @media (max-width: 600px) {
 
     .gallery-grid {
+
         grid-template-columns:
-            repeat(2, minmax(0, 1fr));
+            repeat(
+                2,
+                minmax(0, 1fr)
+            );
 
         gap: 10px;
     }
 
+
     .gallery-page {
+
         padding-left: 10px;
+
         padding-right: 10px;
+
         padding-bottom: 100px;
+
     }
+
 
     .gallery-image {
-        border-radius: 13px;
-    }
 
+        border-radius: 13px;
+
+    }
 }
