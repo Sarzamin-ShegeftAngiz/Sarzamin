@@ -31,18 +31,21 @@ let activeTarget = null;
 
 
 /* =====================================
-   شروع
+   شروع برنامه
 ===================================== */
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
 
-    showCategories();
+        showCategories();
 
-});
+    }
+);
 
 
 /* =====================================
-   صفحه انتخاب گروه
+   انتخاب گروه
 ===================================== */
 
 function showCategories() {
@@ -51,9 +54,14 @@ function showCategories() {
 
 
     const main =
-        document.getElementById("mainApp");
+        document.getElementById(
+            "mainApp"
+        );
 
-    if (!main) return;
+
+    if (!main) {
+        return;
+    }
 
 
     main.style.display = "block";
@@ -81,7 +89,6 @@ function showCategories() {
 
                 </button>
 
-
                 <button
                     class="group-button"
                     data-group="Group2">
@@ -89,7 +96,6 @@ function showCategories() {
                     📚 گروه ۲
 
                 </button>
-
 
                 <button
                     class="group-button"
@@ -107,7 +113,9 @@ function showCategories() {
 
 
     main
-        .querySelectorAll(".group-button")
+        .querySelectorAll(
+            ".group-button"
+        )
         .forEach(button => {
 
             button.addEventListener(
@@ -135,19 +143,28 @@ function startAR(groupName) {
     const config =
         GROUPS[groupName];
 
-    if (!config) return;
+
+    if (!config) {
+        return;
+    }
 
 
     currentGroup =
         groupName;
 
+
     activeTarget = null;
 
 
-    /* صفحه انتخاب گروه مخفی */
+    /*
+       صفحه گروه مخفی
+    */
 
     const main =
-        document.getElementById("mainApp");
+        document.getElementById(
+            "mainApp"
+        );
+
 
     if (main) {
 
@@ -157,18 +174,23 @@ function startAR(groupName) {
     }
 
 
-    /* پاک کردن AR قبلی */
+    /*
+       پاک کردن AR قبلی
+    */
 
     stopAR();
 
 
     /*
-       ساخت VIDEO اصلی
-       این فقط منبع a-video است
+       ==================================
+       VIDEO اصلی
+       ==================================
     */
 
     const video =
-        document.createElement("video");
+        document.createElement(
+            "video"
+        );
 
 
     video.id =
@@ -213,7 +235,9 @@ function startAR(groupName) {
 
 
     /*
-       ساخت Scene
+       ==================================
+       A-SCENE
+       ==================================
     */
 
     const scene =
@@ -223,8 +247,7 @@ function startAR(groupName) {
 
 
     /*
-       دقیقاً همان تنظیم اصلی
-       که قبلاً دوربین با آن کار می‌کرد
+       همان ساختار دوربین نسخه سالم
     */
 
     scene.setAttribute(
@@ -233,7 +256,7 @@ function startAR(groupName) {
         imageTargetSrc: ${config.mind};
         warmupTolerance: 2;
         missTolerance: 1;
-        uiLoading: no;
+        uiLoading: yes;
         uiScanning: yes;
         uiError: yes;
         `
@@ -265,7 +288,9 @@ function startAR(groupName) {
 
 
     /*
+       ==================================
        CAMERA
+       ==================================
     */
 
     const camera =
@@ -292,7 +317,9 @@ function startAR(groupName) {
 
 
     /*
-       ۳۰ تارگت
+       ==================================
+       ساخت ۳۰ تارگت
+       ==================================
     */
 
     for (
@@ -311,7 +338,244 @@ function startAR(groupName) {
 
 
     /*
+       ==================================
+       TARGET FOUND
+       ==================================
+    */
+
+    scene.addEventListener(
+        "targetFound",
+        async event => {
+
+            const target =
+                event.target;
+
+
+            const data =
+                target.getAttribute(
+                    "mindar-image-target"
+                );
+
+
+            if (!data) {
+                return;
+            }
+
+
+            const index =
+                data.targetIndex;
+
+
+            console.log(
+                "TARGET FOUND:",
+                index
+            );
+
+
+            activeTarget =
+                target;
+
+
+            const config =
+                GROUPS[groupName];
+
+
+            const number =
+                config.start + index;
+
+
+            const filename =
+                number < 10
+                    ? "0" + number
+                    : String(number);
+
+
+            const videoURL =
+                `./${groupName}/${filename}.mp4`;
+
+
+            /*
+               توقف ویدئوی قبلی
+            */
+
+            if (currentVideo) {
+
+                try {
+
+                    currentVideo.pause();
+
+                } catch (e) {}
+
+            }
+
+
+            /*
+               مخفی کردن تمام Plane ها
+            */
+
+            scene
+                .querySelectorAll(
+                    "a-video"
+                )
+                .forEach(
+                    plane => {
+
+                        plane.setAttribute(
+                            "visible",
+                            "false"
+                        );
+
+                    }
+                );
+
+
+            if (!currentVideo) {
+                return;
+            }
+
+
+            /*
+               ویدئوی جدید
+            */
+
+            currentVideo.src =
+                videoURL;
+
+
+            currentVideo.currentTime =
+                0;
+
+
+            currentVideo.load();
+
+
+            /*
+               فقط ویدئوی همین Target
+            */
+
+            const videoPlane =
+                target.querySelector(
+                    "a-video"
+                );
+
+
+            if (videoPlane) {
+
+                videoPlane.setAttribute(
+                    "visible",
+                    "true"
+                );
+
+            }
+
+
+            /*
+               پخش
+            */
+
+            try {
+
+                await currentVideo.play();
+
+
+                console.log(
+                    "VIDEO PLAYING:",
+                    number
+                );
+
+            } catch (error) {
+
+                console.log(
+                    "VIDEO ERROR:",
+                    error
+                );
+
+            }
+
+        }
+    );
+
+
+    /*
+       ==================================
+       TARGET LOST
+       ==================================
+       
+       این قسمت مهم است:
+       وقتی دفتر از دوربین خارج شد،
+       Plane فوراً مخفی می‌شود.
+    */
+
+    scene.addEventListener(
+        "targetLost",
+        event => {
+
+            const target =
+                event.target;
+
+
+            console.log(
+                "TARGET LOST"
+            );
+
+
+            /*
+               مخفی کردن Plane همان Target
+            */
+
+            const videoPlane =
+                target.querySelector(
+                    "a-video"
+                );
+
+
+            if (videoPlane) {
+
+                videoPlane.setAttribute(
+                    "visible",
+                    "false"
+                );
+
+            }
+
+
+            /*
+               توقف ویدئو
+            */
+
+            if (currentVideo) {
+
+                try {
+
+                    currentVideo.pause();
+
+                } catch (e) {}
+
+            }
+
+
+            /*
+               پاک کردن Target فعال
+            */
+
+            if (
+                activeTarget ===
+                target
+            ) {
+
+                activeTarget =
+                    null;
+
+            }
+
+        }
+    );
+
+
+    /*
+       ==================================
        اضافه کردن Scene
+       ==================================
     */
 
     document.body.appendChild(
@@ -324,7 +588,9 @@ function startAR(groupName) {
 
 
     /*
+       ==================================
        دکمه تغییر گروه
+       ==================================
     */
 
     const changeButton =
@@ -357,7 +623,7 @@ function startAR(groupName) {
 
 
     /*
-       وقتی AR آماده شد
+       AR READY
     */
 
     scene.addEventListener(
@@ -375,7 +641,7 @@ function startAR(groupName) {
 
 
 /* =====================================
-   ساخت هر Target
+   ساخت Target
 ===================================== */
 
 function createTarget(
@@ -397,7 +663,9 @@ function createTarget(
 
 
     /*
-       VIDEO PLANE
+       ==================================
+       VIDEO
+       ==================================
     */
 
     const videoPlane =
@@ -412,20 +680,35 @@ function createTarget(
     );
 
 
+    /*
+       اندازه اصلی دفتر
+    */
+
     videoPlane.setAttribute(
-    "width",
-    "1"
-);
+        "width",
+        "1"
+    );
 
-videoPlane.setAttribute(
-    "height",
-    "1.405"
-);
 
-videoPlane.setAttribute(
-    "position",
-    "0 0 0"
-);
+    videoPlane.setAttribute(
+        "height",
+        "1.42"
+    );
+
+
+    /*
+       مرکز دقیق Target
+    */
+
+    videoPlane.setAttribute(
+        "position",
+        "0 0 0"
+    );
+
+
+    /*
+       اول مخفی
+    */
 
     videoPlane.setAttribute(
         "visible",
@@ -439,9 +722,9 @@ videoPlane.setAttribute(
 
 
     /*
-       =========================
-       Instagram
-       =========================
+       ==================================
+       INSTAGRAM ZONE
+       ==================================
     */
 
     const instagram =
@@ -485,9 +768,9 @@ videoPlane.setAttribute(
 
 
     /*
-       =========================
-       Share
-       =========================
+       ==================================
+       SHARE ZONE
+       ==================================
     */
 
     const share =
@@ -531,177 +814,10 @@ videoPlane.setAttribute(
 
 
     /*
-       =========================
-       TARGET FOUND
-       =========================
+       ==================================
+       اضافه کردن Target
+       ==================================
     */
-
-    target.addEventListener(
-        "targetFound",
-        async () => {
-
-            console.log(
-                "TARGET FOUND:",
-                index
-            );
-
-
-            activeTarget =
-                target;
-
-
-            const config =
-                GROUPS[groupName];
-
-
-            const number =
-                config.start +
-                index;
-
-
-            const filename =
-                number < 10
-                    ? "0" + number
-                    : String(number);
-
-
-            const videoURL =
-                `./${groupName}/${filename}.mp4`;
-
-
-            /*
-               توقف ویدئوی قبلی
-            */
-
-            if (currentVideo) {
-
-                try {
-
-                    currentVideo.pause();
-
-                } catch (e) {}
-
-            }
-
-
-            /*
-               مخفی کردن Plane های قبلی
-            */
-
-            if (currentScene) {
-
-                currentScene
-                    .querySelectorAll(
-                        "a-video"
-                    )
-                    .forEach(
-                        element => {
-
-                            element.setAttribute(
-                                "visible",
-                                "false"
-                            );
-
-                        }
-                    );
-
-            }
-
-
-            /*
-               ویدئوی جدید
-            */
-
-            if (!currentVideo) {
-                return;
-            }
-
-
-            currentVideo.src =
-                videoURL;
-
-
-            currentVideo.currentTime =
-                0;
-
-
-            currentVideo.load();
-
-
-            videoPlane.setAttribute(
-                "visible",
-                "true"
-            );
-
-
-            try {
-
-                await currentVideo.play();
-
-                console.log(
-                    "VIDEO PLAYING:",
-                    number
-                );
-
-            } catch (error) {
-
-                console.log(
-                    "VIDEO ERROR:",
-                    error
-                );
-
-            }
-
-        }
-    );
-
-
-    /*
-       =========================
-       TARGET LOST
-       =========================
-    */
-
-    target.addEventListener(
-        "targetLost",
-        () => {
-
-            console.log(
-                "TARGET LOST:",
-                index
-            );
-
-
-            videoPlane.setAttribute(
-                "visible",
-                "false"
-            );
-
-
-            if (currentVideo) {
-
-                try {
-
-                    currentVideo.pause();
-
-                } catch (e) {}
-
-            }
-
-
-            if (
-                activeTarget ===
-                target
-            ) {
-
-                activeTarget =
-                    null;
-
-            }
-
-        }
-    );
-
 
     scene.appendChild(
         target
@@ -712,7 +828,7 @@ videoPlane.setAttribute(
 
 /* =====================================
    لمس Instagram و Share
-   همان روش نسخه قدیمی تو
+   همان روش نسخه قدیمی سالم
 ===================================== */
 
 document.addEventListener(
@@ -731,7 +847,6 @@ document.addEventListener(
         ) {
 
             return;
-
         }
 
 
@@ -754,13 +869,26 @@ document.addEventListener(
             canvas.getBoundingClientRect();
 
 
+        if (
+            rect.width === 0 ||
+            rect.height === 0
+        ) {
+
+            return;
+
+        }
+
+
         const mouse =
             new THREE.Vector2();
 
 
         mouse.x =
             (
-                (touch.clientX - rect.left)
+                (
+                    touch.clientX -
+                    rect.left
+                )
                 /
                 rect.width
             ) * 2 - 1;
@@ -768,7 +896,10 @@ document.addEventListener(
 
         mouse.y =
             -(
-                (touch.clientY - rect.top)
+                (
+                    touch.clientY -
+                    rect.top
+                )
                 /
                 rect.height
             ) * 2 + 1;
@@ -785,9 +916,9 @@ document.addEventListener(
 
 
         /*
-           =========================
+           ==================================
            INSTAGRAM
-        =========================
+           ==================================
         */
 
         const instagramZone =
@@ -798,18 +929,17 @@ document.addEventListener(
 
         if (instagramZone) {
 
-            const mesh =
-                instagramZone
-                    .getObject3D(
-                        "mesh"
-                    );
+            const instagramMesh =
+                instagramZone.getObject3D(
+                    "mesh"
+                );
 
 
-            if (mesh) {
+            if (instagramMesh) {
 
                 const hits =
                     raycaster.intersectObject(
-                        mesh,
+                        instagramMesh,
                         true
                     );
 
@@ -844,9 +974,9 @@ document.addEventListener(
 
 
         /*
-           =========================
+           ==================================
            SHARE
-        =========================
+           ==================================
         */
 
         const shareZone =
@@ -1050,15 +1180,15 @@ function stopAR() {
     }
 
 
-    const button =
+    const changeButton =
         document.getElementById(
             "changeGroup"
         );
 
 
-    if (button) {
+    if (changeButton) {
 
-        button.remove();
+        changeButton.remove();
 
     }
 
