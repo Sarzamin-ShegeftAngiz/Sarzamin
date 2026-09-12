@@ -1,557 +1,391 @@
-// ==========================================
-// SARZAMIN AR
-// ==========================================
-
-let scene = null;
-let video = null;
-let activeTarget = null;
-let activePlane = null;
-
-
-// ==========================================
-// GROUPS
-// ==========================================
+/* =========================================================
+   SARZAMIN AR - app.js
+   ========================================================= */
 
 const GROUPS = {
-
     Group1: {
-        title: "گروه اول",
+        title: "دفترهای گروه ۱",
         mind: "./Group1/targets.mind",
-        first: 1,
-        last: 30
+        start: 1,
+        end: 30
     },
 
     Group2: {
-        title: "گروه دوم",
+        title: "دفترهای گروه ۲",
         mind: "./Group2/targets.mind",
-        first: 31,
-        last: 60
+        start: 31,
+        end: 60
     },
 
     Group3: {
-        title: "گروه سوم",
+        title: "دفترهای گروه ۳",
         mind: "./Group3/targets.mind",
-        first: 61,
-        last: 90
+        start: 61,
+        end: 90
     }
-
 };
 
+let currentGroup = null;
+let currentScene = null;
+let currentVideo = null;
 
-// ==========================================
-// START
-// ==========================================
+
+/* =========================================================
+   شروع برنامه
+   ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
-
     createMain();
-
     showCategories();
-
 });
 
 
-// ==========================================
-// MAIN
-// ==========================================
+/* =========================================================
+   ساخت صفحه اصلی
+   ========================================================= */
 
 function createMain() {
 
-    let main = document.getElementById("mainApp");
+    let old = document.getElementById("mainApp");
 
-    if (!main) {
-
-        main = document.createElement("div");
-
-        main.id = "mainApp";
-
-        document.body.appendChild(main);
-
+    if (old) {
+        old.remove();
     }
 
-    return main;
+    const main = document.createElement("div");
 
+    main.id = "mainApp";
+
+    document.body.appendChild(main);
 }
 
 
-// ==========================================
-// CLEAR
-// ==========================================
+/* =========================================================
+   پاک کردن صفحه
+   ========================================================= */
 
 function clearPage() {
 
-    try {
-
-        if (
-            scene &&
-            scene.systems &&
-            scene.systems["mindar-image-system"]
-        ) {
-
-            scene.systems[
-                "mindar-image-system"
-            ].stop();
-
-        }
-
-    } catch (e) {}
-
-
-    activeTarget = null;
-    activePlane = null;
-
-
-    if (scene) {
-
-        try {
-            scene.remove();
-        } catch (e) {}
-
-        scene = null;
-
-    }
-
-
-    if (video) {
-
-        try {
-
-            video.pause();
-
-            video.removeAttribute("src");
-
-            video.load();
-
-            video.remove();
-
-        } catch (e) {}
-
-        video = null;
-
-    }
-
-
-    document
-        .querySelectorAll(
-            "#openCamera, #changeGroup"
-        )
-        .forEach(el => el.remove());
-
-
-    const main =
-        document.getElementById("mainApp");
+    const main = document.getElementById("mainApp");
 
     if (main) {
-
         main.innerHTML = "";
-
-        main.style.display = "";
-
     }
 
+    const oldScene = document.querySelector("a-scene");
 
-    // پاک کردن هر scene قدیمی
+    if (oldScene) {
+        try {
+            oldScene.remove();
+        } catch (e) {}
+    }
 
-    document
-        .querySelectorAll("a-scene")
-        .forEach(el => {
-
-            try {
-                el.remove();
-            } catch (e) {}
-
-        });
-
+    currentScene = null;
+    currentVideo = null;
 }
 
 
-// ==========================================
-// GROUP MENU
-// ==========================================
+/* =========================================================
+   انتخاب گروه
+   ========================================================= */
 
 function showCategories() {
 
     clearPage();
 
-    const main = createMain();
+    const main = document.getElementById("mainApp");
 
-    main.className = "category-page";
+    const page = document.createElement("div");
 
+    page.className = "category-page";
 
-    const title =
-        document.createElement("div");
+    page.innerHTML = `
+        <div class="main-title">
+            سرزمین شگفت‌انگیز ✨
+        </div>
 
-    title.className = "main-title";
+        <div class="main-subtitle">
+            گروه دفترها را انتخاب کنید
+        </div>
 
-    title.textContent =
-        "✨ سرزمین شگفت‌انگیز ✨";
+        <div class="group-buttons">
 
-    main.appendChild(title);
+            <button class="group-button" data-group="Group1">
+                📚 گروه ۱
+            </button>
 
+            <button class="group-button" data-group="Group2">
+                📚 گروه ۲
+            </button>
 
-    const subtitle =
-        document.createElement("div");
+            <button class="group-button" data-group="Group3">
+                📚 گروه ۳
+            </button>
 
-    subtitle.className = "main-subtitle";
+        </div>
+    `;
 
-    subtitle.textContent =
-        "یک گروه را انتخاب کنید";
+    main.appendChild(page);
 
-    main.appendChild(subtitle);
+    page.querySelectorAll(".group-button").forEach(button => {
 
+        button.addEventListener("click", () => {
 
-    const groupContainer =
-        document.createElement("div");
+            const group = button.dataset.group;
 
-    groupContainer.className =
-        "group-buttons";
-
-    main.appendChild(groupContainer);
-
-
-    Object.keys(GROUPS).forEach(groupName => {
-
-        const button =
-            document.createElement("button");
-
-        button.className =
-            "group-button";
-
-        button.textContent =
-            GROUPS[groupName].title;
-
-
-        button.onclick = () => {
-
-            showGallery(groupName);
-
-        };
-
-
-        groupContainer.appendChild(button);
+            showGallery(group);
+        });
 
     });
-
 }
 
 
-// ==========================================
-// GALLERY
-// ==========================================
+/* =========================================================
+   صفحه لیست دفترها
+   ========================================================= */
 
 function showGallery(groupName) {
 
     clearPage();
 
-    const main = createMain();
-
-    main.className = "gallery-page";
-
+    currentGroup = groupName;
 
     const config = GROUPS[groupName];
 
+    const main = document.getElementById("mainApp");
 
-    const header =
-        document.createElement("div");
+    const page = document.createElement("div");
 
-    header.className =
-        "gallery-header";
+    page.className = "gallery-page";
 
+    const header = document.createElement("div");
 
-    const title =
-        document.createElement("div");
+    header.className = "gallery-header";
 
-    title.className =
-        "gallery-title";
+    header.innerHTML = `
+        <div class="gallery-title">
+            ${config.title}
+        </div>
+    `;
 
-    title.textContent =
-        config.title;
-
-
-    header.appendChild(title);
-
-    main.appendChild(header);
+    page.appendChild(header);
 
 
-    // ======================================
-    // GRID
-    // ======================================
+    /* گرید دفترها */
 
-    const grid =
-        document.createElement("div");
+    const grid = document.createElement("div");
 
-    grid.className =
-        "gallery-grid";
+    grid.className = "gallery-grid";
 
-    main.appendChild(grid);
-
-
-    // ======================================
-    // ALL 30 IMAGES
-    // ======================================
 
     for (
-        let number = config.first;
-        number <= config.last;
+        let number = config.start;
+        number <= config.end;
         number++
     ) {
 
-        const filename =
-            String(number).padStart(2, "0");
+        const card = document.createElement("div");
 
+        card.className = "image-card";
+
+
+        const image = document.createElement("img");
+
+        image.className = "gallery-image";
+
+
+        /* 19، 24 و 26 در گروه اول PNG هستند */
 
         let extension = "jpg";
 
-
         if (
-            number === 19 ||
-            number === 24 ||
-            number === 26
+            groupName === "Group1" &&
+            (
+                number === 19 ||
+                number === 24 ||
+                number === 26
+            )
         ) {
-
             extension = "png";
-
         }
 
 
-        const card =
-            document.createElement("div");
+        /* شماره‌های ۱ تا ۹ صفر دارند */
 
-        card.className =
-            "image-card";
+        let filename;
 
-
-        const img =
-            document.createElement("img");
-
-        img.className =
-            "gallery-image";
+        if (number < 10) {
+            filename = "0" + number;
+        } else {
+            filename = String(number);
+        }
 
 
-        img.src =
+        image.src =
             `./${groupName}/${filename}.${extension}`;
 
 
-        img.alt = "";
+        /*
+         * lazy loading عمداً استفاده نشده
+         * تا هر ۳۰ دفتر بدون مشکل نمایش داده شوند.
+         */
 
-        img.loading = "lazy";
+        image.alt = `دفتر ${number}`;
 
-        img.draggable = false;
+        image.draggable = false;
 
 
-        // عکس هیچ کاری انجام نمی‌دهد
+        /*
+         * کلیک روی عکس هیچ کاری نمی‌کند
+         */
 
-        img.onclick = event => {
-
+        image.addEventListener("click", (event) => {
             event.preventDefault();
+            event.stopPropagation();
+        });
 
-        };
 
-
-        card.appendChild(img);
+        card.appendChild(image);
 
         grid.appendChild(card);
-
     }
 
 
-    // ======================================
-    // CAMERA BUTTON
-    // ======================================
+    page.appendChild(grid);
 
-    const cameraButton =
-        document.createElement("button");
 
-    cameraButton.id =
-        "openCamera";
+    /* دکمه دوربین */
 
-    cameraButton.textContent =
+    const cameraButton = document.createElement("button");
+
+    cameraButton.id = "openCamera";
+
+    cameraButton.innerHTML =
         "📷 باز کردن دوربین";
 
 
-    cameraButton.onclick = () => {
+    cameraButton.addEventListener("click", () => {
 
-        startAR(groupName);
+        startAR(currentGroup);
 
-    };
+    });
 
 
-    document.body.appendChild(
-        cameraButton
-    );
+    main.appendChild(page);
 
+    main.appendChild(cameraButton);
+
+
+    /*
+     * اطمینان از اینکه صفحه از اول بالاست
+     */
+
+    setTimeout(() => {
+
+        page.scrollTop = 0;
+
+    }, 50);
 }
 
 
-// ==========================================
-// START AR
-// ==========================================
+/* =========================================================
+   شروع AR
+   ========================================================= */
 
 function startAR(groupName) {
 
-    console.log(
-        "START AR:",
-        groupName
-    );
+    const config = GROUPS[groupName];
+
+    if (!config) {
+        return;
+    }
+
+    currentGroup = groupName;
 
 
-    // ======================================
-    // HIDE GALLERY COMPLETELY
-    // ======================================
+    /*
+     * صفحه گالری را کاملاً مخفی می‌کنیم
+     * تا دوربین فقط صفحه AR را نشان دهد.
+     */
 
-    const main =
-        document.getElementById(
-            "mainApp"
-        );
-
+    const main = document.getElementById("mainApp");
 
     if (main) {
-
         main.style.display = "none";
-
     }
 
 
-    const cameraButton =
-        document.getElementById(
-            "openCamera"
-        );
+    /*
+     * حذف دکمه قبلی
+     */
 
+    const oldButton =
+        document.getElementById("openCamera");
 
-    if (cameraButton) {
-
-        cameraButton.remove();
-
+    if (oldButton) {
+        oldButton.remove();
     }
 
 
-    // ======================================
-    // REMOVE OLD AR
-    // ======================================
+    /*
+     * حذف Scene قبلی
+     */
 
-    if (scene) {
+    const oldScene =
+        document.querySelector("a-scene");
+
+    if (oldScene) {
 
         try {
-
-            if (
-                scene.systems &&
-                scene.systems[
-                    "mindar-image-system"
-                ]
-            ) {
-
-                scene.systems[
-                    "mindar-image-system"
-                ].stop();
-
-            }
-
+            oldScene.remove();
         } catch (e) {}
-
-
-        try {
-            scene.remove();
-        } catch (e) {}
-
-        scene = null;
 
     }
 
 
-    if (video) {
+    /*
+     * ویدیوی AR
+     */
 
-        try {
+    const video = document.createElement("video");
 
-            video.pause();
+    video.id = "arVideo";
 
-            video.removeAttribute("src");
-
-            video.load();
-
-            video.remove();
-
-        } catch (e) {}
-
-        video = null;
-
-    }
-
-
-    const config =
-        GROUPS[groupName];
-
-
-    // ======================================
-    // VIDEO ELEMENT
-    // ======================================
-
-    video =
-        document.createElement("video");
-
-
-    video.id =
-        "arVideo";
-
-
-    video.setAttribute(
-        "playsinline",
-        ""
-    );
-
-
-    video.setAttribute(
-        "webkit-playsinline",
-        ""
-    );
-
-
-    video.playsInline = true;
-
+    video.setAttribute("playsinline", "");
+    video.setAttribute("webkit-playsinline", "");
+    video.setAttribute("muted", "");
     video.muted = true;
-
-    video.autoplay = false;
 
     video.loop = false;
 
     video.preload = "auto";
 
+    document.body.appendChild(video);
 
-    video.style.position =
-        "fixed";
-
-    video.style.width =
-        "1px";
-
-    video.style.height =
-        "1px";
-
-    video.style.left =
-        "-20px";
-
-    video.style.top =
-        "-20px";
-
-    video.style.opacity =
-        "0";
-
-    video.style.pointerEvents =
-        "none";
+    currentVideo = video;
 
 
-    document.body.appendChild(
-        video
+    /* =====================================================
+       ساخت Scene
+       ===================================================== */
+
+    const scene =
+        document.createElement("a-scene");
+
+
+    /*
+     * embedded مهم است
+     */
+
+    scene.setAttribute(
+        "embedded",
+        ""
     );
 
 
-    // ======================================
-    // CREATE A-FRAME SCENE
-    // ======================================
-
-    scene =
-        document.createElement(
-            "a-scene"
-        );
-
+    /*
+     * MindAR
+     */
 
     scene.setAttribute(
         "mindar-image",
@@ -569,13 +403,18 @@ function startAR(groupName) {
     );
 
 
-    // مهم:
-    // embedded عمداً استفاده نمی‌کنیم
-
+    /*
+     * مهم:
+     * alpha:true برای جلوگیری از سیاه شدن تصویر دوربین
+     */
 
     scene.setAttribute(
         "renderer",
-        "colorManagement: true; physicallyCorrectLights: true;"
+        `
+        alpha: true;
+        colorManagement: true;
+        physicallyCorrectLights: true;
+        `
     );
 
 
@@ -597,74 +436,32 @@ function startAR(groupName) {
     );
 
 
-    // ======================================
-    // FULL SCREEN SCENE
-    // ======================================
-
-    scene.style.position =
-        "fixed";
-
-    scene.style.top =
-        "0";
-
-    scene.style.left =
-        "0";
-
-    scene.style.width =
-        "100vw";
-
-    scene.style.height =
-        "100vh";
-
-    scene.style.zIndex =
-        "99999";
-
-    scene.style.margin =
-        "0";
-
-    scene.style.padding =
-        "0";
-
-    scene.style.background =
-        "transparent";
-
-    scene.style.display =
-        "block";
-
-
-    // ======================================
-    // CAMERA
-    // ======================================
+    /* =====================================================
+       دوربین
+       ===================================================== */
 
     const camera =
-        document.createElement(
-            "a-camera"
-        );
-
+        document.createElement("a-camera");
 
     camera.setAttribute(
         "position",
         "0 0 0"
     );
 
-
     camera.setAttribute(
         "look-controls",
         "enabled: false"
     );
-
 
     camera.setAttribute(
         "active",
         "true"
     );
 
-
     camera.setAttribute(
         "cursor",
         "fuse: false; rayOrigin: mouse;"
     );
-
 
     camera.setAttribute(
         "raycaster",
@@ -672,262 +469,187 @@ function startAR(groupName) {
     );
 
 
-    scene.appendChild(
-        camera
+    scene.appendChild(camera);
+
+
+    /* =====================================================
+       ویدیوی AR
+       ===================================================== */
+
+    const arVideo =
+        document.createElement("a-video");
+
+    arVideo.id = "arVideoPlane";
+
+    arVideo.setAttribute(
+        "src",
+        "#arVideo"
+    );
+
+    arVideo.setAttribute(
+        "width",
+        "1"
+    );
+
+    arVideo.setAttribute(
+        "height",
+        "1.42"
+    );
+
+    arVideo.setAttribute(
+        "position",
+        "0 0 0.01"
+    );
+
+    arVideo.setAttribute(
+        "visible",
+        "false"
     );
 
 
-    // ======================================
-    // CREATE 30 TARGETS
-    // ======================================
+    /*
+     * ویدیو را روی همه Targetها می‌گذاریم
+     * و هنگام پیدا شدن Target نشان می‌دهیم.
+     */
 
-    for (
-        let i = 0;
-        i < 30;
-        i++
-    ) {
+    let activeTarget = null;
+
+
+    /* =====================================================
+       ساخت ۳۰ Target
+       ===================================================== */
+
+    for (let i = 0; i < 30; i++) {
 
         createTarget(
             scene,
-            config,
+            i,
             groupName,
-            i
+            arVideo,
+            () => {
+                activeTarget = i;
+            },
+            () => {
+                if (activeTarget === i) {
+                    activeTarget = null;
+                }
+            }
         );
 
     }
 
 
-    // ======================================
-    // ADD SCENE TO BODY
-    // ======================================
+    /*
+     * خود ویدیوی A-Frame
+     */
 
-    document.body.appendChild(
-        scene
-    );
+    scene.appendChild(arVideo);
 
 
-    // ======================================
-    // FORCE FULL SIZE
-    // ======================================
+    /* =====================================================
+       دکمه تغییر گروه
+       ===================================================== */
 
-    requestAnimationFrame(() => {
+    const changeButton =
+        document.createElement("button");
 
-        if (!scene) return;
+    changeButton.id = "changeGroup";
 
-
-        scene.style.width =
-            window.innerWidth + "px";
-
-        scene.style.height =
-            window.innerHeight + "px";
-
-
-        const canvas =
-            scene.querySelector(
-                "canvas"
-            );
-
-
-        if (canvas) {
-
-            canvas.style.position =
-                "fixed";
-
-            canvas.style.top =
-                "0";
-
-            canvas.style.left =
-                "0";
-
-            canvas.style.width =
-                window.innerWidth + "px";
-
-            canvas.style.height =
-                window.innerHeight + "px";
-
-        }
-
-    });
-
-
-    // ======================================
-    // RESIZE
-    // ======================================
-
-    window.addEventListener(
-        "resize",
-        resizeAR,
-        {
-            passive: true
-        }
-    );
-
-
-    // ======================================
-    // CHANGE GROUP
-    // ======================================
-
-    const change =
-        document.createElement(
-            "button"
-        );
-
-
-    change.id =
-        "changeGroup";
-
-
-    change.textContent =
+    changeButton.innerHTML =
         "🔄 تغییر گروه";
 
 
-    change.onclick = () => {
+    changeButton.addEventListener(
+        "click",
+        () => {
 
-        try {
+            if (currentVideo) {
 
-            if (
-                scene &&
-                scene.systems &&
-                scene.systems[
-                    "mindar-image-system"
-                ]
-            ) {
-
-                scene.systems[
-                    "mindar-image-system"
-                ].stop();
+                try {
+                    currentVideo.pause();
+                } catch (e) {}
 
             }
 
-        } catch (e) {}
+
+            const activeScene =
+                document.querySelector("a-scene");
+
+            if (activeScene) {
+
+                try {
+                    activeScene.remove();
+                } catch (e) {}
+
+            }
 
 
-        window.removeEventListener(
-            "resize",
-            resizeAR
-        );
+            const arVid =
+                document.getElementById("arVideo");
+
+            if (arVid) {
+
+                try {
+                    arVid.pause();
+                } catch (e) {}
+
+                arVid.remove();
+
+            }
 
 
-        showCategories();
+            const mainApp =
+                document.getElementById("mainApp");
 
-    };
-
-
-    document.body.appendChild(
-        change
-    );
+            if (mainApp) {
+                mainApp.style.display = "";
+            }
 
 
-    // ======================================
-    // EVENTS
-    // ======================================
-
-    scene.addEventListener(
-        "loaded",
-        () => {
-
-            console.log(
-                "A-FRAME LOADED"
-            );
-
-            resizeAR();
-
-        }
-    );
-
-
-    scene.addEventListener(
-        "arReady",
-        () => {
-
-            console.log(
-                "AR READY:",
-                groupName
-            );
-
-            resizeAR();
+            showCategories();
 
         }
     );
 
 
-    scene.addEventListener(
-        "arError",
-        event => {
+    document.body.appendChild(scene);
 
-            console.log(
-                "AR ERROR:",
-                event
-            );
+    document.body.appendChild(changeButton);
 
-        }
-    );
+    currentScene = scene;
 
+
+    /*
+     * تغییر اندازه بعد از ساخته شدن Scene
+     */
+
+    setTimeout(() => {
+        resizeAR();
+    }, 300);
+
+
+    setTimeout(() => {
+        resizeAR();
+    }, 1000);
+
+
+    setTimeout(() => {
+        resizeAR();
+    }, 2000);
 }
 
 
-// ==========================================
-// RESIZE AR
-// ==========================================
-
-function resizeAR() {
-
-    if (!scene) return;
-
-
-    const width =
-        window.innerWidth;
-
-
-    const height =
-        window.innerHeight;
-
-
-    scene.style.width =
-        width + "px";
-
-
-    scene.style.height =
-        height + "px";
-
-
-    const canvas =
-        scene.querySelector(
-            "canvas"
-        );
-
-
-    if (canvas) {
-
-        canvas.style.position =
-            "fixed";
-
-        canvas.style.top =
-            "0";
-
-        canvas.style.left =
-            "0";
-
-        canvas.style.width =
-            width + "px";
-
-        canvas.style.height =
-            height + "px";
-
-    }
-
-}
-
-
-// ==========================================
-// CREATE TARGET
-// ==========================================
+/* =========================================================
+   ساخت Target
+   ========================================================= */
 
 function createTarget(
     scene,
-    config,
+    index,
     groupName,
-    index
+    arVideoPlane,
+    onFound,
+    onLost
 ) {
 
     const target =
@@ -938,111 +660,83 @@ function createTarget(
 
     target.setAttribute(
         "mindar-image-target",
-        `targetIndex: ${index};`
+        `targetIndex: ${index}`
     );
 
 
-    // ======================================
-    // VIDEO PLANE
-    // ======================================
+    /* =====================================================
+       ویدیو
+       ===================================================== */
 
-    const plane =
-        document.createElement(
-            "a-video"
-        );
+    const video =
+        document.createElement("a-video");
 
-
-    plane.classList.add(
-        "arVideoPlane"
-    );
-
-
-    plane.setAttribute(
+    video.setAttribute(
         "src",
         "#arVideo"
     );
 
-
-    plane.setAttribute(
+    video.setAttribute(
         "width",
         "1"
     );
 
-
-    plane.setAttribute(
+    video.setAttribute(
         "height",
         "1.42"
     );
 
-
-    plane.setAttribute(
+    video.setAttribute(
         "position",
         "0 0 0.01"
     );
 
-
-    plane.setAttribute(
+    video.setAttribute(
         "visible",
         "false"
     );
 
 
-    target.appendChild(
-        plane
-    );
+    target.appendChild(video);
 
 
-    // ======================================
-    // INSTAGRAM CLICK ZONE
-    // ======================================
+    /* =====================================================
+       لینک اینستاگرام
+       ===================================================== */
 
-    const insta =
-        document.createElement(
-            "a-plane"
-        );
+    const instagram =
+        document.createElement("a-plane");
 
+    instagram.classList.add("arLink");
+    instagram.classList.add("instagram-zone");
 
-    insta.classList.add(
-        "arLink"
-    );
-
-
-    insta.setAttribute(
+    instagram.setAttribute(
         "width",
         "0.55"
     );
 
-
-    insta.setAttribute(
+    instagram.setAttribute(
         "height",
         "0.16"
     );
 
-
-    insta.setAttribute(
+    instagram.setAttribute(
         "position",
         "-0.28 0.61 0.06"
     );
 
-
-    insta.setAttribute(
+    instagram.setAttribute(
         "material",
         "transparent: true; opacity: 0; side: double;"
     );
 
 
-    target.appendChild(
-        insta
-    );
-
-
-    insta.addEventListener(
+    instagram.addEventListener(
         "click",
         () => {
 
             const appURL =
                 "instagram://user?username=SarzaminAr";
-
 
             const webURL =
                 "https://www.instagram.com/SarzaminAr/";
@@ -1054,10 +748,8 @@ function createTarget(
 
             setTimeout(
                 () => {
-
                     window.location.href =
                         webURL;
-
                 },
                 1500
             );
@@ -1066,95 +758,69 @@ function createTarget(
     );
 
 
-    // ======================================
-    // SHARE TEXT
-    // ======================================
+    target.appendChild(instagram);
+
+
+    /* =====================================================
+       متن پایین
+       ===================================================== */
 
     const shareText =
-        document.createElement(
-            "a-text"
-        );
-
+        document.createElement("a-text");
 
     shareText.setAttribute(
         "value",
         "سرزمین شگفت‌انگیز"
     );
 
-
     shareText.setAttribute(
         "align",
         "center"
     );
-
-
-    shareText.setAttribute(
-        "anchor",
-        "center"
-    );
-
-
-    shareText.setAttribute(
-        "baseline",
-        "center"
-    );
-
-
-    shareText.setAttribute(
-        "position",
-        "0 -0.88 0.06"
-    );
-
 
     shareText.setAttribute(
         "width",
         "1.8"
     );
 
+    shareText.setAttribute(
+        "position",
+        "0 -0.88 0.06"
+    );
 
     shareText.setAttribute(
         "color",
-        "white"
+        "#ffffff"
     );
 
 
-    target.appendChild(
-        shareText
-    );
+    target.appendChild(shareText);
 
 
-    // ======================================
-    // SHARE CLICK ZONE
-    // ======================================
+    /* =====================================================
+       محدوده قابل کلیک برای Share
+       ===================================================== */
 
     const share =
-        document.createElement(
-            "a-plane"
-        );
+        document.createElement("a-plane");
 
-
-    share.classList.add(
-        "arLink"
-    );
-
+    share.classList.add("arLink");
+    share.classList.add("share-zone");
 
     share.setAttribute(
         "width",
         "1.05"
     );
 
-
     share.setAttribute(
         "height",
         "0.20"
     );
 
-
     share.setAttribute(
         "position",
         "0 -0.88 0.08"
     );
-
 
     share.setAttribute(
         "material",
@@ -1162,218 +828,196 @@ function createTarget(
     );
 
 
-    target.appendChild(
-        share
-    );
-
-
-    // ======================================
-    // SHARE
-    // ======================================
-
     share.addEventListener(
         "click",
         async () => {
 
             const message =
-                "😍 من یه دفتر جادویی پیدا کردم!\n\n" +
-                "دوربین گوشیت رو روی دفتر بگیر " +
-                "تا ببینی چطور زنده میشه! ✨📚\n\n" +
-                "سرزمین شگفت‌انگیز ✨\n" +
-                "@SarzaminAr";
+`😍 من یه دفتر جادویی پیدا کردم!
 
+دوربین گوشیت رو روی دفتر بگیر تا ببینی چطور زنده میشه! ✨📚
+
+سرزمین شگفت‌انگیز ✨
+@SarzaminAr`;
+
+
+            const shareData = {
+
+                title:
+                    "سرزمین شگفت‌انگیز ✨",
+
+                text:
+                    message,
+
+                url:
+                    "https://www.instagram.com/SarzaminAr/"
+
+            };
+
+
+            /*
+             * Share Sheet گوشی
+             */
 
             if (
-                navigator.share
+                navigator.share &&
+                navigator.canShare &&
+                navigator.canShare(shareData)
             ) {
 
                 try {
 
-                    await navigator.share({
+                    await navigator.share(
+                        shareData
+                    );
 
-                        title:
-                            "سرزمین شگفت‌انگیز",
-
-                        text:
-                            message,
-
-                        url:
-                            window.location.href
-
-                    });
+                    return;
 
                 } catch (error) {
 
-                    console.log(
-                        "Share cancelled:",
-                        error
-                    );
+                    /*
+                     * اگر کاربر Share را بست،
+                     * هیچ پیغام اضافی نده.
+                     */
+
+                    if (
+                        error &&
+                        error.name ===
+                        "AbortError"
+                    ) {
+                        return;
+                    }
 
                 }
 
-            } else {
+            }
 
-                try {
+
+            /*
+             * روش جایگزین:
+             * Clipboard
+             */
+
+            try {
+
+                if (
+                    navigator.clipboard &&
+                    navigator.clipboard.writeText
+                ) {
 
                     await navigator.clipboard.writeText(
                         message
                     );
 
-
                     alert(
-                        "متن آماده کپی شد 😊"
+                        "متن آماده اشتراک‌گذاری کپی شد ✨"
                     );
 
-                } catch (error) {
-
-                    alert(
-                        message
-                    );
-
+                    return;
                 }
 
-            }
+            } catch (e) {}
+
+
+            /*
+             * آخرین راه
+             */
+
+            alert(message);
 
         }
     );
 
 
-    // ======================================
-    // TARGET FOUND
-    // ======================================
+    target.appendChild(share);
+
+
+    /* =====================================================
+       پیدا شدن Target
+       ===================================================== */
 
     target.addEventListener(
         "targetFound",
         () => {
 
-            console.log(
-                "TARGET FOUND:",
-                index
-            );
+            onFound();
 
 
-            activeTarget =
-                target;
+            /*
+             * شماره فایل
+             */
+
+            const number =
+                GROUPS[groupName].start +
+                index;
 
 
-            activePlane =
-                plane;
+            let filename;
+
+            if (number < 10) {
+                filename =
+                    "0" + number;
+            } else {
+                filename =
+                    String(number);
+            }
 
 
-            document
-                .querySelectorAll(
-                    ".arVideoPlane"
-                )
-                .forEach(
-                    p => {
-
-                        p.setAttribute(
-                            "visible",
-                            "false"
-                        );
-
-                    }
-                );
-
-
-            try {
-
-                video.pause();
-
-                video.currentTime = 0;
-
-            } catch (e) {}
-
-
-            const videoNumber =
-                config.first + index;
-
-
-            const filename =
-                String(videoNumber)
-                    .padStart(
-                        2,
-                        "0"
-                    );
-
-
-            const src =
+            const videoURL =
                 `./${groupName}/${filename}.mp4`;
 
 
-            console.log(
-                "VIDEO:",
-                src
+            /*
+             * اگر ویدیوی قبلی وجود دارد
+             * متوقفش کن.
+             */
+
+            if (currentVideo) {
+
+                try {
+                    currentVideo.pause();
+                } catch (e) {}
+
+            }
+
+
+            /*
+             * آدرس ویدیوی جدید
+             */
+
+            currentVideo.src =
+                videoURL;
+
+
+            currentVideo.load();
+
+
+            /*
+             * نمایش ویدیو
+             */
+
+            video.setAttribute(
+                "visible",
+                "true"
             );
 
 
-            video.src =
-                src;
+            /*
+             * تلاش برای پخش
+             */
 
-
-            video.load();
-
-
-            const playVideo =
-                () => {
-
-                    if (
-                        activeTarget !==
-                        target
-                    ) {
-
-                        return;
-
-                    }
-
-
-                    video
-                        .play()
-                        .then(
-                            () => {
-
-                                if (
-                                    activeTarget ===
-                                    target
-                                ) {
-
-                                    plane.setAttribute(
-                                        "visible",
-                                        "true"
-                                    );
-
-                                }
-
-                            }
-                        )
-                        .catch(
-                            error => {
-
-                                console.log(
-                                    "VIDEO PLAY ERROR:",
-                                    error
-                                );
-
-                            }
-                        );
-
-                };
+            const playPromise =
+                currentVideo.play();
 
 
             if (
-                video.readyState >= 3
+                playPromise &&
+                typeof playPromise.catch ===
+                "function"
             ) {
 
-                playVideo();
-
-            } else {
-
-                video.addEventListener(
-                    "canplay",
-                    playVideo,
-                    {
-                        once: true
-                    }
+                playPromise.catch(
+                    () => {}
                 );
 
             }
@@ -1382,45 +1026,31 @@ function createTarget(
     );
 
 
-    // ======================================
-    // TARGET LOST
-    // ======================================
+    /* =====================================================
+       گم شدن Target
+       ===================================================== */
 
     target.addEventListener(
         "targetLost",
         () => {
 
-            console.log(
-                "TARGET LOST:",
-                index
+            onLost();
+
+
+            /*
+             * ویدیو مخفی می‌شود
+             */
+
+            video.setAttribute(
+                "visible",
+                "false"
             );
 
 
-            if (
-                activeTarget ===
-                target
-            ) {
-
-                activeTarget =
-                    null;
-
-
-                if (
-                    activePlane
-                ) {
-
-                    activePlane.setAttribute(
-                        "visible",
-                        "false"
-                    );
-
-                }
-
+            if (currentVideo) {
 
                 try {
-
-                    video.pause();
-
+                    currentVideo.pause();
                 } catch (e) {}
 
             }
@@ -1429,8 +1059,123 @@ function createTarget(
     );
 
 
-    scene.appendChild(
-        target
-    );
-
+    scene.appendChild(target);
 }
+
+
+/* =========================================================
+   Resize دوربین / AR
+   ========================================================= */
+
+function resizeAR() {
+
+    const width =
+        window.innerWidth;
+
+    const height =
+        window.innerHeight;
+
+
+    const scene =
+        document.querySelector("a-scene");
+
+
+    if (!scene) {
+        return;
+    }
+
+
+    /*
+     * اندازه Scene
+     */
+
+    scene.style.width =
+        width + "px";
+
+    scene.style.height =
+        height + "px";
+
+
+    /*
+     * اندازه Canvas
+     */
+
+    const canvas =
+        scene.querySelector("canvas");
+
+
+    if (canvas) {
+
+        canvas.style.width =
+            width + "px";
+
+        canvas.style.height =
+            height + "px";
+
+    }
+
+
+    /*
+     * رفرش Resize خود A-Frame
+     */
+
+    try {
+
+        if (
+            scene.renderer &&
+            scene.renderer.setSize
+        ) {
+
+            scene.renderer.setSize(
+                width,
+                height
+            );
+
+        }
+
+    } catch (e) {}
+}
+
+
+/* =========================================================
+   تغییر اندازه صفحه
+   ========================================================= */
+
+window.addEventListener(
+    "resize",
+    () => {
+
+        if (
+            document.querySelector(
+                "a-scene"
+            )
+        ) {
+
+            resizeAR();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   تغییر جهت گوشی
+   ========================================================= */
+
+window.addEventListener(
+    "orientationchange",
+    () => {
+
+        setTimeout(
+            resizeAR,
+            300
+        );
+
+        setTimeout(
+            resizeAR,
+            1000
+        );
+
+    }
+);
