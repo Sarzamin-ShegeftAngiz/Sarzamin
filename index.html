@@ -5,81 +5,69 @@
 <meta charset="UTF-8">
 
 <meta name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+      content="width=device-width,
+               initial-scale=1.0,
+               maximum-scale=1.0,
+               user-scalable=no">
 
 <title>Sarzamin AR</title>
+
+<link rel="stylesheet" href="./style.css?v=131">
 
 <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
-<script defer src="app.js?v=130"></script>
-
-<style>
-
-html,
-body{
-    margin:0;
-    width:100%;
-    height:100%;
-    overflow:hidden;
-}
-
-a-scene{
-    width:100%;
-    height:100%;
-}
-
-</style>
+<script defer src="app.js?v=131"></script>
 
 </head>
 
 <body>
 
-<a-scene
-    mindar-image="imageTargetSrc: ./Group1/targets.mind;warmupTolerance: 2;missTolerance: 1;"
-    embedded
-    vr-mode-ui="enabled:false"
-    device-orientation-permission-ui="enabled:false"
-    renderer="colorManagement:true;"
->
-
+<!-- فقط یک ویدیو -->
 <a-assets>
 
-<video id="video0" src="./Group1/01.mp4" preload="auto" loop muted playsinline webkit-playsinline></video>
-<video id="video1" src="./Group1/02.mp4" preload="auto" loop muted playsinline webkit-playsinline></video>
-<video id="video2" src="./Group1/03.mp4" preload="auto" loop muted playsinline webkit-playsinline></video>
-<video id="video3" src="./Group1/04.mp4" preload="auto" loop muted playsinline webkit-playsinline></video>
-<video id="video4" src="./Group1/05.mp4" preload="auto" loop muted playsinline webkit-playsinline></video>
-<video id="video5" src="./Group1/06.mp4" preload="auto" loop muted playsinline webkit-playsinline></video>
-<video id="video6" src="./Group1/07.mp4" preload="auto" loop muted playsinline webkit-playsinline></video>
-<video id="video7" src="./Group1/08.mp4" preload="auto" loop muted playsinline webkit-playsinline></video>
-<video id="video8" src="./Group1/09.mp4" preload="auto" loop muted playsinline webkit-playsinline></video>
-<video id="video9" src="./Group1/10.mp4" preload="auto" loop muted playsinline webkit-playsinline></video>
-
-<video id="video10" src="./Group1/11.mp4" preload="auto" loop muted playsinline webkit-playsinline></video>
-<video id="video11" src="./Group1/12.mp4" preload="auto" loop muted playsinline webkit-playsinline></video>
-<video id="video12" src="./Group1/13.mp4" preload="auto" loop muted playsinline webkit-playsinline></video>
-<video id="video13" src="./Group1/14.mp4" preload="auto" loop muted playsinline webkit-playsinline></video>
-<video id="video14" src="./Group1/15.mp4" preload="auto" loop muted playsinline webkit-playsinline></video>
-<video id="video15" src="./Group1/16.mp4" preload="auto" loop muted playsinline webkit-playsinline></video>
-<video id="video16" src="./Group1/17.mp4" preload="auto" loop muted playsinline webkit-playsinline></video>
-<video id="video17" src="./Group1/18.mp4" preload="auto" loop muted playsinline webkit-playsinline></video>
-<video id="video18" src="./Group1/19.mp4" preload="auto" loop muted playsinline webkit-playsinline></video>
-<video id="video19" src="./Group1/20.mp4" preload="auto" loop muted playsinline webkit-playsinline></video>
-
-<video id="video20" src="./Group1/21.mp4" preload="auto" loop muted playsinline webkit-playsinline></video>
-<video id="video21" src="./Group1/22.mp4" preload="auto" loop muted playsinline webkit-playsinline></video>
-<video id="video22" src="./Group1/23.mp4" preload="auto" loop muted playsinline webkit-playsinline></video>
-<video id="video23" src="./Group1/24.mp4" preload="auto" loop muted playsinline webkit-playsinline></video>
-<video id="video24" src="./Group1/25.mp4" preload="auto" loop muted playsinline webkit-playsinline></video>
-<video id="video25" src="./Group1/26.mp4" preload="auto" loop muted playsinline webkit-playsinline></video>
-<video id="video26" src="./Group1/27.mp4" preload="auto" loop muted playsinline webkit-playsinline></video>
-<video id="video27" src="./Group1/28.mp4" preload="auto" loop muted playsinline webkit-playsinline></video>
-<video id="video28" src="./Group1/29.mp4" preload="auto" loop muted playsinline webkit-playsinline></video>
-<video id="video29" src="./Group1/30.mp4" preload="auto" loop muted playsinline webkit-playsinline></video>
+    <video
+        id="arVideo"
+        preload="none"
+        loop
+        muted
+        playsinline
+        webkit-playsinline>
+    </video>
 
 </a-assets>
+
+
+<a-scene
+    id="arScene"
+
+    mindar-image="
+        imageTargetSrc: ./Group1/targets.mind;
+        autoStart: true;
+        uiLoading: yes;
+        uiScanning: yes;
+        uiError: yes;
+        warmupTolerance: 5;
+        missTolerance: 3;
+        filterMinCF: 0.0001;
+        filterBeta: 0.001;
+    "
+
+    embedded
+
+    color-space="sRGB"
+
+    renderer="
+        colorManagement: true;
+        physicallyCorrectLights: false;
+    "
+
+    vr-mode-ui="enabled:false"
+
+    device-orientation-permission-ui="enabled:false"
+>
+
 
 <a-camera
     position="0 0 0"
@@ -89,212 +77,283 @@ a-scene{
 
 <!-- TARGET 0 -->
 <a-entity mindar-image-target="targetIndex:0">
-<a-video src="#video0" width="1" height="1.42" position="0 0 0"></a-video>
-<a-plane class="instagram-zone" width="0.70" height="0.16" position="-0.31 0.62 0.02" material="shader:flat;color:red;opacity:0;transparent:true;"></a-plane>
-<a-plane class="share-zone" width="0.70" height="0.16" position="0 -0.62 0.02" material="shader:flat;color:white;opacity:0;transparent:true;"></a-plane>
+    <a-video
+        class="arVideoPlane"
+        src="#arVideo"
+        width="1"
+        height="1.42"
+        position="0 0 0"
+        visible="false">
+    </a-video>
 </a-entity>
+
 
 <!-- TARGET 1 -->
 <a-entity mindar-image-target="targetIndex:1">
-<a-video src="#video1" width="1" height="1.42" position="0 0 0"></a-video>
-<a-plane class="instagram-zone" width="0.70" height="0.16" position="-0.31 0.62 0.02" material="shader:flat;color:red;opacity:0;transparent:true;"></a-plane>
-<a-plane class="share-zone" width="0.70" height="0.16" position="0 -0.62 0.02" material="shader:flat;color:white;opacity:0;transparent:true;"></a-plane>
+    <a-video
+        class="arVideoPlane"
+        src="#arVideo"
+        width="1"
+        height="1.42"
+        position="0 0 0"
+        visible="false">
+    </a-video>
 </a-entity>
+
 
 <!-- TARGET 2 -->
 <a-entity mindar-image-target="targetIndex:2">
-<a-video src="#video2" width="1" height="1.42" position="0 0 0"></a-video>
-<a-plane class="instagram-zone" width="0.70" height="0.16" position="-0.31 0.62 0.02" material="shader:flat;color:red;opacity:0;transparent:true;"></a-plane>
-<a-plane class="share-zone" width="0.70" height="0.16" position="0 -0.62 0.02" material="shader:flat;color:white;opacity:0;transparent:true;"></a-plane>
+    <a-video
+        class="arVideoPlane"
+        src="#arVideo"
+        width="1"
+        height="1.42"
+        position="0 0 0"
+        visible="false">
+    </a-video>
 </a-entity>
+
 
 <!-- TARGET 3 -->
 <a-entity mindar-image-target="targetIndex:3">
-<a-video src="#video3" width="1" height="1.42" position="0 0 0"></a-video>
-<a-plane class="instagram-zone" width="0.70" height="0.16" position="-0.31 0.62 0.02" material="shader:flat;color:red;opacity:0;transparent:true;"></a-plane>
-<a-plane class="share-zone" width="0.70" height="0.16" position="0 -0.62 0.02" material="shader:flat;color:white;opacity:0;transparent:true;"></a-plane>
+    <a-video class="arVideoPlane" src="#arVideo"
+        width="1" height="1.42"
+        position="0 0 0" visible="false">
+    </a-video>
 </a-entity>
+
 
 <!-- TARGET 4 -->
 <a-entity mindar-image-target="targetIndex:4">
-<a-video src="#video4" width="1" height="1.42" position="0 0 0"></a-video>
-<a-plane class="instagram-zone" width="0.70" height="0.16" position="-0.31 0.62 0.02" material="shader:flat;color:red;opacity:0;transparent:true;"></a-plane>
-<a-plane class="share-zone" width="0.70" height="0.16" position="0 -0.62 0.02" material="shader:flat;color:white;opacity:0;transparent:true;"></a-plane>
+    <a-video class="arVideoPlane" src="#arVideo"
+        width="1" height="1.42"
+        position="0 0 0" visible="false">
+    </a-video>
 </a-entity>
+
 
 <!-- TARGET 5 -->
 <a-entity mindar-image-target="targetIndex:5">
-<a-video src="#video5" width="1" height="1.42" position="0 0 0"></a-video>
-<a-plane class="instagram-zone" width="0.70" height="0.16" position="-0.31 0.62 0.02" material="shader:flat;color:red;opacity:0;transparent:true;"></a-plane>
-<a-plane class="share-zone" width="0.70" height="0.16" position="0 -0.62 0.02" material="shader:flat;color:white;opacity:0;transparent:true;"></a-plane>
+    <a-video class="arVideoPlane" src="#arVideo"
+        width="1" height="1.42"
+        position="0 0 0" visible="false">
+    </a-video>
 </a-entity>
+
 
 <!-- TARGET 6 -->
 <a-entity mindar-image-target="targetIndex:6">
-<a-video src="#video6" width="1" height="1.42" position="0 0 0"></a-video>
-<a-plane class="instagram-zone" width="0.70" height="0.16" position="-0.31 0.62 0.02" material="shader:flat;color:red;opacity:0;transparent:true;"></a-plane>
-<a-plane class="share-zone" width="0.70" height="0.16" position="0 -0.62 0.02" material="shader:flat;color:white;opacity:0;transparent:true;"></a-plane>
+    <a-video class="arVideoPlane" src="#arVideo"
+        width="1" height="1.42"
+        position="0 0 0" visible="false">
+    </a-video>
 </a-entity>
+
 
 <!-- TARGET 7 -->
 <a-entity mindar-image-target="targetIndex:7">
-<a-video src="#video7" width="1" height="1.42" position="0 0 0"></a-video>
-<a-plane class="instagram-zone" width="0.70" height="0.16" position="-0.31 0.62 0.02" material="shader:flat;color:red;opacity:0;transparent:true;"></a-plane>
-<a-plane class="share-zone" width="0.70" height="0.16" position="0 -0.62 0.02" material="shader:flat;color:white;opacity:0;transparent:true;"></a-plane>
+    <a-video class="arVideoPlane" src="#arVideo"
+        width="1" height="1.42"
+        position="0 0 0" visible="false">
+    </a-video>
 </a-entity>
+
 
 <!-- TARGET 8 -->
 <a-entity mindar-image-target="targetIndex:8">
-<a-video src="#video8" width="1" height="1.42" position="0 0 0"></a-video>
-<a-plane class="instagram-zone" width="0.70" height="0.16" position="-0.31 0.62 0.02" material="shader:flat;color:red;opacity:0;transparent:true;"></a-plane>
-<a-plane class="share-zone" width="0.70" height="0.16" position="0 -0.62 0.02" material="shader:flat;color:white;opacity:0;transparent:true;"></a-plane>
+    <a-video class="arVideoPlane" src="#arVideo"
+        width="1" height="1.42"
+        position="0 0 0" visible="false">
+    </a-video>
 </a-entity>
+
 
 <!-- TARGET 9 -->
 <a-entity mindar-image-target="targetIndex:9">
-<a-video src="#video9" width="1" height="1.42" position="0 0 0"></a-video>
-<a-plane class="instagram-zone" width="0.70" height="0.16" position="-0.31 0.62 0.02" material="shader:flat;color:red;opacity:0;transparent:true;"></a-plane>
-<a-plane class="share-zone" width="0.70" height="0.16" position="0 -0.62 0.02" material="shader:flat;color:white;opacity:0;transparent:true;"></a-plane>
+    <a-video class="arVideoPlane" src="#arVideo"
+        width="1" height="1.42"
+        position="0 0 0" visible="false">
+    </a-video>
 </a-entity>
+
 
 <!-- TARGET 10 -->
 <a-entity mindar-image-target="targetIndex:10">
-<a-video src="#video10" width="1" height="1.42" position="0 0 0"></a-video>
-<a-plane class="instagram-zone" width="0.70" height="0.16" position="-0.31 0.62 0.02" material="shader:flat;color:red;opacity:0;transparent:true;"></a-plane>
-<a-plane class="share-zone" width="0.70" height="0.16" position="0 -0.62 0.02" material="shader:flat;color:white;opacity:0;transparent:true;"></a-plane>
+    <a-video class="arVideoPlane" src="#arVideo"
+        width="1" height="1.42"
+        position="0 0 0" visible="false">
+    </a-video>
 </a-entity>
+
 
 <!-- TARGET 11 -->
 <a-entity mindar-image-target="targetIndex:11">
-<a-video src="#video11" width="1" height="1.42" position="0 0 0"></a-video>
-<a-plane class="instagram-zone" width="0.70" height="0.16" position="-0.31 0.62 0.02" material="shader:flat;color:red;opacity:0;transparent:true;"></a-plane>
-<a-plane class="share-zone" width="0.70" height="0.16" position="0 -0.62 0.02" material="shader:flat;color:white;opacity:0;transparent:true;"></a-plane>
+    <a-video class="arVideoPlane" src="#arVideo"
+        width="1" height="1.42"
+        position="0 0 0" visible="false">
+    </a-video>
 </a-entity>
+
 
 <!-- TARGET 12 -->
 <a-entity mindar-image-target="targetIndex:12">
-<a-video src="#video12" width="1" height="1.42" position="0 0 0"></a-video>
-<a-plane class="instagram-zone" width="0.70" height="0.16" position="-0.31 0.62 0.02" material="shader:flat;color:red;opacity:0;transparent:true;"></a-plane>
-<a-plane class="share-zone" width="0.70" height="0.16" position="0 -0.62 0.02" material="shader:flat;color:white;opacity:0;transparent:true;"></a-plane>
+    <a-video class="arVideoPlane" src="#arVideo"
+        width="1" height="1.42"
+        position="0 0 0" visible="false">
+    </a-video>
 </a-entity>
+
 
 <!-- TARGET 13 -->
 <a-entity mindar-image-target="targetIndex:13">
-<a-video src="#video13" width="1" height="1.42" position="0 0 0"></a-video>
-<a-plane class="instagram-zone" width="0.70" height="0.16" position="-0.31 0.62 0.02" material="shader:flat;color:red;opacity:0;transparent:true;"></a-plane>
-<a-plane class="share-zone" width="0.70" height="0.16" position="0 -0.62 0.02" material="shader:flat;color:white;opacity:0;transparent:true;"></a-plane>
+    <a-video class="arVideoPlane" src="#arVideo"
+        width="1" height="1.42"
+        position="0 0 0" visible="false">
+    </a-video>
 </a-entity>
+
 
 <!-- TARGET 14 -->
 <a-entity mindar-image-target="targetIndex:14">
-<a-video src="#video14" width="1" height="1.42" position="0 0 0"></a-video>
-<a-plane class="instagram-zone" width="0.70" height="0.16" position="-0.31 0.62 0.02" material="shader:flat;color:red;opacity:0;transparent:true;"></a-plane>
-<a-plane class="share-zone" width="0.70" height="0.16" position="0 -0.62 0.02" material="shader:flat;color:white;opacity:0;transparent:true;"></a-plane>
+    <a-video class="arVideoPlane" src="#arVideo"
+        width="1" height="1.42"
+        position="0 0 0" visible="false">
+    </a-video>
 </a-entity>
+
 
 <!-- TARGET 15 -->
 <a-entity mindar-image-target="targetIndex:15">
-<a-video src="#video15" width="1" height="1.42" position="0 0 0"></a-video>
-<a-plane class="instagram-zone" width="0.70" height="0.16" position="-0.31 0.62 0.02" material="shader:flat;color:red;opacity:0;transparent:true;"></a-plane>
-<a-plane class="share-zone" width="0.70" height="0.16" position="0 -0.62 0.02" material="shader:flat;color:white;opacity:0;transparent:true;"></a-plane>
+    <a-video class="arVideoPlane" src="#arVideo"
+        width="1" height="1.42"
+        position="0 0 0" visible="false">
+    </a-video>
 </a-entity>
+
 
 <!-- TARGET 16 -->
 <a-entity mindar-image-target="targetIndex:16">
-<a-video src="#video16" width="1" height="1.42" position="0 0 0"></a-video>
-<a-plane class="instagram-zone" width="0.70" height="0.16" position="-0.31 0.62 0.02" material="shader:flat;color:red;opacity:0;transparent:true;"></a-plane>
-<a-plane class="share-zone" width="0.70" height="0.16" position="0 -0.62 0.02" material="shader:flat;color:white;opacity:0;transparent:true;"></a-plane>
+    <a-video class="arVideoPlane" src="#arVideo"
+        width="1" height="1.42"
+        position="0 0 0" visible="false">
+    </a-video>
 </a-entity>
+
 
 <!-- TARGET 17 -->
 <a-entity mindar-image-target="targetIndex:17">
-<a-video src="#video17" width="1" height="1.42" position="0 0 0"></a-video>
-<a-plane class="instagram-zone" width="0.70" height="0.16" position="-0.31 0.62 0.02" material="shader:flat;color:red;opacity:0;transparent:true;"></a-plane>
-<a-plane class="share-zone" width="0.70" height="0.16" position="0 -0.62 0.02" material="shader:flat;color:white;opacity:0;transparent:true;"></a-plane>
+    <a-video class="arVideoPlane" src="#arVideo"
+        width="1" height="1.42"
+        position="0 0 0" visible="false">
+    </a-video>
 </a-entity>
+
 
 <!-- TARGET 18 -->
 <a-entity mindar-image-target="targetIndex:18">
-<a-video src="#video18" width="1" height="1.42" position="0 0 0"></a-video>
-<a-plane class="instagram-zone" width="0.70" height="0.16" position="-0.31 0.62 0.02" material="shader:flat;color:red;opacity:0;transparent:true;"></a-plane>
-<a-plane class="share-zone" width="0.70" height="0.16" position="0 -0.62 0.02" material="shader:flat;color:white;opacity:0;transparent:true;"></a-plane>
+    <a-video class="arVideoPlane" src="#arVideo"
+        width="1" height="1.42"
+        position="0 0 0" visible="false">
+    </a-video>
 </a-entity>
+
 
 <!-- TARGET 19 -->
 <a-entity mindar-image-target="targetIndex:19">
-<a-video src="#video19" width="1" height="1.42" position="0 0 0"></a-video>
-<a-plane class="instagram-zone" width="0.70" height="0.16" position="-0.31 0.62 0.02" material="shader:flat;color:red;opacity:0;transparent:true;"></a-plane>
-<a-plane class="share-zone" width="0.70" height="0.16" position="0 -0.62 0.02" material="shader:flat;color:white;opacity:0;transparent:true;"></a-plane>
+    <a-video class="arVideoPlane" src="#arVideo"
+        width="1" height="1.42"
+        position="0 0 0" visible="false">
+    </a-video>
 </a-entity>
+
 
 <!-- TARGET 20 -->
 <a-entity mindar-image-target="targetIndex:20">
-<a-video src="#video20" width="1" height="1.42" position="0 0 0"></a-video>
-<a-plane class="instagram-zone" width="0.70" height="0.16" position="-0.31 0.62 0.02" material="shader:flat;color:red;opacity:0;transparent:true;"></a-plane>
-<a-plane class="share-zone" width="0.70" height="0.16" position="0 -0.62 0.02" material="shader:flat;color:white;opacity:0;transparent:true;"></a-plane>
+    <a-video class="arVideoPlane" src="#arVideo"
+        width="1" height="1.42"
+        position="0 0 0" visible="false">
+    </a-video>
 </a-entity>
+
 
 <!-- TARGET 21 -->
 <a-entity mindar-image-target="targetIndex:21">
-<a-video src="#video21" width="1" height="1.42" position="0 0 0"></a-video>
-<a-plane class="instagram-zone" width="0.70" height="0.16" position="-0.31 0.62 0.02" material="shader:flat;color:red;opacity:0;transparent:true;"></a-plane>
-<a-plane class="share-zone" width="0.70" height="0.16" position="0 -0.62 0.02" material="shader:flat;color:white;opacity:0;transparent:true;"></a-plane>
+    <a-video class="arVideoPlane" src="#arVideo"
+        width="1" height="1.42"
+        position="0 0 0" visible="false">
+    </a-video>
 </a-entity>
+
 
 <!-- TARGET 22 -->
 <a-entity mindar-image-target="targetIndex:22">
-<a-video src="#video22" width="1" height="1.42" position="0 0 0"></a-video>
-<a-plane class="instagram-zone" width="0.70" height="0.16" position="-0.31 0.62 0.02" material="shader:flat;color:red;opacity:0;transparent:true;"></a-plane>
-<a-plane class="share-zone" width="0.70" height="0.16" position="0 -0.62 0.02" material="shader:flat;color:white;opacity:0;transparent:true;"></a-plane>
+    <a-video class="arVideoPlane" src="#arVideo"
+        width="1" height="1.42"
+        position="0 0 0" visible="false">
+    </a-video>
 </a-entity>
+
 
 <!-- TARGET 23 -->
 <a-entity mindar-image-target="targetIndex:23">
-<a-video src="#video23" width="1" height="1.42" position="0 0 0"></a-video>
-<a-plane class="instagram-zone" width="0.70" height="0.16" position="-0.31 0.62 0.02" material="shader:flat;color:red;opacity:0;transparent:true;"></a-plane>
-<a-plane class="share-zone" width="0.70" height="0.16" position="0 -0.62 0.02" material="shader:flat;color:white;opacity:0;transparent:true;"></a-plane>
+    <a-video class="arVideoPlane" src="#arVideo"
+        width="1" height="1.42"
+        position="0 0 0" visible="false">
+    </a-video>
 </a-entity>
+
 
 <!-- TARGET 24 -->
 <a-entity mindar-image-target="targetIndex:24">
-<a-video src="#video24" width="1" height="1.42" position="0 0 0"></a-video>
-<a-plane class="instagram-zone" width="0.70" height="0.16" position="-0.31 0.62 0.02" material="shader:flat;color:red;opacity:0;transparent:true;"></a-plane>
-<a-plane class="share-zone" width="0.70" height="0.16" position="0 -0.62 0.02" material="shader:flat;color:white;opacity:0;transparent:true;"></a-plane>
+    <a-video class="arVideoPlane" src="#arVideo"
+        width="1" height="1.42"
+        position="0 0 0" visible="false">
+    </a-video>
 </a-entity>
+
 
 <!-- TARGET 25 -->
 <a-entity mindar-image-target="targetIndex:25">
-<a-video src="#video25" width="1" height="1.42" position="0 0 0"></a-video>
-<a-plane class="instagram-zone" width="0.70" height="0.16" position="-0.31 0.62 0.02" material="shader:flat;color:red;opacity:0;transparent:true;"></a-plane>
-<a-plane class="share-zone" width="0.70" height="0.16" position="0 -0.62 0.02" material="shader:flat;color:white;opacity:0;transparent:true;"></a-plane>
+    <a-video class="arVideoPlane" src="#arVideo"
+        width="1" height="1.42"
+        position="0 0 0" visible="false">
+    </a-video>
 </a-entity>
+
 
 <!-- TARGET 26 -->
 <a-entity mindar-image-target="targetIndex:26">
-<a-video src="#video26" width="1" height="1.42" position="0 0 0"></a-video>
-<a-plane class="instagram-zone" width="0.70" height="0.16" position="-0.31 0.62 0.02" material="shader:flat;color:red;opacity:0;transparent:true;"></a-plane>
-<a-plane class="share-zone" width="0.70" height="0.16" position="0 -0.62 0.02" material="shader:flat;color:white;opacity:0;transparent:true;"></a-plane>
+    <a-video class="arVideoPlane" src="#arVideo"
+        width="1" height="1.42"
+        position="0 0 0" visible="false">
+    </a-video>
 </a-entity>
+
 
 <!-- TARGET 27 -->
 <a-entity mindar-image-target="targetIndex:27">
-<a-video src="#video27" width="1" height="1.42" position="0 0 0"></a-video>
-<a-plane class="instagram-zone" width="0.70" height="0.16" position="-0.31 0.62 0.02" material="shader:flat;color:red;opacity:0;transparent:true;"></a-plane>
-<a-plane class="share-zone" width="0.70" height="0.16" position="0 -0.62 0.02" material="shader:flat;color:white;opacity:0;transparent:true;"></a-plane>
+    <a-video class="arVideoPlane" src="#arVideo"
+        width="1" height="1.42"
+        position="0 0 0" visible="false">
+    </a-video>
 </a-entity>
+
 
 <!-- TARGET 28 -->
 <a-entity mindar-image-target="targetIndex:28">
-<a-video src="#video28" width="1" height="1.42" position="0 0 0"></a-video>
-<a-plane class="instagram-zone" width="0.70" height="0.16" position="-0.31 0.62 0.02" material="shader:flat;color:red;opacity:0;transparent:true;"></a-plane>
-<a-plane class="share-zone" width="0.70" height="0.16" position="0 -0.62 0.02" material="shader:flat;color:white;opacity:0;transparent:true;"></a-plane>
+    <a-video class="arVideoPlane" src="#arVideo"
+        width="1" height="1.42"
+        position="0 0 0" visible="false">
+    </a-video>
 </a-entity>
+
 
 <!-- TARGET 29 -->
 <a-entity mindar-image-target="targetIndex:29">
-<a-video src="#video29" width="1" height="1.42" position="0 0 0"></a-video>
-<a-plane class="instagram-zone" width="0.70" height="0.16" position="-0.31 0.62 0.02" material="shader:flat;color:red;opacity:0;transparent:true;"></a-plane>
-<a-plane class="share-zone" width="0.70" height="0.16" position="0 -0.62 0.02" material="shader:flat;color:white;opacity:0;transparent:true;"></a-plane>
+    <a-video class="arVideoPlane" src="#arVideo"
+        width="1" height="1.42"
+        position="0 0 0" visible="false">
+    </a-video>
 </a-entity>
 
 
