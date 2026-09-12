@@ -4,6 +4,7 @@
    ========================================================= */
 
 const GROUPS = {
+
     Group1: {
         title: "دفترهای گروه ۱",
         mind: "./Group1/targets.mind",
@@ -24,7 +25,9 @@ const GROUPS = {
         start: 61,
         end: 90
     }
+
 };
+
 
 let currentGroup = null;
 let currentScene = null;
@@ -36,28 +39,35 @@ let currentVideo = null;
    ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
+
     createMain();
+
     showCategories();
+
 });
 
 
 /* =========================================================
-   MAIN
+   CREATE MAIN
    ========================================================= */
 
 function createMain() {
 
-    const old = document.getElementById("mainApp");
+    const old =
+        document.getElementById("mainApp");
 
     if (old) {
         old.remove();
     }
 
-    const main = document.createElement("div");
+
+    const main =
+        document.createElement("div");
 
     main.id = "mainApp";
 
     document.body.appendChild(main);
+
 }
 
 
@@ -67,285 +77,15 @@ function createMain() {
 
 function clearPage() {
 
-    const main = document.getElementById("mainApp");
-
-    if (main) {
-        main.innerHTML = "";
-    }
-
-    const oldScene = document.querySelector("a-scene");
-
-    if (oldScene) {
-        try {
-            oldScene.remove();
-        } catch (e) {}
-    }
-
-    const oldVideo = document.getElementById("arVideo");
-
-    if (oldVideo) {
-        try {
-            oldVideo.pause();
-        } catch (e) {}
-
-        oldVideo.remove();
-    }
-
-    const oldChange = document.getElementById("changeGroup");
-
-    if (oldChange) {
-        oldChange.remove();
-    }
-
-    currentScene = null;
-    currentVideo = null;
-}
-
-
-/* =========================================================
-   GROUPS
-   ========================================================= */
-
-function showCategories() {
-
-    clearPage();
-
-    const main = document.getElementById("mainApp");
-
-    if (!main) return;
-
-    main.style.display = "block";
-
-    const page = document.createElement("div");
-
-    page.className = "category-page";
-
-    page.innerHTML = `
-        <div class="main-title">
-            سرزمین شگفت‌انگیز ✨
-        </div>
-
-        <div class="main-subtitle">
-            گروه دفترها را انتخاب کنید
-        </div>
-
-        <div class="group-buttons">
-
-            <button class="group-button" data-group="Group1">
-                📚 گروه ۱
-            </button>
-
-            <button class="group-button" data-group="Group2">
-                📚 گروه ۲
-            </button>
-
-            <button class="group-button" data-group="Group3">
-                📚 گروه ۳
-            </button>
-
-        </div>
-    `;
-
-    main.appendChild(page);
-
-    page.querySelectorAll(".group-button").forEach(button => {
-
-        button.addEventListener("click", () => {
-
-            showGallery(button.dataset.group);
-
-        });
-
-    });
-}
-
-
-/* =========================================================
-   GALLERY
-   ========================================================= */
-
-function showGallery(groupName) {
-
-    clearPage();
-
-    currentGroup = groupName;
-
-    const config = GROUPS[groupName];
-
-    const main = document.getElementById("mainApp");
-
-    if (!main) return;
-
-    main.style.display = "block";
-
-    const page = document.createElement("div");
-
-    page.className = "gallery-page";
-
-
-    /* HEADER */
-
-    const header = document.createElement("div");
-
-    header.className = "gallery-header";
-
-    header.innerHTML = `
-        <div class="gallery-title">
-            ${config.title}
-        </div>
-    `;
-
-    page.appendChild(header);
-
-
-    /* GRID */
-
-    const grid = document.createElement("div");
-
-    grid.className = "gallery-grid";
-
-
-    for (
-        let number = config.start;
-        number <= config.end;
-        number++
-    ) {
-
-        const card = document.createElement("div");
-
-        card.className = "image-card";
-
-
-        const image = document.createElement("img");
-
-        image.className = "gallery-image";
-
-
-        let extension = "jpg";
-
-
-        /* PNG های خاص */
-
-        if (
-            groupName === "Group1" &&
-            (
-                number === 19 ||
-                number === 24 ||
-                number === 26
-            )
-        ) {
-            extension = "png";
-        }
-
-
-        /* شماره فایل */
-
-        const filename =
-            number < 10
-                ? "0" + number
-                : String(number);
-
-
-        image.src =
-            `./${groupName}/${filename}.${extension}`;
-
-
-        image.alt =
-            `دفتر ${number}`;
-
-
-        image.draggable = false;
-
-
-        /*
-         * lazy loading استفاده نمی‌کنیم
-         * تا تمام ۳۰ عکس درست نمایش داده شوند.
-         */
-
-        image.addEventListener(
-            "click",
-            event => {
-                event.preventDefault();
-                event.stopPropagation();
-            }
-        );
-
-
-        card.appendChild(image);
-
-        grid.appendChild(card);
-    }
-
-
-    page.appendChild(grid);
-
-
-    /* =====================================================
-       CAMERA BUTTON
-       ===================================================== */
-
-    const cameraButton =
-        document.createElement("button");
-
-    cameraButton.id = "openCamera";
-
-    cameraButton.innerHTML =
-        "📷 باز کردن دوربین";
-
-
-    cameraButton.addEventListener(
-        "click",
-        () => {
-
-            startAR(currentGroup);
-
-        }
-    );
-
-
-    main.appendChild(page);
-
-    main.appendChild(cameraButton);
-
-
-    setTimeout(() => {
-
-        page.scrollTop = 0;
-
-    }, 50);
-}
-
-
-/* =========================================================
-   START AR
-   ========================================================= */
-
-function startAR(groupName) {
-
-    const config = GROUPS[groupName];
-
-    if (!config) return;
-
-    currentGroup = groupName;
-
-
-    /* =====================================================
-       HIDE GALLERY
-       ===================================================== */
-
     const main =
         document.getElementById("mainApp");
 
     if (main) {
-        main.style.display = "none";
-    }
 
+        main.innerHTML = "";
 
-    const oldButton =
-        document.getElementById("openCamera");
+        main.style.display = "block";
 
-    if (oldButton) {
-        oldButton.remove();
     }
 
 
@@ -361,54 +101,273 @@ function startAR(groupName) {
     }
 
 
+    const oldVideo =
+        document.getElementById("arVideo");
+
+    if (oldVideo) {
+
+        try {
+            oldVideo.pause();
+        } catch (e) {}
+
+        oldVideo.remove();
+
+    }
+
+
+    const oldChange =
+        document.getElementById("changeGroup");
+
+    if (oldChange) {
+        oldChange.remove();
+    }
+
+
+    currentScene = null;
+
+    currentVideo = null;
+
+}
+
+
+/* =========================================================
+   GROUP SELECTION
+   ========================================================= */
+
+function showCategories() {
+
+    clearPage();
+
+
+    const main =
+        document.getElementById("mainApp");
+
+    if (!main) {
+        return;
+    }
+
+
+    main.style.display = "block";
+
+
+    const page =
+        document.createElement("div");
+
+    page.className =
+        "category-page";
+
+
+    page.innerHTML = `
+
+        <div class="main-title">
+            سرزمین شگفت‌انگیز ✨
+        </div>
+
+        <div class="main-subtitle">
+            گروه دفترها را انتخاب کنید
+        </div>
+
+        <div class="group-buttons">
+
+            <button
+                class="group-button"
+                data-group="Group1"
+            >
+                📚 گروه ۱
+            </button>
+
+
+            <button
+                class="group-button"
+                data-group="Group2"
+            >
+                📚 گروه ۲
+            </button>
+
+
+            <button
+                class="group-button"
+                data-group="Group3"
+            >
+                📚 گروه ۳
+            </button>
+
+        </div>
+
+    `;
+
+
+    main.appendChild(page);
+
+
+    /*
+     * انتخاب گروه
+     * مستقیماً دوربین باز می‌شود
+     */
+
+    page
+        .querySelectorAll(".group-button")
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    const group =
+                        button.dataset.group;
+
+                    startAR(group);
+
+                }
+            );
+
+        });
+
+}
+
+
+/* =========================================================
+   START AR
+   ========================================================= */
+
+function startAR(groupName) {
+
+    const config =
+        GROUPS[groupName];
+
+
+    if (!config) {
+        return;
+    }
+
+
+    currentGroup =
+        groupName;
+
+
     /* =====================================================
-       VIDEO
+       HIDE MAIN PAGE
+       ===================================================== */
+
+    const main =
+        document.getElementById("mainApp");
+
+    if (main) {
+
+        main.style.display =
+            "none";
+
+    }
+
+
+    /* =====================================================
+       REMOVE OLD SCENE
+       ===================================================== */
+
+    const oldScene =
+        document.querySelector("a-scene");
+
+    if (oldScene) {
+
+        try {
+            oldScene.remove();
+        } catch (e) {}
+
+    }
+
+
+    /* =====================================================
+       REMOVE OLD VIDEO
+       ===================================================== */
+
+    const oldVideo =
+        document.getElementById("arVideo");
+
+    if (oldVideo) {
+
+        try {
+            oldVideo.pause();
+        } catch (e) {}
+
+        oldVideo.remove();
+
+    }
+
+
+    /* =====================================================
+       AR VIDEO ELEMENT
        ===================================================== */
 
     const video =
         document.createElement("video");
 
-    video.id = "arVideo";
+
+    video.id =
+        "arVideo";
+
 
     video.setAttribute(
         "playsinline",
         ""
     );
 
+
     video.setAttribute(
         "webkit-playsinline",
         ""
     );
+
 
     video.setAttribute(
         "muted",
         ""
     );
 
-    video.muted = true;
 
-    video.loop = false;
+    video.muted =
+        true;
 
-    video.preload = "auto";
 
-    document.body.appendChild(video);
+    video.loop =
+        false;
 
-    currentVideo = video;
+
+    video.preload =
+        "auto";
+
+
+    document.body.appendChild(
+        video
+    );
+
+
+    currentVideo =
+        video;
 
 
     /* =====================================================
-       SCENE
+       A-FRAME SCENE
        ===================================================== */
 
     const scene =
-        document.createElement("a-scene");
+        document.createElement(
+            "a-scene"
+        );
 
+
+    /*
+     * مهم
+     */
 
     scene.setAttribute(
         "embedded",
         ""
     );
 
+
+    /* =====================================================
+       MINDAR
+       ===================================================== */
 
     scene.setAttribute(
         "mindar-image",
@@ -426,9 +385,13 @@ function startAR(groupName) {
     );
 
 
+    /* =====================================================
+       RENDERER
+       ===================================================== */
+
     /*
      * alpha:true
-     * برای اینکه Canvas جلوی دوربین سفید/سیاه نشود
+     * برای اینکه صفحه سفید/سیاه روی دوربین نیاید
      */
 
     scene.setAttribute(
@@ -464,77 +427,55 @@ function startAR(groupName) {
        ===================================================== */
 
     const camera =
-        document.createElement("a-camera");
+        document.createElement(
+            "a-camera"
+        );
+
 
     camera.setAttribute(
         "position",
         "0 0 0"
     );
 
+
     camera.setAttribute(
         "look-controls",
         "enabled: false"
     );
+
 
     camera.setAttribute(
         "active",
         "true"
     );
 
+
     camera.setAttribute(
         "cursor",
         "fuse: false; rayOrigin: mouse;"
     );
+
 
     camera.setAttribute(
         "raycaster",
         "near: 0; far: 100; objects: .arLink;"
     );
 
-    scene.appendChild(camera);
 
-
-    /* =====================================================
-       AR VIDEO PLANE
-       ===================================================== */
-
-    const arVideoPlane =
-        document.createElement("a-video");
-
-    arVideoPlane.id =
-        "arVideoPlane";
-
-    arVideoPlane.setAttribute(
-        "src",
-        "#arVideo"
-    );
-
-    arVideoPlane.setAttribute(
-        "width",
-        "1"
-    );
-
-    arVideoPlane.setAttribute(
-        "height",
-        "1.42"
-    );
-
-    arVideoPlane.setAttribute(
-        "position",
-        "0 0 0.01"
-    );
-
-    arVideoPlane.setAttribute(
-        "visible",
-        "false"
+    scene.appendChild(
+        camera
     );
 
 
     /* =====================================================
-       TARGETS
+       CREATE 30 TARGETS
        ===================================================== */
 
-    for (let i = 0; i < 30; i++) {
+    for (
+        let i = 0;
+        i < 30;
+        i++
+    ) {
 
         createTarget(
             scene,
@@ -545,20 +486,19 @@ function startAR(groupName) {
     }
 
 
-    scene.appendChild(
-        arVideoPlane
-    );
-
-
     /* =====================================================
-       CHANGE GROUP
+       CHANGE GROUP BUTTON
        ===================================================== */
 
     const changeButton =
-        document.createElement("button");
+        document.createElement(
+            "button"
+        );
+
 
     changeButton.id =
         "changeGroup";
+
 
     changeButton.innerHTML =
         "🔄 تغییر گروه";
@@ -568,52 +508,7 @@ function startAR(groupName) {
         "click",
         () => {
 
-            if (currentVideo) {
-
-                try {
-                    currentVideo.pause();
-                } catch (e) {}
-
-            }
-
-
-            const scene =
-                document.querySelector("a-scene");
-
-            if (scene) {
-
-                try {
-                    scene.remove();
-                } catch (e) {}
-
-            }
-
-
-            const video =
-                document.getElementById("arVideo");
-
-            if (video) {
-
-                try {
-                    video.pause();
-                } catch (e) {}
-
-                video.remove();
-
-            }
-
-
-            const main =
-                document.getElementById("mainApp");
-
-            if (main) {
-                main.style.display = "block";
-            }
-
-
-            currentScene = null;
-            currentVideo = null;
-
+            stopAR();
 
             showCategories();
 
@@ -621,24 +516,39 @@ function startAR(groupName) {
     );
 
 
-    document.body.appendChild(scene);
+    /* =====================================================
+       ADD TO PAGE
+       ===================================================== */
 
-    document.body.appendChild(changeButton);
+    document.body.appendChild(
+        scene
+    );
 
-    currentScene = scene;
+
+    document.body.appendChild(
+        changeButton
+    );
 
 
-    /* RESIZE */
+    currentScene =
+        scene;
+
+
+    /* =====================================================
+       RESIZE
+       ===================================================== */
 
     setTimeout(
         resizeAR,
         300
     );
 
+
     setTimeout(
         resizeAR,
         1000
     );
+
 
 }
 
@@ -653,6 +563,7 @@ function createTarget(
     groupName
 ) {
 
+
     const target =
         document.createElement(
             "a-entity"
@@ -666,31 +577,38 @@ function createTarget(
 
 
     /* =====================================================
-       VIDEO
+       VIDEO PLANE
        ===================================================== */
 
     const videoPlane =
-        document.createElement("a-video");
+        document.createElement(
+            "a-video"
+        );
+
 
     videoPlane.setAttribute(
         "src",
         "#arVideo"
     );
 
+
     videoPlane.setAttribute(
         "width",
         "1"
     );
+
 
     videoPlane.setAttribute(
         "height",
         "1.42"
     );
 
+
     videoPlane.setAttribute(
         "position",
         "0 0 0.01"
     );
+
 
     videoPlane.setAttribute(
         "visible",
@@ -704,15 +622,19 @@ function createTarget(
 
 
     /* =====================================================
-       INSTAGRAM
+       INSTAGRAM CLICK AREA
        ===================================================== */
 
     const instagram =
-        document.createElement("a-plane");
+        document.createElement(
+            "a-plane"
+        );
+
 
     instagram.classList.add(
         "arLink"
     );
+
 
     instagram.classList.add(
         "instagram-zone"
@@ -724,15 +646,18 @@ function createTarget(
         "0.55"
     );
 
+
     instagram.setAttribute(
         "height",
         "0.16"
     );
 
+
     instagram.setAttribute(
         "position",
         "-0.28 0.61 0.06"
     );
+
 
     instagram.setAttribute(
         "material",
@@ -747,6 +672,7 @@ function createTarget(
             const appURL =
                 "instagram://user?username=SarzaminAr";
 
+
             const webURL =
                 "https://www.instagram.com/SarzaminAr/";
 
@@ -757,8 +683,10 @@ function createTarget(
 
             setTimeout(
                 () => {
+
                     window.location.href =
                         webURL;
+
                 },
                 1500
             );
@@ -777,27 +705,34 @@ function createTarget(
        ===================================================== */
 
     const shareText =
-        document.createElement("a-text");
+        document.createElement(
+            "a-text"
+        );
+
 
     shareText.setAttribute(
         "value",
         "سرزمین شگفت‌انگیز"
     );
 
+
     shareText.setAttribute(
         "align",
         "center"
     );
+
 
     shareText.setAttribute(
         "width",
         "1.8"
     );
 
+
     shareText.setAttribute(
         "position",
         "0 -0.88 0.06"
     );
+
 
     shareText.setAttribute(
         "color",
@@ -811,15 +746,19 @@ function createTarget(
 
 
     /* =====================================================
-       SHARE BUTTON
+       SHARE CLICK AREA
        ===================================================== */
 
     const share =
-        document.createElement("a-plane");
+        document.createElement(
+            "a-plane"
+        );
+
 
     share.classList.add(
         "arLink"
     );
+
 
     share.classList.add(
         "share-zone"
@@ -831,15 +770,18 @@ function createTarget(
         "1.05"
     );
 
+
     share.setAttribute(
         "height",
         "0.20"
     );
 
+
     share.setAttribute(
         "position",
         "0 -0.88 0.08"
     );
+
 
     share.setAttribute(
         "material",
@@ -893,7 +835,9 @@ function createTarget(
                         error.name ===
                         "AbortError"
                     ) {
+
                         return;
+
                     }
 
                 }
@@ -907,13 +851,17 @@ function createTarget(
                     message
                 );
 
+
                 alert(
                     "متن آماده اشتراک‌گذاری کپی شد ✨"
                 );
 
-            } catch (e) {
 
-                alert(message);
+            } catch (error) {
+
+                alert(
+                    message
+                );
 
             }
 
@@ -939,7 +887,8 @@ function createTarget(
 
 
             const number =
-                config.start + index;
+                config.start +
+                index;
 
 
             const filename =
@@ -952,9 +901,9 @@ function createTarget(
                 `./${groupName}/${filename}.mp4`;
 
 
-            /*
-             * ویدیوی قبلی متوقف شود
-             */
+            /* ---------------------------------------------
+               توقف ویدیوی قبلی
+               --------------------------------------------- */
 
             if (currentVideo) {
 
@@ -965,37 +914,45 @@ function createTarget(
             }
 
 
-            /*
-             * همه ویدیوهای Target قبلی مخفی
-             */
+            /* ---------------------------------------------
+               مخفی کردن همه Target video ها
+               --------------------------------------------- */
 
-            document
+            scene
                 .querySelectorAll(
                     "a-video"
                 )
-                .forEach(el => {
+                .forEach(
+                    element => {
 
-                    el.setAttribute(
-                        "visible",
-                        "false"
-                    );
+                        element.setAttribute(
+                            "visible",
+                            "false"
+                        );
 
-                });
+                    }
+                );
 
 
-            /*
-             * آدرس ویدیوی جدید
-             */
+            /* ---------------------------------------------
+               ویدیوی جدید
+               --------------------------------------------- */
+
+            if (!currentVideo) {
+                return;
+            }
+
 
             currentVideo.src =
                 videoURL;
 
+
             currentVideo.load();
 
 
-            /*
-             * ویدیوی همین Target نمایش داده شود
-             */
+            /* ---------------------------------------------
+               نمایش ویدیو
+               --------------------------------------------- */
 
             videoPlane.setAttribute(
                 "visible",
@@ -1003,20 +960,20 @@ function createTarget(
             );
 
 
-            /*
-             * پخش
-             */
+            /* ---------------------------------------------
+               پخش
+               --------------------------------------------- */
 
-            const promise =
+            const playPromise =
                 currentVideo.play();
 
 
             if (
-                promise &&
-                promise.catch
+                playPromise &&
+                playPromise.catch
             ) {
 
-                promise.catch(
+                playPromise.catch(
                     () => {}
                 );
 
@@ -1055,11 +1012,78 @@ function createTarget(
     scene.appendChild(
         target
     );
+
 }
 
 
 /* =========================================================
-   RESIZE
+   STOP AR
+   ========================================================= */
+
+function stopAR() {
+
+
+    if (currentVideo) {
+
+        try {
+            currentVideo.pause();
+        } catch (e) {}
+
+    }
+
+
+    const scene =
+        document.querySelector(
+            "a-scene"
+        );
+
+
+    if (scene) {
+
+        try {
+            scene.remove();
+        } catch (e) {}
+
+    }
+
+
+    const video =
+        document.getElementById(
+            "arVideo"
+        );
+
+
+    if (video) {
+
+        try {
+            video.pause();
+        } catch (e) {}
+
+        video.remove();
+
+    }
+
+
+    const changeButton =
+        document.getElementById(
+            "changeGroup"
+        );
+
+
+    if (changeButton) {
+        changeButton.remove();
+    }
+
+
+    currentScene = null;
+
+    currentVideo = null;
+
+}
+
+
+/* =========================================================
+   RESIZE AR
    ========================================================= */
 
 function resizeAR() {
@@ -1069,6 +1093,7 @@ function resizeAR() {
             "a-scene"
         );
 
+
     if (!scene) {
         return;
     }
@@ -1077,12 +1102,14 @@ function resizeAR() {
     const width =
         window.innerWidth;
 
+
     const height =
         window.innerHeight;
 
 
     scene.style.width =
         width + "px";
+
 
     scene.style.height =
         height + "px";
@@ -1098,6 +1125,7 @@ function resizeAR() {
 
         canvas.style.width =
             width + "px";
+
 
         canvas.style.height =
             height + "px";
@@ -1120,6 +1148,7 @@ function resizeAR() {
         }
 
     } catch (e) {}
+
 }
 
 
@@ -1129,7 +1158,11 @@ function resizeAR() {
 
 window.addEventListener(
     "resize",
-    resizeAR
+    () => {
+
+        resizeAR();
+
+    }
 );
 
 
@@ -1141,6 +1174,7 @@ window.addEventListener(
             resizeAR,
             300
         );
+
 
         setTimeout(
             resizeAR,
