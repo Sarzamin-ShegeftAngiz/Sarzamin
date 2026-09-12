@@ -9,20 +9,19 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     let activeTarget = null;
-    let activeIndex = -1;
 
 
     // =========================
-    // آماده شدن AR
+    // AR READY
     // =========================
 
     scene.addEventListener("arReady", () => {
-        console.log("AR READY");
+        console.log("AR READY - 30 TARGETS");
     });
 
 
     // =========================
-    // پیدا شدن تارگت
+    // TARGET FOUND
     // =========================
 
     scene.addEventListener("targetFound", async (e) => {
@@ -36,141 +35,55 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("TARGET FOUND:", index);
 
         activeTarget = target;
-        activeIndex = index;
 
 
         // -------------------------
-        // همه ویدیوها را متوقف کن
+        // تمام ویدیوهای دیگر را متوقف کن
         // -------------------------
 
-        videos.forEach((video) => {
+        videos.forEach((video, i) => {
 
             if (!video) return;
 
-            video.pause();
+            if (i !== index) {
+                video.pause();
 
-            try {
-                video.currentTime = 0;
-            } catch (err) {}
+                try {
+                    video.currentTime = 0;
+                } catch (err) {}
+            }
 
         });
 
 
         // -------------------------
-        // همه پلین‌های ویدیو مخفی
-        // -------------------------
-
-        const allPlanes = document.querySelectorAll("a-video");
-
-        allPlanes.forEach((plane) => {
-            plane.setAttribute("visible", false);
-        });
-
-
-        // -------------------------
-        // ویدیوی مربوط به تارگت
+        // ویدیوی این تارگت
         // -------------------------
 
         const video = videos[index];
 
         if (!video) {
+
             console.log("VIDEO NOT FOUND:", index);
+
             return;
         }
 
-        console.log("VIDEO ELEMENT:", video);
 
-        console.log("VIDEO SRC:", video.currentSrc || video.src);
+        console.log("VIDEO FOUND:", index);
 
 
-        // از اول
-        try {
-            video.currentTime = 0;
-        } catch (err) {}
+        // از ابتدای ویدیو
+        video.currentTime = 0;
 
 
         // صدا روشن
         video.muted = false;
-
         video.volume = 1;
 
 
         // -------------------------
-        // کمی صبر برای آماده شدن فایل
-        // -------------------------
-
-        if (video.readyState < 2) {
-
-            console.log(
-                "VIDEO NOT READY. READY STATE:",
-                video.readyState
-            );
-
-            video.load();
-
-            await new Promise((resolve) => {
-
-                const check = () => {
-
-                    console.log(
-                        "VIDEO CAN PLAY:",
-                        video.readyState
-                    );
-
-                    cleanup();
-
-                    resolve();
-                };
-
-                const cleanup = () => {
-                    video.removeEventListener("loadeddata", check);
-                    video.removeEventListener("canplay", check);
-                };
-
-                video.addEventListener("loadeddata", check, { once: true });
-                video.addEventListener("canplay", check, { once: true });
-
-                // حداکثر 15 ثانیه
-                setTimeout(() => {
-                    cleanup();
-                    resolve();
-                }, 15000);
-
-            });
-        }
-
-
-        // -------------------------
-        // هنوز همان تارگت فعال است؟
-        // -------------------------
-
-        if (activeTarget !== target || activeIndex !== index) {
-
-            console.log("OLD TARGET - CANCEL VIDEO");
-
-            return;
-        }
-
-
-        console.log(
-            "TRYING TO PLAY VIDEO:",
-            index
-        );
-
-
-        // -------------------------
-        // اول ویدیو را نمایش بده
-        // -------------------------
-
-        const plane = target.querySelector("a-video");
-
-        if (plane) {
-            plane.setAttribute("visible", true);
-        }
-
-
-        // -------------------------
-        // پخش
+        // پخش ویدیو
         // -------------------------
 
         try {
@@ -178,20 +91,18 @@ document.addEventListener("DOMContentLoaded", () => {
             await video.play();
 
             console.log(
-                "VIDEO PLAYING SUCCESSFULLY:",
+                "VIDEO PLAYING:",
                 index
             );
 
-        } catch (error) {
+        } catch (err) {
 
-            console.error(
+            console.log(
                 "VIDEO PLAY ERROR:",
-                error
+                err
             );
 
-            // اگر مرورگر پخش صدا‌دار را نپذیرفت،
-            // یک بار بدون صدا امتحان می‌کنیم
-
+            // تلاش دوم بدون صدا
             video.muted = true;
 
             try {
@@ -203,11 +114,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     index
                 );
 
-            } catch (error2) {
+            } catch (err2) {
 
-                console.error(
-                    "VIDEO PLAY ERROR EVEN MUTED:",
-                    error2
+                console.log(
+                    "VIDEO PLAY ERROR 2:",
+                    err2
                 );
 
             }
@@ -218,7 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // =========================
-    // تارگت گم شد
+    // TARGET LOST
     // =========================
 
     scene.addEventListener("targetLost", (e) => {
@@ -245,20 +156,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
-        // همان پلین را فوراً مخفی کن
-
-        const plane = target.querySelector("a-video");
-
-        if (plane) {
-            plane.setAttribute("visible", false);
-        }
-
-
         if (activeTarget === target) {
-
             activeTarget = null;
-            activeIndex = -1;
-
         }
 
     });
