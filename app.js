@@ -5,404 +5,262 @@ document.addEventListener("DOMContentLoaded", () => {
     const videos = [];
 
     for (let i = 0; i < 30; i++) {
-
-        const video =
-            document.querySelector("#video" + i);
-
-        videos.push(video);
-
+        videos.push(document.querySelector("#video" + i));
     }
-
 
     let activeTarget = null;
     let activeIndex = -1;
 
-    // برای جلوگیری از برگشت ویدیوی قدیمی
-    let targetSession = 0;
+
+    // =========================
+    // آماده شدن AR
+    // =========================
+
+    scene.addEventListener("arReady", () => {
+        console.log("AR READY");
+    });
 
 
-    // =====================================================
-    // همه ویدیوها و پلین‌ها را مخفی کن
-    // =====================================================
+    // =========================
+    // پیدا شدن تارگت
+    // =========================
 
-    function hideEverything() {
+    scene.addEventListener("targetFound", async (e) => {
 
-        document
-            .querySelectorAll(".arVideoPlane")
-            .forEach((plane) => {
+        const target = e.target;
 
-                plane.setAttribute(
-                    "visible",
-                    "false"
-                );
+        const data = target.getAttribute("mindar-image-target");
 
-            });
+        const index = data.targetIndex;
+
+        console.log("TARGET FOUND:", index);
+
+        activeTarget = target;
+        activeIndex = index;
 
 
-        document
-            .querySelectorAll("a-video")
-            .forEach((plane) => {
-
-                plane.setAttribute(
-                    "visible",
-                    "false"
-                );
-
-            });
-
+        // -------------------------
+        // همه ویدیوها را متوقف کن
+        // -------------------------
 
         videos.forEach((video) => {
 
-            if (video) {
-
-                video.pause();
-
-            }
-
-        });
-
-    }
-
-
-    // =====================================================
-    // AR READY
-    // =====================================================
-
-    scene.addEventListener(
-        "arReady",
-        () => {
-
-            console.log(
-                "AR READY - 30 TARGETS"
-            );
-
-        }
-    );
-
-
-    // =====================================================
-    // TARGET FOUND
-    // =====================================================
-
-    scene.addEventListener(
-        "targetFound",
-        async (e) => {
-
-            const target =
-                e.target;
-
-
-            const data =
-                target.getAttribute(
-                    "mindar-image-target"
-                );
-
-
-            const index =
-                Number(data.targetIndex);
-
-
-            console.log(
-                "TARGET FOUND:",
-                index
-            );
-
-
-            // -------------------------------------------------
-            // جلسه جدید
-            // -------------------------------------------------
-
-            targetSession++;
-
-            const thisSession =
-                targetSession;
-
-
-            activeTarget =
-                target;
-
-            activeIndex =
-                index;
-
-
-            // -------------------------------------------------
-            // اول همه ویدیوهای قبلی را فوراً مخفی کن
-            // -------------------------------------------------
-
-            hideEverything();
-
-
-            // -------------------------------------------------
-            // ویدیوی مربوط به همین Target
-            // -------------------------------------------------
-
-            const video =
-                videos[index];
-
-
-            if (!video) {
-
-                console.log(
-                    "VIDEO NOT FOUND:",
-                    index
-                );
-
-                return;
-
-            }
-
-
-            // -------------------------------------------------
-            // پلین فقط همین Target
-            // -------------------------------------------------
-
-            const plane =
-                target.querySelector(
-                    "a-video"
-                );
-
-
-            if (!plane) {
-
-                console.log(
-                    "VIDEO PLANE NOT FOUND:",
-                    index
-                );
-
-                return;
-
-            }
-
-
-            // حتماً تا آماده شدن ویدیو مخفی باشد
-            plane.setAttribute(
-                "visible",
-                "false"
-            );
-
-
-            // -------------------------------------------------
-            // ویدیوی جدید
-            // -------------------------------------------------
+            if (!video) return;
 
             video.pause();
 
+            try {
+                video.currentTime = 0;
+            } catch (err) {}
+
+        });
+
+
+        // -------------------------
+        // همه پلین‌های ویدیو مخفی
+        // -------------------------
+
+        const allPlanes = document.querySelectorAll("a-video");
+
+        allPlanes.forEach((plane) => {
+            plane.setAttribute("visible", false);
+        });
+
+
+        // -------------------------
+        // ویدیوی مربوط به تارگت
+        // -------------------------
+
+        const video = videos[index];
+
+        if (!video) {
+            console.log("VIDEO NOT FOUND:", index);
+            return;
+        }
+
+        console.log("VIDEO ELEMENT:", video);
+
+        console.log("VIDEO SRC:", video.currentSrc || video.src);
+
+
+        // از اول
+        try {
             video.currentTime = 0;
+        } catch (err) {}
 
 
-            // صدا
-            video.muted = false;
+        // صدا روشن
+        video.muted = false;
+
+        video.volume = 1;
 
 
-            // -------------------------------------------------
-            // صبر برای آماده شدن ویدیو
-            // -------------------------------------------------
+        // -------------------------
+        // کمی صبر برای آماده شدن فایل
+        // -------------------------
 
-            const showVideo = async () => {
+        if (video.readyState < 2) {
 
-                // اگر در این فاصله Target عوض شده
-                // اصلاً این ویدیو را نشان نده
-                if (
-                    thisSession !== targetSession ||
-                    activeTarget !== target ||
-                    activeIndex !== index
-                ) {
+            console.log(
+                "VIDEO NOT READY. READY STATE:",
+                video.readyState
+            );
+
+            video.load();
+
+            await new Promise((resolve) => {
+
+                const check = () => {
 
                     console.log(
-                        "OLD VIDEO IGNORED:",
-                        index
+                        "VIDEO CAN PLAY:",
+                        video.readyState
                     );
 
-                    return;
+                    cleanup();
 
-                }
+                    resolve();
+                };
 
+                const cleanup = () => {
+                    video.removeEventListener("loadeddata", check);
+                    video.removeEventListener("canplay", check);
+                };
+
+                video.addEventListener("loadeddata", check, { once: true });
+                video.addEventListener("canplay", check, { once: true });
+
+                // حداکثر 15 ثانیه
+                setTimeout(() => {
+                    cleanup();
+                    resolve();
+                }, 15000);
+
+            });
+        }
+
+
+        // -------------------------
+        // هنوز همان تارگت فعال است؟
+        // -------------------------
+
+        if (activeTarget !== target || activeIndex !== index) {
+
+            console.log("OLD TARGET - CANCEL VIDEO");
+
+            return;
+        }
+
+
+        console.log(
+            "TRYING TO PLAY VIDEO:",
+            index
+        );
+
+
+        // -------------------------
+        // اول ویدیو را نمایش بده
+        // -------------------------
+
+        const plane = target.querySelector("a-video");
+
+        if (plane) {
+            plane.setAttribute("visible", true);
+        }
+
+
+        // -------------------------
+        // پخش
+        // -------------------------
+
+        try {
+
+            await video.play();
+
+            console.log(
+                "VIDEO PLAYING SUCCESSFULLY:",
+                index
+            );
+
+        } catch (error) {
+
+            console.error(
+                "VIDEO PLAY ERROR:",
+                error
+            );
+
+            // اگر مرورگر پخش صدا‌دار را نپذیرفت،
+            // یک بار بدون صدا امتحان می‌کنیم
+
+            video.muted = true;
+
+            try {
+
+                await video.play();
 
                 console.log(
-                    "VIDEO READY:",
+                    "VIDEO PLAYING MUTED:",
                     index
                 );
 
+            } catch (error2) {
 
-                try {
-
-                    await video.play();
-
-
-                    // دوباره چک کن Target هنوز فعال است
-                    if (
-                        thisSession !== targetSession ||
-                        activeTarget !== target ||
-                        activeIndex !== index
-                    ) {
-
-                        video.pause();
-
-                        return;
-
-                    }
-
-
-                    // ------------------------------------------------
-                    // فقط حالا ویدیو را روی عکس نشان بده
-                    // ------------------------------------------------
-
-                    plane.setAttribute(
-                        "visible",
-                        "true"
-                    );
-
-
-                    console.log(
-                        "VIDEO SHOWN:",
-                        index
-                    );
-
-                }
-
-                catch (error) {
-
-                    console.log(
-                        "VIDEO PLAY ERROR:",
-                        error
-                    );
-
-                }
-
-            };
-
-
-            // -------------------------------------------------
-            // اگر ویدیو همین الان آماده است
-            // -------------------------------------------------
-
-            if (
-                video.readyState >= 3
-            ) {
-
-                showVideo();
-
-            }
-
-            else {
-
-                video.addEventListener(
-                    "canplay",
-                    showVideo,
-                    {
-                        once: true
-                    }
+                console.error(
+                    "VIDEO PLAY ERROR EVEN MUTED:",
+                    error2
                 );
 
             }
-
-
-            console.log(
-                "LOADING VIDEO:",
-                index
-            );
 
         }
-    );
+
+    });
 
 
-    // =====================================================
-    // TARGET LOST
-    // =====================================================
+    // =========================
+    // تارگت گم شد
+    // =========================
 
-    scene.addEventListener(
-        "targetLost",
-        (e) => {
+    scene.addEventListener("targetLost", (e) => {
 
-            const target =
-                e.target;
+        const target = e.target;
 
+        const data = target.getAttribute("mindar-image-target");
 
-            const data =
-                target.getAttribute(
-                    "mindar-image-target"
-                );
+        const index = data.targetIndex;
+
+        console.log("TARGET LOST:", index);
 
 
-            const index =
-                Number(data.targetIndex);
+        const video = videos[index];
 
+        if (video) {
 
-            console.log(
-                "TARGET LOST:",
-                index
-            );
+            video.pause();
 
-
-            // اگر این Target دیگر فعال نیست
-            // کاری نکن
-            if (
-                activeTarget !== target
-            ) {
-
-                return;
-
-            }
-
-
-            // -------------------------------------------------
-            // اول جلسه را باطل کن
-            // -------------------------------------------------
-
-            targetSession++;
-
-
-            // -------------------------------------------------
-            // فوراً پلین همین Target را مخفی کن
-            // -------------------------------------------------
-
-            const plane =
-                target.querySelector(
-                    "a-video"
-                );
-
-
-            if (plane) {
-
-                plane.setAttribute(
-                    "visible",
-                    "false"
-                );
-
-            }
-
-
-            // -------------------------------------------------
-            // ویدیوی مربوطه فوراً متوقف شود
-            // -------------------------------------------------
-
-            const video =
-                videos[index];
-
-
-            if (video) {
-
-                video.pause();
-
+            try {
                 video.currentTime = 0;
+            } catch (err) {}
 
-            }
+        }
 
 
-            // -------------------------------------------------
-            // وضعیت فعال پاک شود
-            // -------------------------------------------------
+        // همان پلین را فوراً مخفی کن
+
+        const plane = target.querySelector("a-video");
+
+        if (plane) {
+            plane.setAttribute("visible", false);
+        }
+
+
+        if (activeTarget === target) {
 
             activeTarget = null;
-
             activeIndex = -1;
 
-
-            console.log(
-                "VIDEO REMOVED IMMEDIATELY"
-            );
-
         }
-    );
+
+    });
 
 });
