@@ -1,363 +1,704 @@
 <!DOCTYPE html>
 <html lang="fa">
+
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta name="viewport"
-      content="width=device-width,
-               initial-scale=1.0,
-               maximum-scale=1.0,
-               user-scalable=no">
+    <meta name="viewport"
+          content="width=device-width,
+                   initial-scale=1.0,
+                   maximum-scale=1.0,
+                   user-scalable=no">
 
-<title>Sarzamin AR</title>
+    <title>Sarzamin AR</title>
 
-<link rel="stylesheet" href="./style.css?v=131">
 
-<script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <!-- CSS -->
+    <link rel="stylesheet" href="./style.css?v=131">
 
-<script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
-<script defer src="app.js?v=131"></script>
+    <!-- A-FRAME -->
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+
+
+    <!-- MINDAR -->
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+
+
+    <!-- APP -->
+    <script defer src="app.js?v=131"></script>
+
+
+    <style>
+
+        html,
+        body {
+
+            margin: 0;
+            padding: 0;
+
+            width: 100%;
+            height: 100%;
+
+            overflow: hidden;
+
+            background: #000;
+
+        }
+
+
+        a-scene {
+
+            width: 100%;
+            height: 100%;
+
+        }
+
+
+        /*
+        ویدیوی واقعی داخل صفحه دیده نمی‌شود.
+        فقط A-Frame آن را روی Target نمایش می‌دهد.
+        */
+
+        #arVideo {
+
+            position: fixed;
+
+            width: 1px;
+            height: 1px;
+
+            opacity: 0;
+
+            pointer-events: none;
+
+        }
+
+    </style>
 
 </head>
 
+
 <body>
 
-<!-- فقط یک ویدیو -->
-<a-assets>
 
-    <video
-    id="arVideo"
-    preload="none"
-    loop
-    playsinline
-    webkit-playsinline>
-</video>
-        
-
-</a-assets>
-
+<!-- =====================================================
+     AR SCENE
+===================================================== -->
 
 <a-scene
+
     id="arScene"
 
+
     mindar-image="
+
         imageTargetSrc: ./Group1/targets.mind;
+
         autoStart: true;
+
         uiLoading: yes;
+
         uiScanning: yes;
+
         uiError: yes;
-        warmupTolerance: 5;
-        missTolerance: 3;
+
+        warmupTolerance: 2;
+
+        missTolerance: 1;
+
         filterMinCF: 0.0001;
+
         filterBeta: 0.001;
+
     "
+
 
     embedded
 
+
     color-space="sRGB"
 
+
     renderer="
+
         colorManagement: true;
+
         physicallyCorrectLights: false;
+
     "
+
 
     vr-mode-ui="enabled:false"
 
+
     device-orientation-permission-ui="enabled:false"
+
 >
 
 
-<a-camera
-    position="0 0 0"
-    look-controls="enabled:false">
-</a-camera>
+    <!-- =================================================
+         VIDEO ASSET
+         فقط یک ویدیو داریم
+         app.js هنگام پیدا شدن Target فایل را عوض می‌کند
+    ================================================== -->
+
+    <a-assets>
+
+        <video
+
+            id="arVideo"
+
+            preload="none"
+
+            loop
+
+            playsinline
+
+            webkit-playsinline
+
+        ></video>
+
+    </a-assets>
 
 
-<!-- TARGET 0 -->
-<a-entity mindar-image-target="targetIndex:0">
-    <a-video
-        class="arVideoPlane"
-        src="#arVideo"
-        width="1"
-        height="1.42"
+    <!-- =================================================
+         CAMERA
+    ================================================== -->
+
+    <a-camera
+
         position="0 0 0"
-        visible="false">
-    </a-video>
-</a-entity>
+
+        look-controls="enabled:false"
+
+    ></a-camera>
 
 
-<!-- TARGET 1 -->
-<a-entity mindar-image-target="targetIndex:1">
-    <a-video
-        class="arVideoPlane"
-        src="#arVideo"
-        width="1"
-        height="1.42"
-        position="0 0 0"
-        visible="false">
-    </a-video>
-</a-entity>
+    <!-- =================================================
+         TARGET 0
+    ================================================== -->
+
+    <a-entity
+        mindar-image-target="targetIndex:0">
+
+        <a-video
+
+            class="arVideoPlane"
+
+            src="#arVideo"
+
+            width="1"
+
+            height="1.42"
+
+            position="0 0 0"
+
+            visible="false"
+
+        ></a-video>
+
+    </a-entity>
 
 
-<!-- TARGET 2 -->
-<a-entity mindar-image-target="targetIndex:2">
-    <a-video
-        class="arVideoPlane"
-        src="#arVideo"
-        width="1"
-        height="1.42"
-        position="0 0 0"
-        visible="false">
-    </a-video>
-</a-entity>
+    <!-- =================================================
+         TARGET 1
+    ================================================== -->
+
+    <a-entity
+        mindar-image-target="targetIndex:1">
+
+        <a-video
+            class="arVideoPlane"
+            src="#arVideo"
+            width="1"
+            height="1.42"
+            position="0 0 0"
+            visible="false">
+        </a-video>
+
+    </a-entity>
 
 
-<!-- TARGET 3 -->
-<a-entity mindar-image-target="targetIndex:3">
-    <a-video class="arVideoPlane" src="#arVideo"
-        width="1" height="1.42"
-        position="0 0 0" visible="false">
-    </a-video>
-</a-entity>
+    <!-- TARGET 2 -->
+
+    <a-entity
+        mindar-image-target="targetIndex:2">
+
+        <a-video
+            class="arVideoPlane"
+            src="#arVideo"
+            width="1"
+            height="1.42"
+            position="0 0 0"
+            visible="false">
+        </a-video>
+
+    </a-entity>
 
 
-<!-- TARGET 4 -->
-<a-entity mindar-image-target="targetIndex:4">
-    <a-video class="arVideoPlane" src="#arVideo"
-        width="1" height="1.42"
-        position="0 0 0" visible="false">
-    </a-video>
-</a-entity>
+    <!-- TARGET 3 -->
+
+    <a-entity
+        mindar-image-target="targetIndex:3">
+
+        <a-video
+            class="arVideoPlane"
+            src="#arVideo"
+            width="1"
+            height="1.42"
+            position="0 0 0"
+            visible="false">
+        </a-video>
+
+    </a-entity>
 
 
-<!-- TARGET 5 -->
-<a-entity mindar-image-target="targetIndex:5">
-    <a-video class="arVideoPlane" src="#arVideo"
-        width="1" height="1.42"
-        position="0 0 0" visible="false">
-    </a-video>
-</a-entity>
+    <!-- TARGET 4 -->
+
+    <a-entity
+        mindar-image-target="targetIndex:4">
+
+        <a-video
+            class="arVideoPlane"
+            src="#arVideo"
+            width="1"
+            height="1.42"
+            position="0 0 0"
+            visible="false">
+        </a-video>
+
+    </a-entity>
 
 
-<!-- TARGET 6 -->
-<a-entity mindar-image-target="targetIndex:6">
-    <a-video class="arVideoPlane" src="#arVideo"
-        width="1" height="1.42"
-        position="0 0 0" visible="false">
-    </a-video>
-</a-entity>
+    <!-- TARGET 5 -->
+
+    <a-entity
+        mindar-image-target="targetIndex:5">
+
+        <a-video
+            class="arVideoPlane"
+            src="#arVideo"
+            width="1"
+            height="1.42"
+            position="0 0 0"
+            visible="false">
+        </a-video>
+
+    </a-entity>
 
 
-<!-- TARGET 7 -->
-<a-entity mindar-image-target="targetIndex:7">
-    <a-video class="arVideoPlane" src="#arVideo"
-        width="1" height="1.42"
-        position="0 0 0" visible="false">
-    </a-video>
-</a-entity>
+    <!-- TARGET 6 -->
+
+    <a-entity
+        mindar-image-target="targetIndex:6">
+
+        <a-video
+            class="arVideoPlane"
+            src="#arVideo"
+            width="1"
+            height="1.42"
+            position="0 0 0"
+            visible="false">
+        </a-video>
+
+    </a-entity>
 
 
-<!-- TARGET 8 -->
-<a-entity mindar-image-target="targetIndex:8">
-    <a-video class="arVideoPlane" src="#arVideo"
-        width="1" height="1.42"
-        position="0 0 0" visible="false">
-    </a-video>
-</a-entity>
+    <!-- TARGET 7 -->
+
+    <a-entity
+        mindar-image-target="targetIndex:7">
+
+        <a-video
+            class="arVideoPlane"
+            src="#arVideo"
+            width="1"
+            height="1.42"
+            position="0 0 0"
+            visible="false">
+        </a-video>
+
+    </a-entity>
 
 
-<!-- TARGET 9 -->
-<a-entity mindar-image-target="targetIndex:9">
-    <a-video class="arVideoPlane" src="#arVideo"
-        width="1" height="1.42"
-        position="0 0 0" visible="false">
-    </a-video>
-</a-entity>
+    <!-- TARGET 8 -->
+
+    <a-entity
+        mindar-image-target="targetIndex:8">
+
+        <a-video
+            class="arVideoPlane"
+            src="#arVideo"
+            width="1"
+            height="1.42"
+            position="0 0 0"
+            visible="false">
+        </a-video>
+
+    </a-entity>
 
 
-<!-- TARGET 10 -->
-<a-entity mindar-image-target="targetIndex:10">
-    <a-video class="arVideoPlane" src="#arVideo"
-        width="1" height="1.42"
-        position="0 0 0" visible="false">
-    </a-video>
-</a-entity>
+    <!-- TARGET 9 -->
+
+    <a-entity
+        mindar-image-target="targetIndex:9">
+
+        <a-video
+            class="arVideoPlane"
+            src="#arVideo"
+            width="1"
+            height="1.42"
+            position="0 0 0"
+            visible="false">
+        </a-video>
+
+    </a-entity>
 
 
-<!-- TARGET 11 -->
-<a-entity mindar-image-target="targetIndex:11">
-    <a-video class="arVideoPlane" src="#arVideo"
-        width="1" height="1.42"
-        position="0 0 0" visible="false">
-    </a-video>
-</a-entity>
+    <!-- TARGET 10 -->
+
+    <a-entity
+        mindar-image-target="targetIndex:10">
+
+        <a-video
+            class="arVideoPlane"
+            src="#arVideo"
+            width="1"
+            height="1.42"
+            position="0 0 0"
+            visible="false">
+        </a-video>
+
+    </a-entity>
 
 
-<!-- TARGET 12 -->
-<a-entity mindar-image-target="targetIndex:12">
-    <a-video class="arVideoPlane" src="#arVideo"
-        width="1" height="1.42"
-        position="0 0 0" visible="false">
-    </a-video>
-</a-entity>
+    <!-- TARGET 11 -->
+
+    <a-entity
+        mindar-image-target="targetIndex:11">
+
+        <a-video
+            class="arVideoPlane"
+            src="#arVideo"
+            width="1"
+            height="1.42"
+            position="0 0 0"
+            visible="false">
+        </a-video>
+
+    </a-entity>
 
 
-<!-- TARGET 13 -->
-<a-entity mindar-image-target="targetIndex:13">
-    <a-video class="arVideoPlane" src="#arVideo"
-        width="1" height="1.42"
-        position="0 0 0" visible="false">
-    </a-video>
-</a-entity>
+    <!-- TARGET 12 -->
+
+    <a-entity
+        mindar-image-target="targetIndex:12">
+
+        <a-video
+            class="arVideoPlane"
+            src="#arVideo"
+            width="1"
+            height="1.42"
+            position="0 0 0"
+            visible="false">
+        </a-video>
+
+    </a-entity>
 
 
-<!-- TARGET 14 -->
-<a-entity mindar-image-target="targetIndex:14">
-    <a-video class="arVideoPlane" src="#arVideo"
-        width="1" height="1.42"
-        position="0 0 0" visible="false">
-    </a-video>
-</a-entity>
+    <!-- TARGET 13 -->
+
+    <a-entity
+        mindar-image-target="targetIndex:13">
+
+        <a-video
+            class="arVideoPlane"
+            src="#arVideo"
+            width="1"
+            height="1.42"
+            position="0 0 0"
+            visible="false">
+        </a-video>
+
+    </a-entity>
 
 
-<!-- TARGET 15 -->
-<a-entity mindar-image-target="targetIndex:15">
-    <a-video class="arVideoPlane" src="#arVideo"
-        width="1" height="1.42"
-        position="0 0 0" visible="false">
-    </a-video>
-</a-entity>
+    <!-- TARGET 14 -->
+
+    <a-entity
+        mindar-image-target="targetIndex:14">
+
+        <a-video
+            class="arVideoPlane"
+            src="#arVideo"
+            width="1"
+            height="1.42"
+            position="0 0 0"
+            visible="false">
+        </a-video>
+
+    </a-entity>
 
 
-<!-- TARGET 16 -->
-<a-entity mindar-image-target="targetIndex:16">
-    <a-video class="arVideoPlane" src="#arVideo"
-        width="1" height="1.42"
-        position="0 0 0" visible="false">
-    </a-video>
-</a-entity>
+    <!-- TARGET 15 -->
+
+    <a-entity
+        mindar-image-target="targetIndex:15">
+
+        <a-video
+            class="arVideoPlane"
+            src="#arVideo"
+            width="1"
+            height="1.42"
+            position="0 0 0"
+            visible="false">
+        </a-video>
+
+    </a-entity>
 
 
-<!-- TARGET 17 -->
-<a-entity mindar-image-target="targetIndex:17">
-    <a-video class="arVideoPlane" src="#arVideo"
-        width="1" height="1.42"
-        position="0 0 0" visible="false">
-    </a-video>
-</a-entity>
+    <!-- TARGET 16 -->
+
+    <a-entity
+        mindar-image-target="targetIndex:16">
+
+        <a-video
+            class="arVideoPlane"
+            src="#arVideo"
+            width="1"
+            height="1.42"
+            position="0 0 0"
+            visible="false">
+        </a-video>
+
+    </a-entity>
 
 
-<!-- TARGET 18 -->
-<a-entity mindar-image-target="targetIndex:18">
-    <a-video class="arVideoPlane" src="#arVideo"
-        width="1" height="1.42"
-        position="0 0 0" visible="false">
-    </a-video>
-</a-entity>
+    <!-- TARGET 17 -->
+
+    <a-entity
+        mindar-image-target="targetIndex:17">
+
+        <a-video
+            class="arVideoPlane"
+            src="#arVideo"
+            width="1"
+            height="1.42"
+            position="0 0 0"
+            visible="false">
+        </a-video>
+
+    </a-entity>
 
 
-<!-- TARGET 19 -->
-<a-entity mindar-image-target="targetIndex:19">
-    <a-video class="arVideoPlane" src="#arVideo"
-        width="1" height="1.42"
-        position="0 0 0" visible="false">
-    </a-video>
-</a-entity>
+    <!-- TARGET 18 -->
+
+    <a-entity
+        mindar-image-target="targetIndex:18">
+
+        <a-video
+            class="arVideoPlane"
+            src="#arVideo"
+            width="1"
+            height="1.42"
+            position="0 0 0"
+            visible="false">
+        </a-video>
+
+    </a-entity>
 
 
-<!-- TARGET 20 -->
-<a-entity mindar-image-target="targetIndex:20">
-    <a-video class="arVideoPlane" src="#arVideo"
-        width="1" height="1.42"
-        position="0 0 0" visible="false">
-    </a-video>
-</a-entity>
+    <!-- TARGET 19 -->
+
+    <a-entity
+        mindar-image-target="targetIndex:19">
+
+        <a-video
+            class="arVideoPlane"
+            src="#arVideo"
+            width="1"
+            height="1.42"
+            position="0 0 0"
+            visible="false">
+        </a-video>
+
+    </a-entity>
 
 
-<!-- TARGET 21 -->
-<a-entity mindar-image-target="targetIndex:21">
-    <a-video class="arVideoPlane" src="#arVideo"
-        width="1" height="1.42"
-        position="0 0 0" visible="false">
-    </a-video>
-</a-entity>
+    <!-- TARGET 20 -->
+
+    <a-entity
+        mindar-image-target="targetIndex:20">
+
+        <a-video
+            class="arVideoPlane"
+            src="#arVideo"
+            width="1"
+            height="1.42"
+            position="0 0 0"
+            visible="false">
+        </a-video>
+
+    </a-entity>
 
 
-<!-- TARGET 22 -->
-<a-entity mindar-image-target="targetIndex:22">
-    <a-video class="arVideoPlane" src="#arVideo"
-        width="1" height="1.42"
-        position="0 0 0" visible="false">
-    </a-video>
-</a-entity>
+    <!-- TARGET 21 -->
+
+    <a-entity
+        mindar-image-target="targetIndex:21">
+
+        <a-video
+            class="arVideoPlane"
+            src="#arVideo"
+            width="1"
+            height="1.42"
+            position="0 0 0"
+            visible="false">
+        </a-video>
+
+    </a-entity>
 
 
-<!-- TARGET 23 -->
-<a-entity mindar-image-target="targetIndex:23">
-    <a-video class="arVideoPlane" src="#arVideo"
-        width="1" height="1.42"
-        position="0 0 0" visible="false">
-    </a-video>
-</a-entity>
+    <!-- TARGET 22 -->
+
+    <a-entity
+        mindar-image-target="targetIndex:22">
+
+        <a-video
+            class="arVideoPlane"
+            src="#arVideo"
+            width="1"
+            height="1.42"
+            position="0 0 0"
+            visible="false">
+        </a-video>
+
+    </a-entity>
 
 
-<!-- TARGET 24 -->
-<a-entity mindar-image-target="targetIndex:24">
-    <a-video class="arVideoPlane" src="#arVideo"
-        width="1" height="1.42"
-        position="0 0 0" visible="false">
-    </a-video>
-</a-entity>
+    <!-- TARGET 23 -->
+
+    <a-entity
+        mindar-image-target="targetIndex:23">
+
+        <a-video
+            class="arVideoPlane"
+            src="#arVideo"
+            width="1"
+            height="1.42"
+            position="0 0 0"
+            visible="false">
+        </a-video>
+
+    </a-entity>
 
 
-<!-- TARGET 25 -->
-<a-entity mindar-image-target="targetIndex:25">
-    <a-video class="arVideoPlane" src="#arVideo"
-        width="1" height="1.42"
-        position="0 0 0" visible="false">
-    </a-video>
-</a-entity>
+    <!-- TARGET 24 -->
+
+    <a-entity
+        mindar-image-target="targetIndex:24">
+
+        <a-video
+            class="arVideoPlane"
+            src="#arVideo"
+            width="1"
+            height="1.42"
+            position="0 0 0"
+            visible="false">
+        </a-video>
+
+    </a-entity>
 
 
-<!-- TARGET 26 -->
-<a-entity mindar-image-target="targetIndex:26">
-    <a-video class="arVideoPlane" src="#arVideo"
-        width="1" height="1.42"
-        position="0 0 0" visible="false">
-    </a-video>
-</a-entity>
+    <!-- TARGET 25 -->
+
+    <a-entity
+        mindar-image-target="targetIndex:25">
+
+        <a-video
+            class="arVideoPlane"
+            src="#arVideo"
+            width="1"
+            height="1.42"
+            position="0 0 0"
+            visible="false">
+        </a-video>
+
+    </a-entity>
 
 
-<!-- TARGET 27 -->
-<a-entity mindar-image-target="targetIndex:27">
-    <a-video class="arVideoPlane" src="#arVideo"
-        width="1" height="1.42"
-        position="0 0 0" visible="false">
-    </a-video>
-</a-entity>
+    <!-- TARGET 26 -->
+
+    <a-entity
+        mindar-image-target="targetIndex:26">
+
+        <a-video
+            class="arVideoPlane"
+            src="#arVideo"
+            width="1"
+            height="1.42"
+            position="0 0 0"
+            visible="false">
+        </a-video>
+
+    </a-entity>
 
 
-<!-- TARGET 28 -->
-<a-entity mindar-image-target="targetIndex:28">
-    <a-video class="arVideoPlane" src="#arVideo"
-        width="1" height="1.42"
-        position="0 0 0" visible="false">
-    </a-video>
-</a-entity>
+    <!-- TARGET 27 -->
+
+    <a-entity
+        mindar-image-target="targetIndex:27">
+
+        <a-video
+            class="arVideoPlane"
+            src="#arVideo"
+            width="1"
+            height="1.42"
+            position="0 0 0"
+            visible="false">
+        </a-video>
+
+    </a-entity>
 
 
-<!-- TARGET 29 -->
-<a-entity mindar-image-target="targetIndex:29">
-    <a-video class="arVideoPlane" src="#arVideo"
-        width="1" height="1.42"
-        position="0 0 0" visible="false">
-    </a-video>
-</a-entity>
+    <!-- TARGET 28 -->
+
+    <a-entity
+        mindar-image-target="targetIndex:28">
+
+        <a-video
+            class="arVideoPlane"
+            src="#arVideo"
+            width="1"
+            height="1.42"
+            position="0 0 0"
+            visible="false">
+        </a-video>
+
+    </a-entity>
+
+
+    <!-- TARGET 29 -->
+
+    <a-entity
+        mindar-image-target="targetIndex:29">
+
+        <a-video
+            class="arVideoPlane"
+            src="#arVideo"
+            width="1"
+            height="1.42"
+            position="0 0 0"
+            visible="false">
+        </a-video>
+
+    </a-entity>
 
 
 </a-scene>
 
+
 </body>
+
 </html>
