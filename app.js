@@ -355,15 +355,6 @@ function startAR(groupName) {
         );
 
 
-    /*
-     * مهم
-     */
-
-    scene.setAttribute(
-        "embedded",
-        ""
-    );
-
 
     /* =====================================================
        MINDAR
