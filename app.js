@@ -1,1284 +1,1203 @@
-/* =========================================================
-   SARZAMIN SHEGEFTANGIZ - WEB AR
-   ========================================================= */
+// ==========================================
+// SARZAMIN AR - APP.JS
+// ==========================================
 
 let scene = null;
 let video = null;
+
 let activeTarget = null;
 let activePlane = null;
 
 
-/* =========================================================
-   GROUPS
-   ========================================================= */
+// ==========================================
+// GROUPS
+// ==========================================
 
 const GROUPS = {
 
-  Group1: {
-    mind: "./Group1/targets.mind",
-    first: 1,
-    last: 30,
-    title: "دسته یک"
-  },
+    Group1: {
+        title: "گروه اول",
+        mind: "./Group1/targets.mind",
+        first: 1,
+        last: 30
+    },
 
-  Group2: {
-    mind: "./Group2/targets.mind",
-    first: 31,
-    last: 60,
-    title: "دسته دو"
-  },
+    Group2: {
+        title: "گروه دوم",
+        mind: "./Group2/targets.mind",
+        first: 31,
+        last: 60
+    },
 
-  Group3: {
-    mind: "./Group3/targets.mind",
-    first: 61,
-    last: 90,
-    title: "دسته سه"
-  }
+    Group3: {
+        title: "گروه سوم",
+        mind: "./Group3/targets.mind",
+        first: 61,
+        last: 90
+    }
 
 };
 
 
-/* =========================================================
-   START
-   ========================================================= */
+// ==========================================
+// START APP
+// ==========================================
 
 document.addEventListener("DOMContentLoaded", () => {
-  showCategories();
+
+    createAppRoot();
+
+    showCategories();
+
 });
 
 
-/* =========================================================
-   CLEAR PAGE
-   ========================================================= */
+// ==========================================
+// APP ROOT
+// ==========================================
+
+function createAppRoot() {
+
+    let root = document.getElementById("appRoot");
+
+    if (!root) {
+
+        root = document.createElement("div");
+
+        root.id = "appRoot";
+
+        document.body.appendChild(root);
+
+    }
+
+    return root;
+}
+
+
+// ==========================================
+// CLEAR APP
+// ==========================================
 
 function clearPage() {
 
-  try {
-    if (
-      scene &&
-      scene.systems &&
-      scene.systems["mindar-image-system"]
-    ) {
-      scene.systems["mindar-image-system"].stop();
+    try {
+
+        if (
+            scene &&
+            scene.systems &&
+            scene.systems["mindar-image-system"]
+        ) {
+
+            scene.systems["mindar-image-system"].stop();
+
+        }
+
+    } catch (e) {}
+
+    activeTarget = null;
+    activePlane = null;
+
+    if (video) {
+
+        try {
+
+            video.pause();
+
+            video.removeAttribute("src");
+
+            video.load();
+
+        } catch (e) {}
+
+        video.remove();
+
+        video = null;
+
     }
-  } catch (e) {}
 
-  scene = null;
-  video = null;
-  activeTarget = null;
-  activePlane = null;
+    if (scene) {
 
-  document.body.innerHTML = "";
+        try {
+
+            scene.remove();
+
+        } catch (e) {}
+
+        scene = null;
+
+    }
+
+    const root = document.getElementById("appRoot");
+
+    if (root) {
+
+        root.innerHTML = "";
+
+    }
+
+    const oldCameraButton = document.getElementById("openCamera");
+
+    if (oldCameraButton) {
+
+        oldCameraButton.remove();
+
+    }
+
+    const oldChange = document.getElementById("changeGroup");
+
+    if (oldChange) {
+
+        oldChange.remove();
+
+    }
 
 }
 
 
-/* =========================================================
-   BASIC STYLE
-   ========================================================= */
-
-function addStyle() {
-
-  if (document.getElementById("sarzaminStyle")) {
-    return;
-  }
-
-  const style = document.createElement("style");
-
-  style.id = "sarzaminStyle";
-
-  style.innerHTML = `
-
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    html,
-    body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      font-family: Arial, sans-serif;
-      direction: rtl;
-      background: #111;
-    }
-
-    button {
-      font-family: Arial, sans-serif;
-      border: 0;
-      cursor: pointer;
-    }
-
-    .mainPage {
-      width: 100%;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 25px;
-      background:
-        radial-gradient(circle at top, #5b21b6, #111 65%);
-    }
-
-    .mainTitle {
-      color: white;
-      font-size: 32px;
-      font-weight: bold;
-      margin-bottom: 10px;
-      text-align: center;
-    }
-
-    .mainSub {
-      color: #ddd;
-      font-size: 17px;
-      margin-bottom: 35px;
-      text-align: center;
-    }
-
-    .groupButton {
-      width: min(90%, 330px);
-      padding: 17px;
-      margin: 8px;
-      border-radius: 18px;
-      background: white;
-      color: #222;
-      font-size: 18px;
-      font-weight: bold;
-      box-shadow: 0 5px 20px rgba(0,0,0,.25);
-    }
-
-    .groupButton:active {
-      transform: scale(.97);
-    }
-
-    .galleryPage {
-      width: 100%;
-      min-height: 100vh;
-      overflow-y: auto;
-      padding: 20px 12px 40px;
-      background:
-        linear-gradient(180deg, #24104f, #090909);
-    }
-
-    .galleryTitle {
-      color: white;
-      text-align: center;
-      font-size: 25px;
-      font-weight: bold;
-      margin: 10px 0 22px;
-    }
-
-    .galleryGrid {
-      width: 100%;
-      max-width: 700px;
-      margin: auto;
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-    }
-
-    .galleryItem {
-      background: white;
-      border-radius: 14px;
-      padding: 7px;
-      box-shadow: 0 4px 15px rgba(0,0,0,.3);
-      overflow: hidden;
-    }
-
-    .galleryItem img {
-      width: 100%;
-      display: block;
-      aspect-ratio: 3 / 4;
-      object-fit: cover;
-      border-radius: 10px;
-      background: #ddd;
-    }
-
-    .galleryNumber {
-      text-align: center;
-      color: #222;
-      font-weight: bold;
-      font-size: 15px;
-      padding: 7px 2px 4px;
-    }
-
-    .galleryAR {
-      width: 100%;
-      margin-top: 6px;
-      padding: 10px 5px;
-      border-radius: 10px;
-      background: #6d28d9;
-      color: white;
-      font-size: 14px;
-      font-weight: bold;
-    }
-
-    .backButton {
-      display: block;
-      margin: 5px auto 18px;
-      padding: 11px 20px;
-      border-radius: 12px;
-      background: white;
-      color: #222;
-      font-size: 15px;
-      font-weight: bold;
-    }
-
-    #changeGroup {
-      position: fixed !important;
-      top: 12px !important;
-      right: 12px !important;
-      z-index: 99999 !important;
-      padding: 10px 13px;
-      border-radius: 12px;
-      background: rgba(0,0,0,.72);
-      color: white;
-      font-size: 14px;
-      font-weight: bold;
-      box-shadow: 0 3px 12px rgba(0,0,0,.35);
-    }
-
-    #arVideo {
-      pointer-events: none !important;
-    }
-
-    .a-canvas {
-      width: 100% !important;
-      height: 100% !important;
-    }
-
-    .a-scene {
-      width: 100% !important;
-      height: 100% !important;
-    }
-
-  `;
-
-  document.head.appendChild(style);
-
-}
-
-
-/* =========================================================
-   CATEGORY MENU
-   ========================================================= */
+// ==========================================
+// GROUP SELECTION
+// ==========================================
 
 function showCategories() {
 
-  clearPage();
+    clearPage();
 
-  addStyle();
+    const root = createAppRoot();
 
-  const page =
-    document.createElement("div");
+    root.style.width = "100%";
 
-  page.className = "mainPage";
+    root.style.minHeight = "100vh";
 
-
-  const title =
-    document.createElement("div");
-
-  title.className = "mainTitle";
-
-  title.textContent =
-    "✨ سرزمین شگفت‌انگیز ✨";
-
-  page.appendChild(title);
+    root.innerHTML = "";
 
 
-  const sub =
-    document.createElement("div");
+    const title = document.createElement("div");
 
-  sub.className = "mainSub";
+    title.className = "gallery-title";
 
-  sub.textContent =
-    "دفتر مورد علاقه‌ات را انتخاب کن";
+    title.textContent = "سرزمین شگفت‌انگیز";
 
-  page.appendChild(sub);
+    root.appendChild(title);
 
 
-  Object.keys(GROUPS).forEach(
-    groupName => {
+    const subtitle = document.createElement("div");
 
-      const button =
-        document.createElement("button");
+    subtitle.style.textAlign = "center";
 
-      button.className =
-        "groupButton";
+    subtitle.style.fontSize = "16px";
 
-      button.textContent =
-        GROUPS[groupName].title;
+    subtitle.style.marginBottom = "20px";
 
-      button.onclick =
-        () => showGallery(groupName);
+    subtitle.textContent = "یک گروه را انتخاب کنید";
 
-      page.appendChild(button);
-
-    }
-  );
+    root.appendChild(subtitle);
 
 
-  document.body.appendChild(page);
+    Object.keys(GROUPS).forEach(groupName => {
 
-}
+        const button = document.createElement("button");
+
+        button.textContent = GROUPS[groupName].title;
+
+        button.style.display = "block";
+
+        button.style.width = "calc(100% - 30px)";
+
+        button.style.margin = "12px auto";
+
+        button.style.padding = "18px";
+
+        button.style.border = "none";
+
+        button.style.borderRadius = "16px";
+
+        button.style.background = "#111";
+
+        button.style.color = "white";
+
+        button.style.fontSize = "18px";
+
+        button.style.fontWeight = "bold";
+
+        button.style.cursor = "pointer";
 
 
-/* =========================================================
-   IMAGE EXTENSION
-   ========================================================= */
+        button.onclick = () => {
 
-function getImageExtension(number) {
+            showGallery(groupName);
 
-  /*
-     تصاویر PNG خاص
-  */
+        };
 
-  if (
-    number === 19 ||
-    number === 24 ||
-    number === 26
-  ) {
-    return "png";
-  }
 
-  return "jpg";
+        root.appendChild(button);
+
+    });
 
 }
 
 
-/* =========================================================
-   GALLERY
-   ========================================================= */
+// ==========================================
+// GALLERY
+// ==========================================
 
 function showGallery(groupName) {
 
-  clearPage();
+    clearPage();
 
-  addStyle();
+    const root = createAppRoot();
 
-  const config =
-    GROUPS[groupName];
+    root.innerHTML = "";
 
-
-  const page =
-    document.createElement("div");
-
-  page.className =
-    "galleryPage";
+    root.id = "galleryPage";
 
 
-  const back =
-    document.createElement("button");
-
-  back.className =
-    "backButton";
-
-  back.textContent =
-    "← برگشت";
-
-  back.onclick =
-    showCategories;
-
-  page.appendChild(back);
+    const config = GROUPS[groupName];
 
 
-  const title =
-    document.createElement("div");
+    // عنوان
 
-  title.className =
-    "galleryTitle";
+    const title = document.createElement("div");
 
-  title.textContent =
-    config.title;
+    title.className = "gallery-title";
 
-  page.appendChild(title);
+    title.textContent = config.title;
 
-
-  const grid =
-    document.createElement("div");
-
-  grid.className =
-    "galleryGrid";
+    root.appendChild(title);
 
 
-  for (
-    let number = config.first;
-    number <= config.last;
-    number++
-  ) {
+    // شبکه عکس‌ها
 
-    const item =
-      document.createElement("div");
+    const grid = document.createElement("div");
 
-    item.className =
-      "galleryItem";
+    grid.className = "gallery-grid";
+
+    root.appendChild(grid);
 
 
-    const img =
-      document.createElement("img");
+    // ======================================
+    // CREATE 30 IMAGES
+    // ======================================
 
-    const extension =
-      getImageExtension(number);
+    for (
+        let number = config.first;
+        number <= config.last;
+        number++
+    ) {
 
+        const filename = String(number).padStart(2, "0");
 
-    /*
-       فایل‌ها مستقیماً داخل Group هستند
-       مثال:
-       Group1/01.jpg
-       Group1/02.jpg
-    */
-
-    img.src =
-      `./${groupName}/${number}.${extension}`;
-
-    img.alt =
-      `دفتر ${number}`;
-
-    img.loading =
-      "lazy";
+        let extension = "jpg";
 
 
-    item.appendChild(img);
+        // فایل‌های PNG
+
+        if (
+            number === 19 ||
+            number === 24 ||
+            number === 26
+        ) {
+
+            extension = "png";
+
+        }
 
 
-    const num =
-      document.createElement("div");
+        const img = document.createElement("img");
 
-    num.className =
-      "galleryNumber";
+        img.className = "gallery-image";
 
-    num.textContent =
-      `دفتر ${number}`;
+        img.src =
+            `./${groupName}/${filename}.${extension}`;
 
-    item.appendChild(num);
+        img.alt = "";
 
-
-    const ar =
-      document.createElement("button");
-
-    ar.className =
-      "galleryAR";
-
-    ar.textContent =
-      "✨ اجرای انیمیشن";
-
-    ar.onclick =
-      () => startAR(groupName);
-
-    item.appendChild(ar);
+        img.draggable = false;
 
 
-    grid.appendChild(item);
+        // ==================================
+        // IMPORTANT:
+        // IMAGE IS NOT CLICKABLE
+        // ==================================
 
-  }
+        img.onclick = (event) => {
+
+            event.preventDefault();
+
+        };
 
 
-  page.appendChild(grid);
+        grid.appendChild(img);
 
-  document.body.appendChild(page);
+    }
+
+
+    // ======================================
+    // CAMERA BUTTON
+    // ======================================
+
+    const cameraButton = document.createElement("button");
+
+    cameraButton.id = "openCamera";
+
+    cameraButton.textContent = "📷 باز کردن دوربین";
+
+
+    cameraButton.onclick = () => {
+
+        startAR(groupName);
+
+    };
+
+
+    document.body.appendChild(cameraButton);
 
 }
 
 
-/* =========================================================
-   START AR
-   ========================================================= */
+// ==========================================
+// START AR
+// ==========================================
 
 function startAR(groupName) {
 
-  clearPage();
+    clearPage();
 
-  addStyle();
-
-  const config =
-    GROUPS[groupName];
+    const config = GROUPS[groupName];
 
 
-  /* =======================================================
-     VIDEO
-  ======================================================= */
+    // ======================================
+    // VIDEO ELEMENT
+    // ======================================
 
-  video =
-    document.createElement("video");
+    video = document.createElement("video");
 
-  video.id =
-    "arVideo";
+    video.id = "arVideo";
 
-  video.setAttribute(
-    "playsinline",
-    ""
-  );
+    video.setAttribute("playsinline", "");
 
-  video.setAttribute(
-    "webkit-playsinline",
-    ""
-  );
+    video.setAttribute("webkit-playsinline", "");
 
-  video.autoplay =
-    false;
+    video.autoplay = false;
 
-  video.loop =
-    false;
+    video.loop = false;
 
-  video.muted =
-    true;
+    video.muted = true;
 
-  video.playsInline =
-    true;
+    video.playsInline = true;
 
-  video.preload =
-    "auto";
-
-  video.style.position =
-    "fixed";
-
-  video.style.width =
-    "1px";
-
-  video.style.height =
-    "1px";
-
-  video.style.opacity =
-    "0";
-
-  video.style.pointerEvents =
-    "none";
-
-  document.body.appendChild(video);
+    video.preload = "auto";
 
 
-  /* =======================================================
-     SCENE
-     ======================================================= */
+    video.style.position = "fixed";
 
-  scene =
-    document.createElement("a-scene");
+    video.style.width = "1px";
 
+    video.style.height = "1px";
 
-  scene.setAttribute(
-    "mindar-image",
-    `
-      imageTargetSrc: ${config.mind};
-      autoStart: true;
-      uiLoading: no;
-      uiScanning: yes;
-      uiError: yes;
-      warmupTolerance: 3;
-      missTolerance: 2;
-      filterMinCF: 0.0001;
-      filterBeta: 0.001;
-    `
-  );
+    video.style.opacity = "0";
+
+    video.style.pointerEvents = "none";
+
+    video.style.left = "-10px";
+
+    video.style.top = "-10px";
 
 
-  scene.setAttribute(
-    "embedded",
-    ""
-  );
+    document.body.appendChild(video);
 
 
-  scene.setAttribute(
-    "color-space",
-    "sRGB"
-  );
+    // ======================================
+    // A-FRAME SCENE
+    // ======================================
+
+    scene = document.createElement("a-scene");
 
 
-  /*
-     alpha:true حذف شده
-     تا دوربین سیاه نشود
-  */
-
-  scene.setAttribute(
-    "renderer",
-    "colorManagement: true;"
-  );
-
-
-  scene.setAttribute(
-    "vr-mode-ui",
-    "enabled: false"
-  );
-
-
-  scene.setAttribute(
-    "device-orientation-permission-ui",
-    "enabled: false"
-  );
+    scene.setAttribute(
+        "mindar-image",
+        `
+        imageTargetSrc: ${config.mind};
+        autoStart: true;
+        uiLoading: no;
+        uiScanning: yes;
+        uiError: yes;
+        warmupTolerance: 3;
+        missTolerance: 2;
+        filterMinCF: 0.0001;
+        filterBeta: 0.001;
+        `
+    );
 
 
-  scene.style.position =
-    "fixed";
+    scene.setAttribute("embedded", "");
 
-  scene.style.left =
-    "0";
+    scene.setAttribute(
+        "renderer",
+        "colorManagement: true; physicallyCorrectLights: true;"
+    );
 
-  scene.style.top =
-    "0";
+    scene.setAttribute(
+        "color-space",
+        "sRGB"
+    );
 
-  scene.style.width =
-    "100%";
+    scene.setAttribute(
+        "vr-mode-ui",
+        "enabled: false"
+    );
 
-  scene.style.height =
-    "100%";
-
-  scene.style.zIndex =
-    "1";
-
-  scene.style.background =
-    "transparent";
-
-
-  /* =======================================================
-     CAMERA
-     ======================================================= */
-
-  const camera =
-    document.createElement("a-camera");
+    scene.setAttribute(
+        "device-orientation-permission-ui",
+        "enabled: false"
+    );
 
 
-  camera.setAttribute(
-    "position",
-    "0 0 0"
-  );
+    // ======================================
+    // SCENE STYLE
+    // ======================================
+
+    scene.style.position = "fixed";
+
+    scene.style.left = "0";
+
+    scene.style.top = "0";
+
+    scene.style.width = "100%";
+
+    scene.style.height = "100%";
+
+    scene.style.zIndex = "1";
+
+    scene.style.background = "transparent";
 
 
-  camera.setAttribute(
-    "look-controls",
-    "enabled: false"
-  );
+    // ======================================
+    // CAMERA
+    // ======================================
+
+    const camera = document.createElement("a-camera");
+
+    camera.setAttribute(
+        "position",
+        "0 0 0"
+    );
+
+    camera.setAttribute(
+        "look-controls",
+        "enabled: false"
+    );
+
+    camera.setAttribute(
+        "active",
+        "true"
+    );
+
+    camera.setAttribute(
+        "cursor",
+        "fuse: false; rayOrigin: mouse;"
+    );
+
+    camera.setAttribute(
+        "raycaster",
+        "near: 0; far: 100; objects: .arLink;"
+    );
 
 
-  /*
-     فعال کردن لمس روی عناصر AR
-  */
-
-  camera.setAttribute(
-    "cursor",
-    "fuse: false; rayOrigin: mouse;"
-  );
+    scene.appendChild(camera);
 
 
-  camera.setAttribute(
-    "raycaster",
-    "near: 0; far: 100; objects: .arLink;"
-  );
+    // ======================================
+    // CREATE 30 TARGETS
+    // ======================================
+
+    for (let i = 0; i < 30; i++) {
+
+        createTarget(
+            scene,
+            config,
+            groupName,
+            i
+        );
+
+    }
 
 
-  scene.appendChild(camera);
+    document.body.appendChild(scene);
 
 
-  /* =======================================================
-     TARGETS
-     ======================================================= */
+    // ======================================
+    // CHANGE GROUP BUTTON
+    // ======================================
 
-  for (
-    let i = 0;
-    i < 30;
-    i++
-  ) {
+    const change = document.createElement("button");
+
+    change.id = "changeGroup";
+
+    change.textContent = "🔄 تغییر گروه";
+
+
+    change.onclick = () => {
+
+        try {
+
+            if (
+                scene &&
+                scene.systems &&
+                scene.systems["mindar-image-system"]
+            ) {
+
+                scene.systems[
+                    "mindar-image-system"
+                ].stop();
+
+            }
+
+        } catch (e) {}
+
+
+        showCategories();
+
+    };
+
+
+    document.body.appendChild(change);
+
+
+    // ======================================
+    // EVENTS
+    // ======================================
+
+    scene.addEventListener(
+        "loaded",
+        () => {
+
+            console.log(
+                "A-Frame loaded:",
+                groupName
+            );
+
+        }
+    );
+
+
+    scene.addEventListener(
+        "arReady",
+        () => {
+
+            console.log(
+                "AR READY:",
+                groupName
+            );
+
+        }
+    );
+
+
+    scene.addEventListener(
+        "arError",
+        event => {
+
+            console.log(
+                "AR ERROR:",
+                event
+            );
+
+        }
+    );
+
+}
+
+
+// ==========================================
+// CREATE TARGET
+// ==========================================
+
+function createTarget(
+    scene,
+    config,
+    groupName,
+    index
+) {
 
     const target =
-      document.createElement(
-        "a-entity"
-      );
+        document.createElement(
+            "a-entity"
+        );
 
 
     target.setAttribute(
-      "mindar-image-target",
-      `targetIndex: ${i};`
+        "mindar-image-target",
+        `targetIndex: ${index};`
     );
 
 
-    /* =====================================================
-       VIDEO PLANE
-       ===================================================== */
+    // ======================================
+    // VIDEO PLANE
+    // ======================================
 
     const plane =
-      document.createElement(
-        "a-video"
-      );
+        document.createElement(
+            "a-video"
+        );
 
 
     plane.classList.add(
-      "arVideoPlane"
+        "arVideoPlane"
     );
 
 
     plane.setAttribute(
-      "src",
-      "#arVideo"
+        "src",
+        "#arVideo"
     );
 
 
     plane.setAttribute(
-      "width",
-      "1"
+        "width",
+        "1"
     );
 
 
     plane.setAttribute(
-      "height",
-      "1.42"
+        "height",
+        "1.42"
     );
 
 
     plane.setAttribute(
-      "position",
-      "0 0 0.01"
+        "position",
+        "0 0 0.01"
     );
 
 
     plane.setAttribute(
-      "visible",
-      "false"
+        "visible",
+        "false"
     );
 
 
     target.appendChild(plane);
 
 
-    /* =====================================================
-       INSTAGRAM CLICK AREA
-       روی @SarzaminAr که داخل خود ویدئو است
-       ===================================================== */
+    // ======================================
+    // INSTAGRAM TRANSPARENT CLICK AREA
+    // ======================================
 
     const insta =
-      document.createElement(
-        "a-plane"
-      );
+        document.createElement(
+            "a-plane"
+        );
 
 
     insta.classList.add(
-      "arLink"
+        "arLink",
+        "instagram-zone"
     );
 
 
     insta.setAttribute(
-      "width",
-      "0.55"
+        "width",
+        "0.55"
     );
 
 
     insta.setAttribute(
-      "height",
-      "0.16"
-    );
-
-
-    /*
-       بالا سمت چپ
-    */
-
-    insta.setAttribute(
-      "position",
-      "-0.28 0.61 0.06"
+        "height",
+        "0.16"
     );
 
 
     insta.setAttribute(
-      "material",
-      "transparent: true; opacity: 0; side: double;"
+        "position",
+        "-0.28 0.61 0.06"
+    );
+
+
+    insta.setAttribute(
+        "material",
+        "transparent: true; opacity: 0; side: double;"
     );
 
 
     target.appendChild(insta);
 
 
-    /* =====================================================
-       INSTAGRAM CLICK
-       ===================================================== */
+    // ======================================
+    // INSTAGRAM CLICK
+    // ======================================
 
     insta.addEventListener(
-      "click",
-      () => {
+        "click",
+        () => {
 
-        console.log(
-          "Instagram clicked"
-        );
-
-
-        const appURL =
-          "instagram://user?username=SarzaminAr";
+            console.log(
+                "Instagram clicked"
+            );
 
 
-        const webURL =
-          "https://www.instagram.com/SarzaminAr/";
+            const appURL =
+                "instagram://user?username=SarzaminAr";
 
 
-        /*
-           اول اپ اینستاگرام
-        */
-
-        window.location.href =
-          appURL;
+            const webURL =
+                "https://www.instagram.com/SarzaminAr/";
 
 
-        /*
-           اگر اپ باز نشد،
-           سایت اینستاگرام
-        */
-
-        setTimeout(
-          () => {
+            // ابتدا اپ اینستاگرام
 
             window.location.href =
-              webURL;
+                appURL;
 
-          },
-          1500
-        );
 
-      }
+            // اگر اپ باز نشد، سایت
+
+            setTimeout(
+                () => {
+
+                    window.location.href =
+                        webURL;
+
+                },
+                1500
+            );
+
+        }
     );
 
 
-    /* =====================================================
-       SHARE TEXT
-       ===================================================== */
+    // ======================================
+    // SHARE TEXT
+    // ======================================
+
+    const shareText =
+        document.createElement(
+            "a-text"
+        );
+
+
+    shareText.setAttribute(
+        "value",
+        "سرزمین شگفت‌انگیز"
+    );
+
+
+    shareText.setAttribute(
+        "align",
+        "center"
+    );
+
+
+    shareText.setAttribute(
+        "anchor",
+        "center"
+    );
+
+
+    shareText.setAttribute(
+        "baseline",
+        "center"
+    );
+
+
+    shareText.setAttribute(
+        "position",
+        "0 -0.88 0.06"
+    );
+
+
+    shareText.setAttribute(
+        "width",
+        "1.8"
+    );
+
+
+    shareText.setAttribute(
+        "color",
+        "white"
+    );
+
+
+    // متن خودش قابل کلیک نیست
+
+    target.appendChild(
+        shareText
+    );
+
+
+    // ======================================
+    // TRANSPARENT SHARE BUTTON
+    // روی نوشته قرار می‌گیرد
+    // ======================================
 
     const share =
-      document.createElement(
-        "a-text"
-      );
+        document.createElement(
+            "a-plane"
+        );
 
 
     share.classList.add(
-      "arLink"
+        "arLink",
+        "share-zone"
     );
 
 
     share.setAttribute(
-      "value",
-      "سرزمین شگفت‌انگیز"
+        "width",
+        "0.95"
     );
 
 
     share.setAttribute(
-      "align",
-      "center"
+        "height",
+        "0.18"
     );
 
 
     share.setAttribute(
-      "anchor",
-      "center"
+        "position",
+        "0 -0.88 0.08"
     );
 
 
     share.setAttribute(
-      "baseline",
-      "center"
+        "material",
+        "transparent: true; opacity: 0; side: double;"
     );
 
 
-    share.setAttribute(
-      "position",
-      "0 -0.88 0.06"
+    target.appendChild(
+        share
     );
 
 
-    share.setAttribute(
-      "width",
-      "1.8"
-    );
-
-
-    share.setAttribute(
-      "color",
-      "white"
-    );
-
-
-    target.appendChild(share);
-
-
-    /* =====================================================
-       SHARE ACTION
-       ===================================================== */
+    // ======================================
+    // SHARE CLICK
+    // ======================================
 
     share.addEventListener(
-      "click",
-      async () => {
-
-        const message =
-          "😍 من یه دفتر جادویی پیدا کردم!\n\n" +
-          "دوربین گوشیت رو روی دفتر بگیر " +
-          "تا ببینی چطور زنده میشه! ✨📚\n\n" +
-          "سرزمین شگفت‌انگیز ✨\n" +
-          "@SarzaminAr";
-
-
-        /*
-           Share گوشی
-           تلگرام، روبیکا، شاد و برنامه‌های
-           سازگار نصب‌شده را نمایش می‌دهد.
-        */
-
-        if (
-          navigator.share
-        ) {
-
-          try {
-
-            await navigator.share({
-
-              title:
-                "سرزمین شگفت‌انگیز",
-
-              text:
-                message,
-
-              url:
-                window.location.href
-
-            });
-
-          } catch (error) {
+        "click",
+        async () => {
 
             console.log(
-              "Share cancelled:",
-              error
+                "Share clicked"
             );
 
-          }
 
-        } else {
-
-          /*
-             گوشی قدیمی یا مرورگر بدون Share
-          */
-
-          try {
-
-            await navigator.clipboard.writeText(
-              message
-            );
-
-            alert(
-              "متن آماده کپی شد 😊"
-            );
-
-          } catch (error) {
-
-            alert(
-              message
-            );
-
-          }
-
-        }
-
-      }
-    );
+            const message =
+                "😍 من یه دفتر جادویی پیدا کردم!\n\n" +
+                "دوربین گوشیت رو روی دفتر بگیر " +
+                "تا ببینی چطور زنده میشه! ✨📚\n\n" +
+                "سرزمین شگفت‌انگیز ✨\n" +
+                "@SarzaminAr";
 
 
-    /* =====================================================
-       TARGET FOUND
-       ===================================================== */
-
-    target.addEventListener(
-      "targetFound",
-      () => {
-
-        console.log(
-          "TARGET FOUND:",
-          i
-        );
-
-
-        activeTarget =
-          target;
-
-
-        activePlane =
-          plane;
-
-
-        /*
-           مخفی کردن همه ویدئوها
-        */
-
-        document
-          .querySelectorAll(
-            ".arVideoPlane"
-          )
-          .forEach(
-            p => {
-
-              p.setAttribute(
-                "visible",
-                "false"
-              );
-
-            }
-          );
-
-
-        /*
-           توقف ویدئوی قبلی
-        */
-
-        try {
-
-          video.pause();
-
-          video.currentTime =
-            0;
-
-        } catch (e) {}
-
-
-        /* =================================================
-           شماره واقعی فایل ویدئو
-           Group1 = 01 تا 30
-           Group2 = 31 تا 60
-           Group3 = 61 تا 90
-        ================================================= */
-
-        const videoNumber =
-          config.first + i;
-
-
-        const filename =
-          String(videoNumber)
-            .padStart(2, "0");
-
-
-        const src =
-          `./${groupName}/${filename}.mp4`;
-
-
-        console.log(
-          "VIDEO:",
-          src
-        );
-
-
-        video.src =
-          src;
-
-
-        video.load();
-
-
-        /* =================================================
-           PLAY
-        ================================================= */
-
-        const playVideo =
-          () => {
+            // =================================
+            // NATIVE SHARE
+            // =================================
 
             if (
-              activeTarget !== target
+                navigator.share
             ) {
-              return;
-            }
 
+                try {
 
-            video.play()
-              .then(
-                () => {
+                    await navigator.share({
 
-                  if (
-                    activeTarget === target
-                  ) {
+                        title:
+                            "سرزمین شگفت‌انگیز",
 
-                    plane.setAttribute(
-                      "visible",
-                      "true"
+                        text:
+                            message,
+
+                        url:
+                            window.location.href
+
+                    });
+
+                    console.log(
+                        "Share successful"
                     );
 
-                  }
+                }
+
+                catch (error) {
+
+                    console.log(
+                        "Share cancelled:",
+                        error
+                    );
 
                 }
-              )
-              .catch(
-                error => {
 
-                  console.log(
-                    "VIDEO PLAY ERROR:",
-                    error
-                  );
-
-                }
-              );
-
-          };
-
-
-        if (
-          video.readyState >= 3
-        ) {
-
-          playVideo();
-
-        } else {
-
-          video.addEventListener(
-            "canplay",
-            playVideo,
-            {
-              once: true
             }
-          );
+
+            // =================================
+            // FALLBACK
+            // =================================
+
+            else {
+
+                try {
+
+                    await navigator.clipboard.writeText(
+                        message
+                    );
+
+
+                    alert(
+                        "متن آماده کپی شد 😊\n\n" +
+                        "حالا آن را برای دوستت بفرست."
+                    );
+
+                }
+
+                catch (error) {
+
+                    alert(
+                        message
+                    );
+
+                }
+
+            }
 
         }
-
-      }
     );
 
 
-    /* =====================================================
-       TARGET LOST
-       ===================================================== */
+    // ======================================
+    // TARGET FOUND
+    // ======================================
 
     target.addEventListener(
-      "targetLost",
-      () => {
+        "targetFound",
+        () => {
 
-        console.log(
-          "TARGET LOST:",
-          i
-        );
-
-
-        if (
-          activeTarget === target
-        ) {
-
-          activeTarget =
-            null;
-
-
-          if (
-            activePlane
-          ) {
-
-            activePlane.setAttribute(
-              "visible",
-              "false"
+            console.log(
+                "TARGET FOUND:",
+                index
             );
 
-          }
+
+            activeTarget =
+                target;
 
 
-          try {
+            activePlane =
+                plane;
 
-            video.pause();
 
-          } catch (e) {}
+            // مخفی کردن همه ویدیوها
+
+            document
+                .querySelectorAll(
+                    ".arVideoPlane"
+                )
+                .forEach(
+                    p => {
+
+                        p.setAttribute(
+                            "visible",
+                            "false"
+                        );
+
+                    }
+                );
+
+
+            // توقف ویدیوی قبلی
+
+            try {
+
+                video.pause();
+
+                video.currentTime = 0;
+
+            }
+
+            catch (e) {}
+
+
+            // =================================
+            // VIDEO NUMBER
+            // =================================
+
+            const videoNumber =
+                config.first + index;
+
+
+            const filename =
+                String(videoNumber)
+                    .padStart(2, "0");
+
+
+            const src =
+                `./${groupName}/${filename}.mp4`;
+
+
+            console.log(
+                "VIDEO:",
+                src
+            );
+
+
+            // =================================
+            // LOAD VIDEO
+            // =================================
+
+            video.src =
+                src;
+
+
+            video.load();
+
+
+            // =================================
+            // PLAY
+            // =================================
+
+            const playVideo =
+                () => {
+
+                    if (
+                        activeTarget !==
+                        target
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    video
+                        .play()
+                        .then(
+                            () => {
+
+                                if (
+                                    activeTarget ===
+                                    target
+                                ) {
+
+                                    plane.setAttribute(
+                                        "visible",
+                                        "true"
+                                    );
+
+                                }
+
+                            }
+                        )
+                        .catch(
+                            error => {
+
+                                console.log(
+                                    "VIDEO PLAY ERROR:",
+                                    error
+                                );
+
+                            }
+                        );
+
+                };
+
+
+            if (
+                video.readyState >= 3
+            ) {
+
+                playVideo();
+
+            }
+
+            else {
+
+                video.addEventListener(
+                    "canplay",
+                    playVideo,
+                    {
+                        once: true
+                    }
+                );
+
+            }
 
         }
+    );
 
-      }
+
+    // ======================================
+    // TARGET LOST
+    // ======================================
+
+    target.addEventListener(
+        "targetLost",
+        () => {
+
+            console.log(
+                "TARGET LOST:",
+                index
+            );
+
+
+            if (
+                activeTarget ===
+                target
+            ) {
+
+                activeTarget =
+                    null;
+
+
+                if (
+                    activePlane
+                ) {
+
+                    activePlane.setAttribute(
+                        "visible",
+                        "false"
+                    );
+
+                }
+
+
+                try {
+
+                    video.pause();
+
+                }
+
+                catch (e) {}
+
+            }
+
+        }
     );
 
 
     scene.appendChild(
-      target
+        target
     );
 
-  }
+}
 
 
-  /* =======================================================
-     ADD SCENE
-     ======================================================= */
+// ==========================================
+// PREVENT ACCIDENTAL PAGE SCROLL IN AR
+// ==========================================
 
-  document.body.appendChild(
-    scene
-  );
+document.addEventListener(
+    "touchmove",
+    event => {
 
+        if (scene) {
 
-  /* =======================================================
-     CHANGE GROUP BUTTON
-     ======================================================= */
-
-  const change =
-    document.createElement(
-      "button"
-    );
-
-
-  change.id =
-    "changeGroup";
-
-
-  change.textContent =
-    "🔄 تغییر گروه";
-
-
-  change.onclick =
-    () => {
-
-      try {
-
-        if (
-          scene &&
-          scene.systems &&
-          scene.systems[
-            "mindar-image-system"
-          ]
-        ) {
-
-          scene.systems[
-            "mindar-image-system"
-          ].stop();
+            event.preventDefault();
 
         }
 
-      } catch (e) {
-
-        console.log(e);
-
-      }
-
-
-      showCategories();
-
-    };
-
-
-  document.body.appendChild(
-    change
-  );
-
-
-  /* =======================================================
-     AR READY
-     ======================================================= */
-
-  scene.addEventListener(
-    "arReady",
-    () => {
-
-      console.log(
-        "AR READY:",
-        groupName
-      );
-
+    },
+    {
+        passive: false
     }
-  );
-
-
-  /* =======================================================
-     AR ERROR
-     ======================================================= */
-
-  scene.addEventListener(
-    "arError",
-    event => {
-
-      console.log(
-        "AR ERROR:",
-        event
-      );
-
-    }
-  );
-
-}
+);
