@@ -1,327 +1,628 @@
-document.addEventListener("DOMContentLoaded", () => {
-
-    const scene = document.querySelector("a-scene");
-
-    const videos = [];
-
-    for (let i = 0; i < 30; i++) {
-        videos.push(document.querySelector("#video" + i));
-    }
-
-    let activeTarget = null;
-    let activeIndex = -1;
-
-
-    // =========================
-    // AR READY
-    // =========================
-
-    scene.addEventListener("arReady", () => {
-        console.log("AR READY");
-    });
-
-
-    // =========================
-    // TARGET FOUND
-    // =========================
-
-    scene.addEventListener("targetFound", async (e) => {
-
-        const target = e.target;
-
-        const data = target.getAttribute("mindar-image-target");
-
-        const index = data.targetIndex;
-
-        console.log("TARGET FOUND:", index);
-
-
-        activeTarget = target;
-        activeIndex = index;
-
-
-        // -------------------------
-        // فقط ویدیوهای دیگر را متوقف و مخفی کن
-        // -------------------------
-
-        const allTargets = scene.querySelectorAll(
-            "[mindar-image-target]"
-        );
-
-        allTargets.forEach((t) => {
-
-            const plane = t.querySelector("a-video");
-
-            if (plane && t !== target) {
-
-                plane.setAttribute("visible", false);
-
-                // اطمینان از مخفی شدن واقعی
-                if (plane.object3D) {
-                    plane.object3D.visible = false;
-                }
-            }
-
-        });
-
-
-        // -------------------------
-        // همه ویدیوها را متوقف کن
-        // -------------------------
-
-        videos.forEach((video, i) => {
-
-            if (!video) return;
-
-            if (i !== index) {
-
-                video.pause();
-
-                try {
-                    video.currentTime = 0;
-                } catch (err) {}
-
-            }
-
-        });
-
-
-        // -------------------------
-        // ویدیوی مربوط به تارگت
-        // -------------------------
-
-        const video = videos[index];
-
-        if (!video) {
-
-            console.log("VIDEO NOT FOUND:", index);
-
-            return;
-        }
-
-
-        console.log(
-            "VIDEO:",
-            index,
-            "READY STATE:",
-            video.readyState
-        );
-
-
-        // از اول ویدیو
-        try {
-            video.currentTime = 0;
-        } catch (err) {}
-
-
-        // صدا مثل نسخه قبلی
-        video.muted = false;
-        video.volume = 1;
-
-
-        // -------------------------
-        // اگر ویدیو هنوز داده ندارد
-        // -------------------------
-
-        if (video.readyState < 2) {
-
-            console.log("WAITING FOR VIDEO DATA...");
-
-
-            await new Promise((resolve) => {
-
-                let finished = false;
-
-                const done = () => {
-
-                    if (finished) return;
-
-                    finished = true;
-
-                    video.removeEventListener(
-                        "loadeddata",
-                        done
-                    );
-
-                    video.removeEventListener(
-                        "canplay",
-                        done
-                    );
-
-                    console.log(
-                        "VIDEO DATA READY:",
-                        video.readyState
-                    );
-
-                    resolve();
-                };
-
-
-                video.addEventListener(
-                    "loadeddata",
-                    done,
-                    { once: true }
-                );
-
-                video.addEventListener(
-                    "canplay",
-                    done,
-                    { once: true }
-                );
-
-
-                // اگر قبلاً آماده شد
-                if (video.readyState >= 2) {
-                    done();
-                }
-
-
-                // حداکثر 10 ثانیه
-                setTimeout(done, 10000);
-
-            });
-
-        }
-
-
-        // -------------------------
-        // بررسی اینکه هنوز همین تارگت است
-        // -------------------------
-
-        if (
-            activeTarget !== target ||
-            activeIndex !== index
-        ) {
-
-            console.log("TARGET CHANGED - CANCEL");
-
-            return;
-        }
-
-
-        // -------------------------
-        // حالا پلین همین تارگت را نشان بده
-        // -------------------------
-
-        const plane = target.querySelector("a-video");
-
-        if (!plane) {
-
-            console.log("A-VIDEO NOT FOUND:", index);
-
-            return;
-        }
-
-
-        plane.setAttribute("visible", true);
-
-        if (plane.object3D) {
-            plane.object3D.visible = true;
-        }
-
-
-        console.log("VIDEO PLANE VISIBLE:", index);
-
-
-        // -------------------------
-        // PLAY
-        // -------------------------
-
-        try {
-
-            await video.play();
-
-            console.log(
-                "VIDEO PLAYING:",
-                index
-            );
-
-        } catch (error) {
-
-            console.log(
-                "PLAY WITH SOUND FAILED:",
-                error
-            );
-
-
-            // تلاش دوم بدون صدا
-            video.muted = true;
-
-            try {
-
-                await video.play();
-
-                console.log(
-                    "VIDEO PLAYING MUTED:",
-                    index
-                );
-
-            } catch (error2) {
-
-                console.log(
-                    "VIDEO PLAY FAILED:",
-                    error2
-                );
-
-            }
-
-        }
-
-    });
-
-
-    // =========================
-    // TARGET LOST
-    // =========================
-
-    scene.addEventListener("targetLost", (e) => {
-
-        const target = e.target;
-
-        const data =
-            target.getAttribute("mindar-image-target");
-
-        const index = data.targetIndex;
-
-        console.log("TARGET LOST:", index);
-
-
-        const video = videos[index];
-
-        if (video) {
-
-            video.pause();
-
-            try {
-                video.currentTime = 0;
-            } catch (err) {}
-
-        }
-
-
-        // فوراً ویدیو را مخفی کن
-
-        const plane = target.querySelector("a-video");
-
-        if (plane) {
-
-            plane.setAttribute("visible", false);
-
-            if (plane.object3D) {
-                plane.object3D.visible = false;
-            }
-
-        }
-
-
-        // فقط اگر همین تارگت فعال بود
-        if (activeTarget === target) {
-
-            activeTarget = null;
-            activeIndex = -1;
-
-        }
-
-    });
-
-});
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>Sarzamin AR</title>
+
+    <link rel="stylesheet" href="./style.css?v=124">
+
+    <!-- A-Frame -->
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+
+    <!-- MindAR -->
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+
+</head>
+
+
+<body>
+
+
+<a-scene
+    mindar-image="
+        imageTargetSrc: ./Group1/targets.mind;
+        autoStart: true;
+        uiLoading: no;
+        uiScanning: yes;
+        uiError: no;
+        warmupTolerance: 2;
+        missTolerance: 1;
+        filterMinCF: 0.0001;
+        filterBeta: 0.001;
+    "
+
+    embedded
+
+    color-space="sRGB"
+
+    renderer="
+        colorManagement: true;
+    "
+
+    vr-mode-ui="enabled: false"
+
+    device-orientation-permission-ui="enabled: false"
+>
+
+
+    <!-- ========================= -->
+    <!-- VIDEOS -->
+    <!-- ========================= -->
+
+    <a-assets>
+
+        <video
+            id="video0"
+            src="./Group1/01.mp4"
+            preload="auto"
+            loop
+            muted
+            playsinline
+            webkit-playsinline>
+        </video>
+
+        <video
+            id="video1"
+            src="./Group1/02.mp4"
+            preload="auto"
+            loop
+            muted
+            playsinline
+            webkit-playsinline>
+        </video>
+
+        <video
+            id="video2"
+            src="./Group1/03.mp4"
+            preload="auto"
+            loop
+            muted
+            playsinline
+            webkit-playsinline>
+        </video>
+
+        <video
+            id="video3"
+            src="./Group1/04.mp4"
+            preload="auto"
+            loop
+            muted
+            playsinline
+            webkit-playsinline>
+        </video>
+
+        <video
+            id="video4"
+            src="./Group1/05.mp4"
+            preload="auto"
+            loop
+            muted
+            playsinline
+            webkit-playsinline>
+        </video>
+
+        <video
+            id="video5"
+            src="./Group1/06.mp4"
+            preload="auto"
+            loop
+            muted
+            playsinline
+            webkit-playsinline>
+        </video>
+
+        <video
+            id="video6"
+            src="./Group1/07.mp4"
+            preload="auto"
+            loop
+            muted
+            playsinline
+            webkit-playsinline>
+        </video>
+
+        <video
+            id="video7"
+            src="./Group1/08.mp4"
+            preload="auto"
+            loop
+            muted
+            playsinline
+            webkit-playsinline>
+        </video>
+
+        <video
+            id="video8"
+            src="./Group1/09.mp4"
+            preload="auto"
+            loop
+            muted
+            playsinline
+            webkit-playsinline>
+        </video>
+
+        <video
+            id="video9"
+            src="./Group1/10.mp4"
+            preload="auto"
+            loop
+            muted
+            playsinline
+            webkit-playsinline>
+        </video>
+
+        <video
+            id="video10"
+            src="./Group1/11.mp4"
+            preload="auto"
+            loop
+            muted
+            playsinline
+            webkit-playsinline>
+        </video>
+
+        <video
+            id="video11"
+            src="./Group1/12.mp4"
+            preload="auto"
+            loop
+            muted
+            playsinline
+            webkit-playsinline>
+        </video>
+
+        <video
+            id="video12"
+            src="./Group1/13.mp4"
+            preload="auto"
+            loop
+            muted
+            playsinline
+            webkit-playsinline>
+        </video>
+
+        <video
+            id="video13"
+            src="./Group1/14.mp4"
+            preload="auto"
+            loop
+            muted
+            playsinline
+            webkit-playsinline>
+        </video>
+
+        <video
+            id="video14"
+            src="./Group1/15.mp4"
+            preload="auto"
+            loop
+            muted
+            playsinline
+            webkit-playsinline>
+        </video>
+
+        <video
+            id="video15"
+            src="./Group1/16.mp4"
+            preload="auto"
+            loop
+            muted
+            playsinline
+            webkit-playsinline>
+        </video>
+
+        <video
+            id="video16"
+            src="./Group1/17.mp4"
+            preload="auto"
+            loop
+            muted
+            playsinline
+            webkit-playsinline>
+        </video>
+
+        <video
+            id="video17"
+            src="./Group1/18.mp4"
+            preload="auto"
+            loop
+            muted
+            playsinline
+            webkit-playsinline>
+        </video>
+
+        <video
+            id="video18"
+            src="./Group1/19.mp4"
+            preload="auto"
+            loop
+            muted
+            playsinline
+            webkit-playsinline>
+        </video>
+
+        <video
+            id="video19"
+            src="./Group1/20.mp4"
+            preload="auto"
+            loop
+            muted
+            playsinline
+            webkit-playsinline>
+        </video>
+
+        <video
+            id="video20"
+            src="./Group1/21.mp4"
+            preload="auto"
+            loop
+            muted
+            playsinline
+            webkit-playsinline>
+        </video>
+
+        <video
+            id="video21"
+            src="./Group1/22.mp4"
+            preload="auto"
+            loop
+            muted
+            playsinline
+            webkit-playsinline>
+        </video>
+
+        <video
+            id="video22"
+            src="./Group1/23.mp4"
+            preload="auto"
+            loop
+            muted
+            playsinline
+            webkit-playsinline>
+        </video>
+
+        <video
+            id="video23"
+            src="./Group1/24.mp4"
+            preload="auto"
+            loop
+            muted
+            playsinline
+            webkit-playsinline>
+        </video>
+
+        <video
+            id="video24"
+            src="./Group1/25.mp4"
+            preload="auto"
+            loop
+            muted
+            playsinline
+            webkit-playsinline>
+        </video>
+
+        <video
+            id="video25"
+            src="./Group1/26.mp4"
+            preload="auto"
+            loop
+            muted
+            playsinline
+            webkit-playsinline>
+        </video>
+
+        <video
+            id="video26"
+            src="./Group1/27.mp4"
+            preload="auto"
+            loop
+            muted
+            playsinline
+            webkit-playsinline>
+        </video>
+
+        <video
+            id="video27"
+            src="./Group1/28.mp4"
+            preload="auto"
+            loop
+            muted
+            playsinline
+            webkit-playsinline>
+        </video>
+
+        <video
+            id="video28"
+            src="./Group1/29.mp4"
+            preload="auto"
+            loop
+            muted
+            playsinline
+            webkit-playsinline>
+        </video>
+
+        <video
+            id="video29"
+            src="./Group1/30.mp4"
+            preload="auto"
+            loop
+            muted
+            playsinline
+            webkit-playsinline>
+        </video>
+
+    </a-assets>
+
+
+
+    <!-- ========================= -->
+    <!-- TARGETS -->
+    <!-- ========================= -->
+
+    <a-entity mindar-image-target="targetIndex: 0">
+        <a-video src="#video0"
+                 width="1"
+                 height="1.42"
+                 position="0 0 0">
+        </a-video>
+    </a-entity>
+
+    <a-entity mindar-image-target="targetIndex: 1">
+        <a-video src="#video1"
+                 width="1"
+                 height="1.42"
+                 position="0 0 0">
+        </a-video>
+    </a-entity>
+
+    <a-entity mindar-image-target="targetIndex: 2">
+        <a-video src="#video2"
+                 width="1"
+                 height="1.42"
+                 position="0 0 0">
+        </a-video>
+    </a-entity>
+
+    <a-entity mindar-image-target="targetIndex: 3">
+        <a-video src="#video3"
+                 width="1"
+                 height="1.42"
+                 position="0 0 0">
+        </a-video>
+    </a-entity>
+
+    <a-entity mindar-image-target="targetIndex: 4">
+        <a-video src="#video4"
+                 width="1"
+                 height="1.42"
+                 position="0 0 0">
+        </a-video>
+    </a-entity>
+
+    <a-entity mindar-image-target="targetIndex: 5">
+        <a-video src="#video5"
+                 width="1"
+                 height="1.42"
+                 position="0 0 0">
+        </a-video>
+    </a-entity>
+
+    <a-entity mindar-image-target="targetIndex: 6">
+        <a-video src="#video6"
+                 width="1"
+                 height="1.42"
+                 position="0 0 0">
+        </a-video>
+    </a-entity>
+
+    <a-entity mindar-image-target="targetIndex: 7">
+        <a-video src="#video7"
+                 width="1"
+                 height="1.42"
+                 position="0 0 0">
+        </a-video>
+    </a-entity>
+
+    <a-entity mindar-image-target="targetIndex: 8">
+        <a-video src="#video8"
+                 width="1"
+                 height="1.42"
+                 position="0 0 0">
+        </a-video>
+    </a-entity>
+
+    <a-entity mindar-image-target="targetIndex: 9">
+        <a-video src="#video9"
+                 width="1"
+                 height="1.42"
+                 position="0 0 0">
+        </a-video>
+    </a-entity>
+
+    <a-entity mindar-image-target="targetIndex: 10">
+        <a-video src="#video10"
+                 width="1"
+                 height="1.42"
+                 position="0 0 0">
+        </a-video>
+    </a-entity>
+
+    <a-entity mindar-image-target="targetIndex: 11">
+        <a-video src="#video11"
+                 width="1"
+                 height="1.42"
+                 position="0 0 0">
+        </a-video>
+    </a-entity>
+
+    <a-entity mindar-image-target="targetIndex: 12">
+        <a-video src="#video12"
+                 width="1"
+                 height="1.42"
+                 position="0 0 0">
+        </a-video>
+    </a-entity>
+
+    <a-entity mindar-image-target="targetIndex: 13">
+        <a-video src="#video13"
+                 width="1"
+                 height="1.42"
+                 position="0 0 0">
+        </a-video>
+    </a-entity>
+
+    <a-entity mindar-image-target="targetIndex: 14">
+        <a-video src="#video14"
+                 width="1"
+                 height="1.42"
+                 position="0 0 0">
+        </a-video>
+    </a-entity>
+
+    <a-entity mindar-image-target="targetIndex: 15">
+        <a-video src="#video15"
+                 width="1"
+                 height="1.42"
+                 position="0 0 0">
+        </a-video>
+    </a-entity>
+
+    <a-entity mindar-image-target="targetIndex: 16">
+        <a-video src="#video16"
+                 width="1"
+                 height="1.42"
+                 position="0 0 0">
+        </a-video>
+    </a-entity>
+
+    <a-entity mindar-image-target="targetIndex: 17">
+        <a-video src="#video17"
+                 width="1"
+                 height="1.42"
+                 position="0 0 0">
+        </a-video>
+    </a-entity>
+
+    <a-entity mindar-image-target="targetIndex: 18">
+        <a-video src="#video18"
+                 width="1"
+                 height="1.42"
+                 position="0 0 0">
+        </a-video>
+    </a-entity>
+
+    <a-entity mindar-image-target="targetIndex: 19">
+        <a-video src="#video19"
+                 width="1"
+                 height="1.42"
+                 position="0 0 0">
+        </a-video>
+    </a-entity>
+
+    <a-entity mindar-image-target="targetIndex: 20">
+        <a-video src="#video20"
+                 width="1"
+                 height="1.42"
+                 position="0 0 0">
+        </a-video>
+    </a-entity>
+
+    <a-entity mindar-image-target="targetIndex: 21">
+        <a-video src="#video21"
+                 width="1"
+                 height="1.42"
+                 position="0 0 0">
+        </a-video>
+    </a-entity>
+
+    <a-entity mindar-image-target="targetIndex: 22">
+        <a-video src="#video22"
+                 width="1"
+                 height="1.42"
+                 position="0 0 0">
+        </a-video>
+    </a-entity>
+
+    <a-entity mindar-image-target="targetIndex: 23">
+        <a-video src="#video23"
+                 width="1"
+                 height="1.42"
+                 position="0 0 0">
+        </a-video>
+    </a-entity>
+
+    <a-entity mindar-image-target="targetIndex: 24">
+        <a-video src="#video24"
+                 width="1"
+                 height="1.42"
+                 position="0 0 0">
+        </a-video>
+    </a-entity>
+
+    <a-entity mindar-image-target="targetIndex: 25">
+        <a-video src="#video25"
+                 width="1"
+                 height="1.42"
+                 position="0 0 0">
+        </a-video>
+    </a-entity>
+
+    <a-entity mindar-image-target="targetIndex: 26">
+        <a-video src="#video26"
+                 width="1"
+                 height="1.42"
+                 position="0 0 0">
+        </a-video>
+    </a-entity>
+
+    <a-entity mindar-image-target="targetIndex: 27">
+        <a-video src="#video27"
+                 width="1"
+                 height="1.42"
+                 position="0 0 0">
+        </a-video>
+    </a-entity>
+
+    <a-entity mindar-image-target="targetIndex: 28">
+        <a-video src="#video28"
+                 width="1"
+                 height="1.42"
+                 position="0 0 0">
+        </a-video>
+    </a-entity>
+
+    <a-entity mindar-image-target="targetIndex: 29">
+        <a-video src="#video29"
+                 width="1"
+                 height="1.42"
+                 position="0 0 0">
+        </a-video>
+    </a-entity>
+
+
+
+    <!-- CAMERA -->
+
+    <a-camera
+        position="0 0 0"
+        look-controls="enabled: false">
+    </a-camera>
+
+
+</a-scene>
+
+
+<!-- ========================= -->
+<!-- APP JS -->
+<!-- ========================= -->
+
+<script src="./app.js?v=1"></script>
+
+
+</body>
+</html>
