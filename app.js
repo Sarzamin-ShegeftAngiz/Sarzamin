@@ -11,18 +11,10 @@ document.addEventListener("DOMContentLoaded", () => {
     let activeTarget = null;
 
 
-    // =========================
-    // AR READY
-    // =========================
-
     scene.addEventListener("arReady", () => {
         console.log("AR READY - 30 TARGETS");
     });
 
-
-    // =========================
-    // TARGET FOUND
-    // =========================
 
     scene.addEventListener("targetFound", async (e) => {
 
@@ -37,10 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
         activeTarget = target;
 
 
-        // -------------------------
-        // تمام ویدیوهای دیگر را متوقف کن
-        // -------------------------
-
+        // توقف ویدیوهای دیگر
         videos.forEach((video, i) => {
 
             if (!video) return;
@@ -56,16 +45,10 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
 
-        // -------------------------
-        // ویدیوی این تارگت
-        // -------------------------
-
         const video = videos[index];
 
         if (!video) {
-
             console.log("VIDEO NOT FOUND:", index);
-
             return;
         }
 
@@ -73,8 +56,10 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("VIDEO FOUND:", index);
 
 
-        // از ابتدای ویدیو
-        video.currentTime = 0;
+        // شروع از اول
+        try {
+            video.currentTime = 0;
+        } catch (err) {}
 
 
         // صدا روشن
@@ -82,25 +67,16 @@ document.addEventListener("DOMContentLoaded", () => {
         video.volume = 1;
 
 
-        // -------------------------
-        // پخش ویدیو
-        // -------------------------
-
+        // پخش مستقیم
         try {
 
             await video.play();
 
-            console.log(
-                "VIDEO PLAYING:",
-                index
-            );
+            console.log("VIDEO PLAYING:", index);
 
         } catch (err) {
 
-            console.log(
-                "VIDEO PLAY ERROR:",
-                err
-            );
+            console.log("VIDEO PLAY ERROR:", err);
 
             // تلاش دوم بدون صدا
             video.muted = true;
@@ -109,17 +85,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 await video.play();
 
-                console.log(
-                    "VIDEO PLAYING MUTED:",
-                    index
-                );
+                console.log("VIDEO PLAYING MUTED:", index);
 
             } catch (err2) {
 
-                console.log(
-                    "VIDEO PLAY ERROR 2:",
-                    err2
-                );
+                console.log("VIDEO PLAY ERROR 2:", err2);
 
             }
 
@@ -127,10 +97,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     });
 
-
-    // =========================
-    // TARGET LOST
-    // =========================
 
     scene.addEventListener("targetLost", (e) => {
 
