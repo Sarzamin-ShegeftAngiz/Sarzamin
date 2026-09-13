@@ -5,13 +5,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const videos = [];
 
     for (let i = 0; i < 30; i++) {
-
         videos.push(
             document.querySelector("#video" + i)
         );
-
     }
-
 
     let activeTarget = null;
 
@@ -40,24 +37,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function shareSarzamin() {
 
-        console.log("SHARE BUTTON CLICKED");
-
+        console.log("🔴 SHARE AREA TOUCHED");
 
         if (navigator.share) {
 
             try {
 
                 await navigator.share({
-
                     title: "سرزمین شگفت‌انگیز",
-
                     text: shareText
-
                 });
 
-
-                console.log("SHARE SUCCESS");
-
+                console.log("✅ SHARE SUCCESS");
 
             } catch (err) {
 
@@ -68,7 +59,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             }
 
-
         } else {
 
             try {
@@ -77,11 +67,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     shareText
                 );
 
-
                 alert(
                     "متن آماده کپی شد 😊"
                 );
-
 
             } catch (err) {
 
@@ -92,29 +80,44 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
         }
-
     }
 
 
-
     /* =====================================
-       دکمه‌های اشتراک‌گذاری
-    ===================================== */
+       فقط Target 1
+       ===================================== */
 
-    const shareButtons =
-        document.querySelectorAll(
-            ".shareButton"
+    const target1 =
+        document.querySelector(
+            '[mindar-image-target="targetIndex: 0"]'
         );
 
 
-    shareButtons.forEach(
-        (button) => {
+    if (target1) {
 
-            button.addEventListener(
+        const shareButton =
+            target1.querySelector(".shareButton");
+
+
+        if (shareButton) {
+
+            console.log("✅ TARGET 1 SHARE AREA FOUND");
+
+
+            /*
+             * کلیک
+             */
+
+            shareButton.addEventListener(
                 "click",
                 (event) => {
 
+                    event.preventDefault();
                     event.stopPropagation();
+
+                    console.log(
+                        "🟢 TARGET 1 CLICK"
+                    );
 
                     shareSarzamin();
 
@@ -122,13 +125,20 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
 
-            button.addEventListener(
-                "touchstart",
+            /*
+             * لمس مستقیم موبایل
+             */
+
+            shareButton.addEventListener(
+                "touchend",
                 (event) => {
 
                     event.preventDefault();
-
                     event.stopPropagation();
+
+                    console.log(
+                        "🟢 TARGET 1 TOUCH"
+                    );
 
                     shareSarzamin();
 
@@ -139,8 +149,8 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
         }
-    );
 
+    }
 
 
     /* =====================================
@@ -159,7 +169,6 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 
-
     /* =====================================
        TARGET FOUND
     ===================================== */
@@ -170,25 +179,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const target = e.target;
 
-
             const data =
                 target.getAttribute(
                     "mindar-image-target"
                 );
 
-
             const index =
                 data.targetIndex;
-
 
             console.log(
                 "TARGET FOUND:",
                 index
             );
 
-
             activeTarget = target;
-
 
 
             /* توقف ویدیوهای دیگر */
@@ -198,23 +202,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     if (!video) return;
 
-
                     if (i !== index) {
 
                         video.pause();
 
-
                         try {
-
                             video.currentTime = 0;
-
                         } catch (err) {}
 
                     }
 
                 }
             );
-
 
 
             /* ویدیوی مربوط به تارگت */
@@ -241,35 +240,26 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
 
-
             try {
-
                 video.currentTime = 0;
-
             } catch (err) {}
-
 
 
             video.load();
 
 
-
             video.muted = false;
-
             video.volume = 1;
-
 
 
             try {
 
                 await video.play();
 
-
                 console.log(
                     "VIDEO PLAYING:",
                     index
                 );
-
 
             } catch (err) {
 
@@ -279,8 +269,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
 
 
-                /* پخش بدون صدا در صورت محدودیت مرورگر */
-
                 video.muted = true;
 
 
@@ -288,12 +276,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     await video.play();
 
-
                     console.log(
                         "VIDEO PLAYING MUTED:",
                         index
                     );
-
 
                 } catch (err2) {
 
@@ -310,7 +296,6 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 
-
     /* =====================================
        TARGET LOST
     ===================================== */
@@ -322,12 +307,10 @@ document.addEventListener("DOMContentLoaded", () => {
             const target =
                 e.target;
 
-
             const data =
                 target.getAttribute(
                     "mindar-image-target"
                 );
-
 
             const index =
                 data.targetIndex;
@@ -347,15 +330,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 video.pause();
 
-
                 try {
-
                     video.currentTime = 0;
-
                 } catch (err) {}
 
             }
-
 
 
             if (
