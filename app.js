@@ -5,17 +5,20 @@ document.addEventListener("DOMContentLoaded", () => {
     const videos = [];
 
     for (let i = 0; i < 30; i++) {
+
         videos.push(
             document.querySelector("#video" + i)
         );
+
     }
+
 
     let activeTarget = null;
 
 
-    // --------------------------------
-    // متن آماده اشتراک گذاری
-    // --------------------------------
+    /* =====================================
+       متن آماده اشتراک گذاری
+    ===================================== */
 
     const shareText =
 `🎉 دفتر من زنده شددد! 😍📱
@@ -31,9 +34,9 @@ document.addEventListener("DOMContentLoaded", () => {
 🚀 سرزمین شگفت‌انگیز؛ جایی که دفترها زنده میشن!`;
 
 
-    // --------------------------------
-    // اشتراک گذاری
-    // --------------------------------
+    /* =====================================
+       SHARE
+    ===================================== */
 
     async function shareSarzamin() {
 
@@ -52,7 +55,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 });
 
+
                 console.log("SHARE SUCCESS");
+
 
             } catch (err) {
 
@@ -63,18 +68,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
             }
 
+
         } else {
 
-            // اگر مرورگر Share را پشتیبانی نکرد
             try {
 
                 await navigator.clipboard.writeText(
                     shareText
                 );
 
+
                 alert(
                     "متن آماده کپی شد 😊"
                 );
+
 
             } catch (err) {
 
@@ -89,9 +96,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    // --------------------------------
-    // فعال کردن دکمه اشتراک روی تارگت‌ها
-    // --------------------------------
+
+    /* =====================================
+       دکمه‌های اشتراک‌گذاری
+    ===================================== */
 
     const shareButtons =
         document.querySelectorAll(
@@ -134,9 +142,10 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 
-    // --------------------------------
-    // AR آماده شد
-    // --------------------------------
+
+    /* =====================================
+       AR READY
+    ===================================== */
 
     scene.addEventListener(
         "arReady",
@@ -150,9 +159,10 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 
-    // --------------------------------
-    // تارگت پیدا شد
-    // --------------------------------
+
+    /* =====================================
+       TARGET FOUND
+    ===================================== */
 
     scene.addEventListener(
         "targetFound",
@@ -160,10 +170,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const target = e.target;
 
+
             const data =
                 target.getAttribute(
                     "mindar-image-target"
                 );
+
 
             const index =
                 data.targetIndex;
@@ -178,7 +190,9 @@ document.addEventListener("DOMContentLoaded", () => {
             activeTarget = target;
 
 
-            // توقف همه ویدیوهای دیگر
+
+            /* توقف ویدیوهای دیگر */
+
             videos.forEach(
                 (video, i) => {
 
@@ -188,6 +202,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (i !== index) {
 
                         video.pause();
+
 
                         try {
 
@@ -200,6 +215,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             );
 
+
+
+            /* ویدیوی مربوط به تارگت */
 
             const video =
                 videos[index];
@@ -223,6 +241,7 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
 
+
             try {
 
                 video.currentTime = 0;
@@ -230,8 +249,9 @@ document.addEventListener("DOMContentLoaded", () => {
             } catch (err) {}
 
 
-            // فقط همین ویدیو لود شود
+
             video.load();
+
 
 
             video.muted = false;
@@ -239,14 +259,17 @@ document.addEventListener("DOMContentLoaded", () => {
             video.volume = 1;
 
 
+
             try {
 
                 await video.play();
+
 
                 console.log(
                     "VIDEO PLAYING:",
                     index
                 );
+
 
             } catch (err) {
 
@@ -256,7 +279,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
 
 
-                // حالت بی‌صدا در صورت محدودیت مرورگر
+                /* پخش بدون صدا در صورت محدودیت مرورگر */
+
                 video.muted = true;
 
 
@@ -264,10 +288,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     await video.play();
 
+
                     console.log(
                         "VIDEO PLAYING MUTED:",
                         index
                     );
+
 
                 } catch (err2) {
 
@@ -284,9 +310,10 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 
-    // --------------------------------
-    // تارگت گم شد
-    // --------------------------------
+
+    /* =====================================
+       TARGET LOST
+    ===================================== */
 
     scene.addEventListener(
         "targetLost",
@@ -328,6 +355,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 } catch (err) {}
 
             }
+
 
 
             if (
