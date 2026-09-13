@@ -10,26 +10,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let activeTarget = null;
 
-
     scene.addEventListener("arReady", () => {
         console.log("AR READY - 30 TARGETS");
     });
 
-
     scene.addEventListener("targetFound", async (e) => {
 
         const target = e.target;
-
         const data = target.getAttribute("mindar-image-target");
-
         const index = data.targetIndex;
 
         console.log("TARGET FOUND:", index);
 
         activeTarget = target;
 
-
-        // توقف ویدیوهای دیگر
+        // توقف همه ویدیوهای دیگر
         videos.forEach((video, i) => {
 
             if (!video) return;
@@ -41,9 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     video.currentTime = 0;
                 } catch (err) {}
             }
-
         });
-
 
         const video = videos[index];
 
@@ -52,22 +45,19 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
+        console.log("LOADING VIDEO:", index);
 
-        console.log("VIDEO FOUND:", index);
-
-
-        // شروع از اول
+        // از اول
         try {
             video.currentTime = 0;
         } catch (err) {}
 
+        // فقط همین ویدیو را لود کن
+        video.load();
 
-        // صدا روشن
         video.muted = false;
         video.volume = 1;
 
-
-        // پخش مستقیم
         try {
 
             await video.play();
@@ -78,7 +68,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             console.log("VIDEO PLAY ERROR:", err);
 
-            // تلاش دوم بدون صدا
+            // اگر صدای خودکار توسط مرورگر اجازه داده نشد
             video.muted = true;
 
             try {
@@ -92,22 +82,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 console.log("VIDEO PLAY ERROR 2:", err2);
 
             }
-
         }
-
     });
-
 
     scene.addEventListener("targetLost", (e) => {
 
         const target = e.target;
-
         const data = target.getAttribute("mindar-image-target");
-
         const index = data.targetIndex;
 
         console.log("TARGET LOST:", index);
-
 
         const video = videos[index];
 
@@ -118,14 +102,11 @@ document.addEventListener("DOMContentLoaded", () => {
             try {
                 video.currentTime = 0;
             } catch (err) {}
-
         }
-
 
         if (activeTarget === target) {
             activeTarget = null;
         }
-
     });
 
 });
