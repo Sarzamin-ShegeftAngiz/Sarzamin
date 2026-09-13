@@ -13,12 +13,146 @@ document.addEventListener("DOMContentLoaded", () => {
     let activeTarget = null;
 
 
-    scene.addEventListener("arReady", () => {
+    // --------------------------------
+    // متن آماده اشتراک گذاری
+    // --------------------------------
 
-        console.log("AR READY - 30 TARGETS");
+    const shareText =
+`🎉 دفتر من زنده شددد! 😍📱
+باور نمی‌کنی؟!
 
-    });
+دوربین گوشیتو بگیر روی دفتر و ببین چه اتفاقی می‌افته! 🤯✨
 
+🎨 می‌خوای ببینی کدوم طرح‌ها زنده میشن؟
+بیا توی اینستاگرام @SarzaminAr 👀💜
+
+اونجا طرح‌های زنده رو ببین و اگه دوست داری طرح دفتر خودتم زنده کنیم، بهمون بگو! 😍🔥
+
+🚀 سرزمین شگفت‌انگیز؛ جایی که دفترها زنده میشن!`;
+
+
+    // --------------------------------
+    // اشتراک گذاری
+    // --------------------------------
+
+    async function shareSarzamin() {
+
+        console.log("SHARE BUTTON CLICKED");
+
+
+        if (navigator.share) {
+
+            try {
+
+                await navigator.share({
+
+                    title: "سرزمین شگفت‌انگیز",
+
+                    text: shareText
+
+                });
+
+                console.log("SHARE SUCCESS");
+
+            } catch (err) {
+
+                console.log(
+                    "SHARE CANCELLED:",
+                    err
+                );
+
+            }
+
+        } else {
+
+            // اگر مرورگر Share را پشتیبانی نکرد
+            try {
+
+                await navigator.clipboard.writeText(
+                    shareText
+                );
+
+                alert(
+                    "متن آماده کپی شد 😊"
+                );
+
+            } catch (err) {
+
+                alert(
+                    "امکان اشتراک‌گذاری در این مرورگر وجود ندارد."
+                );
+
+            }
+
+        }
+
+    }
+
+
+    // --------------------------------
+    // فعال کردن دکمه اشتراک روی تارگت‌ها
+    // --------------------------------
+
+    const shareButtons =
+        document.querySelectorAll(
+            ".shareButton"
+        );
+
+
+    shareButtons.forEach(
+        (button) => {
+
+            button.addEventListener(
+                "click",
+                (event) => {
+
+                    event.stopPropagation();
+
+                    shareSarzamin();
+
+                }
+            );
+
+
+            button.addEventListener(
+                "touchstart",
+                (event) => {
+
+                    event.preventDefault();
+
+                    event.stopPropagation();
+
+                    shareSarzamin();
+
+                },
+                {
+                    passive: false
+                }
+            );
+
+        }
+    );
+
+
+    // --------------------------------
+    // AR آماده شد
+    // --------------------------------
+
+    scene.addEventListener(
+        "arReady",
+        () => {
+
+            console.log(
+                "AR READY - 30 TARGETS"
+            );
+
+        }
+    );
+
+
+    // --------------------------------
+    // تارگت پیدا شد
+    // --------------------------------
 
     scene.addEventListener(
         "targetFound",
@@ -54,7 +188,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (i !== index) {
 
                         video.pause();
-
 
                         try {
 
@@ -123,7 +256,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
 
 
-                // اگر صدای خودکار اجازه داده نشد
+                // حالت بی‌صدا در صورت محدودیت مرورگر
                 video.muted = true;
 
 
@@ -150,6 +283,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     );
 
+
+    // --------------------------------
+    // تارگت گم شد
+    // --------------------------------
 
     scene.addEventListener(
         "targetLost",
