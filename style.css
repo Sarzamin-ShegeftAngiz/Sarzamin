@@ -1,3 +1,7 @@
+/* ==========================================
+   GENERAL
+   ========================================== */
+
 html,
 body {
     margin: 0;
@@ -8,164 +12,70 @@ body {
 
     overflow: hidden;
 
-    font-family: Arial, sans-serif;
+    font-family:
+        Tahoma,
+        Arial,
+        sans-serif;
+
+    direction: rtl;
 }
 
-
-/* =====================================
-   صفحه انتخاب گروه
-===================================== */
-
-#mainApp {
-    width: 100%;
-    height: 100%;
-}
-
-
-.category-page {
-    width: 100%;
-    height: 100%;
-
-    box-sizing: border-box;
-
-    padding: 30px 15px;
-
-    background: #ffffff;
-
-    overflow-y: auto;
-}
-
-
-.main-title {
-    text-align: center;
-
-    font-size: 28px;
-    font-weight: bold;
-
-    margin-top: 30px;
-    margin-bottom: 10px;
-}
-
-
-.main-subtitle {
-    text-align: center;
-
-    font-size: 16px;
-
-    margin-bottom: 30px;
-}
-
-
-.group-buttons {
-    width: 100%;
-    max-width: 500px;
-
-    margin: 0 auto;
-}
-
-
-.group-button {
-    display: block;
-
-    width: 100%;
-
-    box-sizing: border-box;
-
-    padding: 18px;
-
-    margin: 12px 0;
-
-    border: none;
-
-    border-radius: 18px;
-
-    background: #111111;
-
-    color: #ffffff;
-
-    font-size: 19px;
-
-    font-weight: bold;
-
-    cursor: pointer;
-
-    -webkit-tap-highlight-color: transparent;
-}
-
-
-/* =====================================
-   A-FRAME
-   دست نمی‌زنیم چون دوربین با این حالت سالم است
-===================================== */
-
-a-scene {
-    width: 100%;
-    height: 100%;
-}
-
-
-/* =====================================
-   دکمه تغییر گروه
-===================================== */
-
-#changeGroup {
-    position: fixed;
-
-    top: 15px;
-    right: 15px;
-
-    z-index: 999999;
-
-    border: none;
-
-    border-radius: 14px;
-
-    padding: 11px 15px;
-
-    background: rgba(0, 0, 0, 0.72);
-
-    color: #ffffff;
-
-    font-size: 15px;
-
-    font-weight: bold;
-
-    cursor: pointer;
-
-    -webkit-tap-highlight-color: transparent;
-}
-
-
-/* =====================================
-   نواحی لمس
-===================================== */
-
-.instagram-zone,
-.share-zone {
-    opacity: 0 !important;
-}
 
 /* ==========================================
-   AR SHARE OVERLAY
+   AR SCENE
    ========================================== */
 
+a-scene {
+    position: fixed;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    z-index: 1;
+}
+
+
+/* ==========================================
+   SHARE OVERLAY
+   ========================================== */
+
+/*
+   این دکمه عمداً نامرئی است.
+   فقط ناحیه لمس را ایجاد می‌کند.
+*/
+
 #shareOverlay {
+
     position: fixed;
 
     z-index: 999999;
 
     display: none;
 
-    transform: translate(-50%, -50%);
+    /*
+       مرکز کردن ناحیه لمس
+    */
+    transform:
+        translate(-50%, -50%);
 
+    /*
+       اندازه ناحیه لمس
+    */
     width: 85px;
     height: 20px;
 
     border: none;
+
     outline: none;
 
     background: transparent;
 
+    /*
+       متن کاملاً نامرئی
+    */
     color: transparent;
 
     font-size: 0;
@@ -175,12 +85,42 @@ a-scene {
 
     opacity: 0;
 
+    /*
+       اجازه لمس روی موبایل
+    */
     touch-action: manipulation;
 
-    -webkit-tap-highlight-color: transparent;
+    -webkit-tap-highlight-color:
+        transparent;
 
     cursor: pointer;
 
     user-select: none;
+
     -webkit-user-select: none;
+}
+
+
+/* ==========================================
+   TEST RED MARKER
+   ========================================== */
+
+#redTestMarker {
+    pointer-events: none;
+}
+
+
+/* ==========================================
+   MOBILE
+   ========================================== */
+
+@media (max-width: 600px) {
+
+    #shareOverlay {
+
+        width: 85px;
+        height: 20px;
+
+    }
+
 }
