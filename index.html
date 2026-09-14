@@ -5,757 +5,196 @@
     <meta charset="UTF-8">
 
     <meta name="viewport"
-          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+          content="width=device-width, initial-scale=1.0,
+                   maximum-scale=1.0, user-scalable=no">
 
-    <title>Sarzamin AR</title>
+    <title>سرزمین شگفت انگیز</title>
 
-    <link rel="stylesheet" href="./style.css?v=124">
+    <style>
 
-    <!-- A-FRAME -->
-    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: Tahoma, Arial, sans-serif;
+        }
 
-    <!-- MINDAR -->
-    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+        body {
+            direction: rtl;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #7048ff,
+                    #40218a,
+                    #211044
+                );
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #groupMenu {
+            width: 100%;
+            height: 100%;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #groupBox {
+            width: 82%;
+            max-width: 380px;
+
+            padding: 30px 22px;
+
+            text-align: center;
+
+            background: rgba(255,255,255,0.12);
+
+            border-radius: 25px;
+
+            box-shadow:
+                0 15px 40px rgba(0,0,0,0.35);
+
+            backdrop-filter: blur(10px);
+        }
+
+        #groupBox h1 {
+            color: white;
+
+            font-size: 28px;
+
+            margin:
+                0
+                0
+                12px;
+        }
+
+        #groupBox p {
+            color: white;
+
+            font-size: 16px;
+
+            margin:
+                0
+                0
+                25px;
+        }
+
+        .groupButton {
+            width: 100%;
+
+            border: none;
+
+            border-radius: 15px;
+
+            padding: 17px;
+
+            margin: 10px 0;
+
+            background: white;
+
+            color: #40218a;
+
+            font-size: 19px;
+
+            font-weight: bold;
+
+            font-family:
+                Tahoma,
+                Arial,
+                sans-serif;
+
+            cursor: pointer;
+
+            -webkit-tap-highlight-color:
+                transparent;
+        }
+
+        .groupButton:active {
+            transform: scale(0.97);
+        }
+
+    </style>
 
 </head>
 
 <body>
 
-<a-scene
-    mindar-image="
-        imageTargetSrc: ./Group1/targets.mind;
-        autoStart: true;
-        uiLoading: no;
-        uiScanning: yes;
-        uiError: no;
-        warmupTolerance: 2;
-        missTolerance: 1;
-        filterMinCF: 0.0001;
-        filterBeta: 0.001;
-    "
-    embedded
-    color-space="sRGB"
-    renderer="colorManagement: true;"
-    vr-mode-ui="enabled: false"
-    device-orientation-permission-ui="enabled: false">
+    <div id="groupMenu">
 
+        <div id="groupBox">
 
-    <!-- ================================= -->
-    <!-- VIDEOS -->
-    <!-- ================================= -->
+            <h1>
+                سرزمین شگفت انگیز
+            </h1>
 
-    <a-assets>
+            <p>
+                گروه دفترها را انتخاب کنید
+            </p>
 
-        <video id="video0"
-            src="./Group1/01.mp4"
-            preload="none"
-            loop muted playsinline webkit-playsinline>
-        </video>
+            <button
+                class="groupButton"
+                id="group1Btn">
 
-        <video id="video1"
-            src="./Group1/02.mp4"
-            preload="none"
-            loop muted playsinline webkit-playsinline>
-        </video>
+                📚 گروه یک
 
-        <video id="video2"
-            src="./Group1/03.mp4"
-            preload="none"
-            loop muted playsinline webkit-playsinline>
-        </video>
+            </button>
 
-        <video id="video3"
-            src="./Group1/04.mp4"
-            preload="none"
-            loop muted playsinline webkit-playsinline>
-        </video>
+            <button
+                class="groupButton"
+                id="group2Btn">
 
-        <video id="video4"
-            src="./Group1/05.mp4"
-            preload="none"
-            loop muted playsinline webkit-playsinline>
-        </video>
+                📚 گروه دو
 
-        <video id="video5"
-            src="./Group1/06.mp4"
-            preload="none"
-            loop muted playsinline webkit-playsinline>
-        </video>
+            </button>
 
-        <video id="video6"
-            src="./Group1/07.mp4"
-            preload="none"
-            loop muted playsinline webkit-playsinline>
-        </video>
+        </div>
 
-        <video id="video7"
-            src="./Group1/08.mp4"
-            preload="none"
-            loop muted playsinline webkit-playsinline>
-        </video>
+    </div>
 
-        <video id="video8"
-            src="./Group1/09.mp4"
-            preload="none"
-            loop muted playsinline webkit-playsinline>
-        </video>
 
-        <video id="video9"
-            src="./Group1/10.mp4"
-            preload="none"
-            loop muted playsinline webkit-playsinline>
-        </video>
+    <script>
 
-        <video id="video10"
-            src="./Group1/11.mp4"
-            preload="none"
-            loop muted playsinline webkit-playsinline>
-        </video>
+        document.addEventListener(
+            "DOMContentLoaded",
+            () => {
 
-        <video id="video11"
-            src="./Group1/12.mp4"
-            preload="none"
-            loop muted playsinline webkit-playsinline>
-        </video>
+                document
+                    .getElementById("group1Btn")
+                    .addEventListener(
+                        "click",
+                        () => {
 
-        <video id="video12"
-            src="./Group1/13.mp4"
-            preload="none"
-            loop muted playsinline webkit-playsinline>
-        </video>
+                            window.location.href =
+                                "./Group1.html";
 
-        <video id="video13"
-            src="./Group1/14.mp4"
-            preload="none"
-            loop muted playsinline webkit-playsinline>
-        </video>
+                        }
+                    );
 
-        <video id="video14"
-            src="./Group1/15.mp4"
-            preload="none"
-            loop muted playsinline webkit-playsinline>
-        </video>
 
-        <video id="video15"
-            src="./Group1/16.mp4"
-            preload="none"
-            loop muted playsinline webkit-playsinline>
-        </video>
+                document
+                    .getElementById("group2Btn")
+                    .addEventListener(
+                        "click",
+                        () => {
 
-        <video id="video16"
-            src="./Group1/17.mp4"
-            preload="none"
-            loop muted playsinline webkit-playsinline>
-        </video>
+                            window.location.href =
+                                "./Group2.html";
 
-        <video id="video17"
-            src="./Group1/18.mp4"
-            preload="none"
-            loop muted playsinline webkit-playsinline>
-        </video>
+                        }
+                    );
 
-        <video id="video18"
-            src="./Group1/19.mp4"
-            preload="none"
-            loop muted playsinline webkit-playsinline>
-        </video>
+            }
+        );
 
-        <video id="video19"
-            src="./Group1/20.mp4"
-            preload="none"
-            loop muted playsinline webkit-playsinline>
-        </video>
-
-        <video id="video20"
-            src="./Group1/21.mp4"
-            preload="none"
-            loop muted playsinline webkit-playsinline>
-        </video>
-
-        <video id="video21"
-            src="./Group1/22.mp4"
-            preload="none"
-            loop muted playsinline webkit-playsinline>
-        </video>
-
-        <video id="video22"
-            src="./Group1/23.mp4"
-            preload="none"
-            loop muted playsinline webkit-playsinline>
-        </video>
-
-        <video id="video23"
-            src="./Group1/24.mp4"
-            preload="none"
-            loop muted playsinline webkit-playsinline>
-        </video>
-
-        <video id="video24"
-            src="./Group1/25.mp4"
-            preload="none"
-            loop muted playsinline webkit-playsinline>
-        </video>
-
-        <video id="video25"
-            src="./Group1/26.mp4"
-            preload="none"
-            loop muted playsinline webkit-playsinline>
-        </video>
-
-        <video id="video26"
-            src="./Group1/27.mp4"
-            preload="none"
-            loop muted playsinline webkit-playsinline>
-        </video>
-
-        <video id="video27"
-            src="./Group1/28.mp4"
-            preload="none"
-            loop muted playsinline webkit-playsinline>
-        </video>
-
-        <video id="video28"
-            src="./Group1/29.mp4"
-            preload="none"
-            loop muted playsinline webkit-playsinline>
-        </video>
-
-        <video id="video29"
-            src="./Group1/30.mp4"
-            preload="none"
-            loop muted playsinline webkit-playsinline>
-        </video>
-
-    </a-assets>
-
-
-    <!-- ================================= -->
-    <!-- TARGET 1 -->
-    <!-- ================================= -->
-
-    <a-entity mindar-image-target="targetIndex: 0">
-
-        <a-video
-            src="#video0"
-            width="1"
-            height="1.42"
-            position="0 0 0"
-            rotation="0 0 0">
-        </a-video>
-
-    </a-entity>
-
-
-    <!-- ================================= -->
-    <!-- TARGET 2 -->
-    <!-- ================================= -->
-
-    <a-entity mindar-image-target="targetIndex: 1">
-
-        <a-video
-            src="#video1"
-            width="1"
-            height="1.42"
-            position="0 0 0"
-            rotation="0 0 0">
-        </a-video>
-
-    </a-entity>
-
-
-    <!-- ================================= -->
-    <!-- TARGET 3 -->
-    <!-- ================================= -->
-
-    <a-entity mindar-image-target="targetIndex: 2">
-
-        <a-video
-            src="#video2"
-            width="1"
-            height="1.42"
-            position="0 0 0"
-            rotation="0 0 0">
-        </a-video>
-
-    </a-entity>
-
-
-    <!-- ================================= -->
-    <!-- TARGET 4 -->
-    <!-- ================================= -->
-
-    <a-entity mindar-image-target="targetIndex: 3">
-
-        <a-video
-            src="#video3"
-            width="1"
-            height="1.42"
-            position="0 0 0"
-            rotation="0 0 0">
-        </a-video>
-
-    </a-entity>
-
-
-    <!-- ================================= -->
-    <!-- TARGET 5 -->
-    <!-- ================================= -->
-
-    <a-entity mindar-image-target="targetIndex: 4">
-
-        <a-video
-            src="#video4"
-            width="1"
-            height="1.42"
-            position="0 0 0"
-            rotation="0 0 0">
-        </a-video>
-
-    </a-entity>
-
-
-    <!-- ================================= -->
-    <!-- TARGET 6 -->
-    <!-- ================================= -->
-
-    <a-entity mindar-image-target="targetIndex: 5">
-
-        <a-video
-            src="#video5"
-            width="1"
-            height="1.42"
-            position="0 0 0"
-            rotation="0 0 0">
-        </a-video>
-
-    </a-entity>
-
-
-    <!-- ================================= -->
-    <!-- TARGET 7 -->
-    <!-- ================================= -->
-
-    <a-entity mindar-image-target="targetIndex: 6">
-
-        <a-video
-            src="#video6"
-            width="1"
-            height="1.42"
-            position="0 0 0"
-            rotation="0 0 0">
-        </a-video>
-
-    </a-entity>
-
-
-    <!-- ================================= -->
-    <!-- TARGET 8 -->
-    <!-- ================================= -->
-
-    <a-entity mindar-image-target="targetIndex: 7">
-
-        <a-video
-            src="#video7"
-            width="1"
-            height="1.42"
-            position="0 0 0"
-            rotation="0 0 0">
-        </a-video>
-
-    </a-entity>
-
-
-    <!-- ================================= -->
-    <!-- TARGET 9 -->
-    <!-- ================================= -->
-
-    <a-entity mindar-image-target="targetIndex: 8">
-
-        <a-video
-            src="#video8"
-            width="1"
-            height="1.42"
-            position="0 0 0"
-            rotation="0 0 0">
-        </a-video>
-
-    </a-entity>
-
-
-    <!-- ================================= -->
-    <!-- TARGET 10 -->
-    <!-- ================================= -->
-
-    <a-entity mindar-image-target="targetIndex: 9">
-
-        <a-video
-            src="#video9"
-            width="1"
-            height="1.42"
-            position="0 0 0"
-            rotation="0 0 0">
-        </a-video>
-
-    </a-entity>
-
-
-    <!-- ================================= -->
-    <!-- TARGET 11 -->
-    <!-- ================================= -->
-
-    <a-entity mindar-image-target="targetIndex: 10">
-
-        <a-video
-            src="#video10"
-            width="1"
-            height="1.42"
-            position="0 0 0"
-            rotation="0 0 0">
-        </a-video>
-
-    </a-entity>
-
-
-    <!-- ================================= -->
-    <!-- TARGET 12 -->
-    <!-- ================================= -->
-
-    <a-entity mindar-image-target="targetIndex: 11">
-
-        <a-video
-            src="#video11"
-            width="1"
-            height="1.42"
-            position="0 0 0"
-            rotation="0 0 0">
-        </a-video>
-
-    </a-entity>
-
-
-    <!-- ================================= -->
-    <!-- TARGET 13 -->
-    <!-- ================================= -->
-
-    <a-entity mindar-image-target="targetIndex: 12">
-
-        <a-video
-            src="#video12"
-            width="1"
-            height="1.42"
-            position="0 0 0"
-            rotation="0 0 0">
-        </a-video>
-
-    </a-entity>
-
-
-    <!-- ================================= -->
-    <!-- TARGET 14 -->
-    <!-- ================================= -->
-
-    <a-entity mindar-image-target="targetIndex: 13">
-
-        <a-video
-            src="#video13"
-            width="1"
-            height="1.42"
-            position="0 0 0"
-            rotation="0 0 0">
-        </a-video>
-
-    </a-entity>
-
-
-    <!-- ================================= -->
-    <!-- TARGET 15 -->
-    <!-- ================================= -->
-
-    <a-entity mindar-image-target="targetIndex: 14">
-
-        <a-video
-            src="#video14"
-            width="1"
-            height="1.42"
-            position="0 0 0"
-            rotation="0 0 0">
-        </a-video>
-
-    </a-entity>
-
-
-    <!-- ================================= -->
-    <!-- TARGET 16 -->
-    <!-- ================================= -->
-
-    <a-entity mindar-image-target="targetIndex: 15">
-
-        <a-video
-            src="#video15"
-            width="1"
-            height="1.42"
-            position="0 0 0"
-            rotation="0 0 0">
-        </a-video>
-
-    </a-entity>
-
-
-    <!-- ================================= -->
-    <!-- TARGET 17 -->
-    <!-- ================================= -->
-
-    <a-entity mindar-image-target="targetIndex: 16">
-
-        <a-video
-            src="#video16"
-            width="1"
-            height="1.42"
-            position="0 0 0"
-            rotation="0 0 0">
-        </a-video>
-
-    </a-entity>
-
-
-    <!-- ================================= -->
-    <!-- TARGET 18 -->
-    <!-- ================================= -->
-
-    <a-entity mindar-image-target="targetIndex: 17">
-
-        <a-video
-            src="#video17"
-            width="1"
-            height="1.42"
-            position="0 0 0"
-            rotation="0 0 0">
-        </a-video>
-
-    </a-entity>
-
-
-    <!-- ================================= -->
-    <!-- TARGET 19 -->
-    <!-- ================================= -->
-
-    <a-entity mindar-image-target="targetIndex: 18">
-
-        <a-video
-            src="#video18"
-            width="1"
-            height="1.42"
-            position="0 0 0"
-            rotation="0 0 0">
-        </a-video>
-
-    </a-entity>
-
-
-    <!-- ================================= -->
-    <!-- TARGET 20 -->
-    <!-- ================================= -->
-
-    <a-entity mindar-image-target="targetIndex: 19">
-
-        <a-video
-            src="#video19"
-            width="1"
-            height="1.42"
-            position="0 0 0"
-            rotation="0 0 0">
-        </a-video>
-
-    </a-entity>
-
-
-    <!-- ================================= -->
-    <!-- TARGET 21 -->
-    <!-- ================================= -->
-
-    <a-entity mindar-image-target="targetIndex: 20">
-
-        <a-video
-            src="#video20"
-            width="1"
-            height="1.42"
-            position="0 0 0"
-            rotation="0 0 0">
-        </a-video>
-
-    </a-entity>
-
-
-    <!-- ================================= -->
-    <!-- TARGET 22 -->
-    <!-- ================================= -->
-
-    <a-entity mindar-image-target="targetIndex: 21">
-
-        <a-video
-            src="#video21"
-            width="1"
-            height="1.42"
-            position="0 0 0"
-            rotation="0 0 0">
-        </a-video>
-
-    </a-entity>
-
-
-    <!-- ================================= -->
-    <!-- TARGET 23 -->
-    <!-- ================================= -->
-
-    <a-entity mindar-image-target="targetIndex: 22">
-
-        <a-video
-            src="#video22"
-            width="1"
-            height="1.42"
-            position="0 0 0"
-            rotation="0 0 0">
-        </a-video>
-
-    </a-entity>
-
-
-    <!-- ================================= -->
-    <!-- TARGET 24 -->
-    <!-- ================================= -->
-
-    <a-entity mindar-image-target="targetIndex: 23">
-
-        <a-video
-            src="#video23"
-            width="1"
-            height="1.42"
-            position="0 0 0"
-            rotation="0 0 0">
-        </a-video>
-
-    </a-entity>
-
-
-    <!-- ================================= -->
-    <!-- TARGET 25 -->
-    <!-- ================================= -->
-
-    <a-entity mindar-image-target="targetIndex: 24">
-
-        <a-video
-            src="#video24"
-            width="1"
-            height="1.42"
-            position="0 0 0"
-            rotation="0 0 0">
-        </a-video>
-
-    </a-entity>
-
-
-    <!-- ================================= -->
-    <!-- TARGET 26 -->
-    <!-- ================================= -->
-
-    <a-entity mindar-image-target="targetIndex: 25">
-
-        <a-video
-            src="#video25"
-            width="1"
-            height="1.42"
-            position="0 0 0"
-            rotation="0 0 0">
-        </a-video>
-
-    </a-entity>
-
-
-    <!-- ================================= -->
-    <!-- TARGET 27 -->
-    <!-- ================================= -->
-
-    <a-entity mindar-image-target="targetIndex: 26">
-
-        <a-video
-            src="#video26"
-            width="1"
-            height="1.42"
-            position="0 0 0"
-            rotation="0 0 0">
-        </a-video>
-
-    </a-entity>
-
-
-    <!-- ================================= -->
-    <!-- TARGET 28 -->
-    <!-- ================================= -->
-
-    <a-entity mindar-image-target="targetIndex: 27">
-
-        <a-video
-            src="#video27"
-            width="1"
-            height="1.42"
-            position="0 0 0"
-            rotation="0 0 0">
-        </a-video>
-
-    </a-entity>
-
-
-    <!-- ================================= -->
-    <!-- TARGET 29 -->
-    <!-- ================================= -->
-
-    <a-entity mindar-image-target="targetIndex: 28">
-
-        <a-video
-            src="#video28"
-            width="1"
-            height="1.42"
-            position="0 0 0"
-            rotation="0 0 0">
-        </a-video>
-
-    </a-entity>
-
-
-    <!-- ================================= -->
-    <!-- TARGET 30 -->
-    <!-- ================================= -->
-
-    <a-entity mindar-image-target="targetIndex: 29">
-
-        <a-video
-            src="#video29"
-            width="1"
-            height="1.42"
-            position="0 0 0"
-            rotation="0 0 0">
-        </a-video>
-
-    </a-entity>
-
-
-    <!-- ================================= -->
-    <!-- CAMERA -->
-    <!-- ================================= -->
-
-    <a-camera
-        position="0 0 0"
-        look-controls="enabled: false">
-    </a-camera>
-
-</a-scene>
-
-
-<!-- ================================= -->
-<!-- APP JS -->
-<!-- ================================= -->
-
-<script src="./app.js?v=2"></script>
+    </script>
 
 </body>
 </html>
