@@ -1,7 +1,3 @@
-/* ==========================================
-   GENERAL
-   ========================================== */
-
 html,
 body {
     margin: 0;
@@ -12,115 +8,190 @@ body {
 
     overflow: hidden;
 
-    font-family:
-        Tahoma,
-        Arial,
-        sans-serif;
-
-    direction: rtl;
+    font-family: Arial, sans-serif;
 }
 
 
-/* ==========================================
-   AR SCENE
-   ========================================== */
+/* =====================================
+   صفحه انتخاب گروه
+===================================== */
 
-a-scene {
-    position: fixed;
+#mainApp {
+    width: 100%;
+    height: 100%;
+}
 
-    top: 0;
-    left: 0;
 
+.category-page {
     width: 100%;
     height: 100%;
 
-    z-index: 1;
+    box-sizing: border-box;
+
+    padding: 30px 15px;
+
+    background: #ffffff;
+
+    overflow-y: auto;
 }
 
 
-/* ==========================================
-   SHARE OVERLAY
-   ========================================== */
+.main-title {
+    text-align: center;
 
-/*
-   این دکمه عمداً نامرئی است.
-   فقط ناحیه لمس را ایجاد می‌کند.
-*/
+    font-size: 28px;
+    font-weight: bold;
 
-#shareOverlay {
+    margin-top: 30px;
+    margin-bottom: 10px;
+}
 
-    position: fixed;
 
-    z-index: 999999;
+.main-subtitle {
+    text-align: center;
 
-    display: none;
+    font-size: 16px;
 
-    /*
-       مرکز کردن ناحیه لمس
-    */
-    transform:
-        translate(-50%, -50%);
+    margin-bottom: 30px;
+}
 
-    /*
-       اندازه ناحیه لمس
-    */
-    width: 85px;
-    height: 20px;
+
+.group-buttons {
+    width: 100%;
+    max-width: 500px;
+
+    margin: 0 auto;
+}
+
+
+.group-button {
+    display: block;
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 18px;
+
+    margin: 12px 0;
 
     border: none;
 
-    outline: none;
+    border-radius: 18px;
 
-    background: transparent;
+    background: #111111;
 
-    /*
-       متن کاملاً نامرئی
-    */
-    color: transparent;
+    color: #ffffff;
 
-    font-size: 0;
+    font-size: 19px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+}
+
+
+/* =====================================
+   A-FRAME
+   دست نمی‌زنیم چون دوربین با این حالت سالم است
+===================================== */
+
+a-scene {
+    width: 100%;
+    height: 100%;
+}
+
+
+/* =====================================
+   دکمه تغییر گروه
+===================================== */
+
+#changeGroup {
+    position: fixed;
+
+    top: 15px;
+    right: 15px;
+
+    z-index: 999999;
+
+    border: none;
+
+    border-radius: 14px;
+
+    padding: 11px 15px;
+
+    background: rgba(0, 0, 0, 0.72);
+
+    color: #ffffff;
+
+    font-size: 15px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+}
+
+
+/* =====================================
+   نواحی لمس
+===================================== */
+
+.instagram-zone,
+.share-zone {
+    opacity: 0 !important;
+}
+
+
+/* =====================================
+   SHARE OVERLAY
+   متن نامرئی - فقط ناحیه لمس
+===================================== */
+
+#shareOverlay {
+    position: fixed;
+
+    z-index: 999998;
+
+    display: none;
+
+    transform: translate(-50%, -50%);
+
+    width: 85px;
+    height: 20px;
 
     padding: 0;
     margin: 0;
 
+    border: none;
+    outline: none;
+
+    background: transparent;
+
+    color: transparent;
+
+    font-size: 0;
+
     opacity: 0;
 
-    /*
-       اجازه لمس روی موبایل
-    */
     touch-action: manipulation;
 
-    -webkit-tap-highlight-color:
-        transparent;
+    -webkit-tap-highlight-color: transparent;
 
     cursor: pointer;
 
     user-select: none;
-
     -webkit-user-select: none;
 }
 
 
-/* ==========================================
-   TEST RED MARKER
-   ========================================== */
+/* =====================================
+   علامت قرمز تست
+===================================== */
 
 #redTestMarker {
     pointer-events: none;
-}
-
-
-/* ==========================================
-   MOBILE
-   ========================================== */
-
-@media (max-width: 600px) {
-
-    #shareOverlay {
-
-        width: 85px;
-        height: 20px;
-
-    }
-
 }
