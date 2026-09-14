@@ -13,22 +13,12 @@ document.addEventListener("DOMContentLoaded", () => {
     let activeTarget = null;
 
 
-    // =========================================
-    // AR READY
-    // =========================================
-
     scene.addEventListener("arReady", () => {
 
-        console.log(
-            "AR READY - 30 TARGETS"
-        );
+        console.log("AR READY - 30 TARGETS");
 
     });
 
-
-    // =========================================
-    // TARGET FOUND
-    // =========================================
 
     scene.addEventListener(
         "targetFound",
@@ -54,18 +44,17 @@ document.addEventListener("DOMContentLoaded", () => {
             activeTarget = target;
 
 
-            // =================================
             // توقف همه ویدیوهای دیگر
-            // =================================
-
             videos.forEach(
                 (video, i) => {
 
                     if (!video) return;
 
+
                     if (i !== index) {
 
                         video.pause();
+
 
                         try {
 
@@ -78,10 +67,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             );
 
-
-            // =================================
-            // ویدیوی مربوط به Target
-            // =================================
 
             const video =
                 videos[index];
@@ -105,7 +90,6 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
 
-            // از اول
             try {
 
                 video.currentTime = 0;
@@ -113,7 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
             } catch (err) {}
 
 
-            // فقط همین ویدیو را لود کن
+            // فقط همین ویدیو لود شود
             video.load();
 
 
@@ -121,10 +105,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             video.volume = 1;
 
-
-            // =================================
-            // PLAY
-            // =================================
 
             try {
 
@@ -143,7 +123,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
 
 
-                // اگر مرورگر اجازه صدا نداد
+                // اگر صدای خودکار اجازه داده نشد
                 video.muted = true;
 
 
@@ -170,10 +150,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     );
 
-
-    // =========================================
-    // TARGET LOST
-    // =========================================
 
     scene.addEventListener(
         "targetLost",
@@ -206,6 +182,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (video) {
 
                 video.pause();
+
 
                 try {
 
