@@ -5,17 +5,19 @@ document.addEventListener("DOMContentLoaded", () => {
     const videos = [];
 
     for (let i = 0; i < 30; i++) {
+
         videos.push(
             document.querySelector("#video" + i)
         );
+
     }
 
     let activeTarget = null;
 
 
-    /* =====================================
-       متن آماده اشتراک گذاری
-    ===================================== */
+    // ================================
+    // SHARE TEXT
+    // ================================
 
     const shareText =
 `🎉 دفتر من زنده شددد! 😍📱
@@ -31,131 +33,191 @@ document.addEventListener("DOMContentLoaded", () => {
 🚀 سرزمین شگفت‌انگیز؛ جایی که دفترها زنده میشن!`;
 
 
-    /* =====================================
-       SHARE
-    ===================================== */
+    // ================================
+    // SHARE FUNCTION
+    // ================================
 
     async function shareSarzamin() {
 
-        console.log("🔴 SHARE AREA TOUCHED");
+        console.log("🟢 SHARE CLICKED");
+
+
+        const shareURL =
+            window.location.href;
+
 
         if (navigator.share) {
 
             try {
 
                 await navigator.share({
-                    title: "سرزمین شگفت‌انگیز",
-                    text: shareText
+
+                    title:
+                        "سرزمین شگفت‌انگیز 📚✨",
+
+                    text:
+                        shareText,
+
+                    url:
+                        shareURL
+
                 });
 
-                console.log("✅ SHARE SUCCESS");
+                console.log(
+                    "✅ SHARE SUCCESS"
+                );
 
-            } catch (err) {
+            }
+            catch (err) {
 
                 console.log(
-                    "SHARE CANCELLED:",
+                    "SHARE CANCELLED",
                     err
                 );
 
             }
 
-        } else {
+        }
+
+        else {
 
             try {
 
                 await navigator.clipboard.writeText(
-                    shareText
+                    shareText +
+                    "\n\n" +
+                    shareURL
                 );
 
                 alert(
-                    "متن آماده کپی شد 😊"
+                    "متن و لینک کپی شد ❤️"
                 );
 
-            } catch (err) {
+            }
+            catch (err) {
 
-                alert(
-                    "امکان اشتراک‌گذاری در این مرورگر وجود ندارد."
+                prompt(
+                    "این متن و لینک را برای دوستت بفرست:",
+                    shareText +
+                    "\n\n" +
+                    shareURL
                 );
 
             }
 
         }
+
     }
 
 
-    /* =====================================
-       فقط Target 1
-       ===================================== */
+    // ================================
+    // SHARE CLICK
+    // ================================
 
-    const target1 =
-        document.querySelector(
-            '[mindar-image-target="targetIndex: 0"]'
-        );
+    scene.addEventListener(
+        "click",
+        (event) => {
 
-
-    if (target1) {
-
-        const shareButton =
-            target1.querySelector(".shareButton");
-
-
-        if (shareButton) {
-
-            console.log("✅ TARGET 1 SHARE AREA FOUND");
-
-
-            /*
-             * کلیک
-             */
-
-            shareButton.addEventListener(
-                "click",
-                (event) => {
-
-                    event.preventDefault();
-                    event.stopPropagation();
-
-                    console.log(
-                        "🟢 TARGET 1 CLICK"
-                    );
-
-                    shareSarzamin();
-
-                }
+            console.log(
+                "CLICK EVENT"
             );
 
 
-            /*
-             * لمس مستقیم موبایل
-             */
+            const clickedObject =
+                event.detail &&
+                event.detail.intersection &&
+                event.detail.intersection.object;
 
-            shareButton.addEventListener(
-                "touchend",
-                (event) => {
 
-                    event.preventDefault();
-                    event.stopPropagation();
+            if (!clickedObject) {
 
-                    console.log(
-                        "🟢 TARGET 1 TOUCH"
-                    );
+                console.log(
+                    "NO INTERSECTION"
+                );
 
-                    shareSarzamin();
+                return;
 
-                },
-                {
-                    passive: false
+            }
+
+
+            const shareZone =
+                document.querySelector(
+                    ".share-zone"
+                );
+
+
+            if (!shareZone) {
+
+                return;
+
+            }
+
+
+            const shareMesh =
+                shareZone.getObject3D(
+                    "mesh"
+                );
+
+
+            if (!shareMesh) {
+
+                return;
+
+            }
+
+
+            let object =
+                clickedObject;
+
+
+            let isShare =
+                false;
+
+
+            while (object) {
+
+                if (
+                    object === shareMesh
+                ) {
+
+                    isShare = true;
+
+                    break;
+
                 }
+
+                object =
+                    object.parent;
+
+            }
+
+
+            if (!isShare) {
+
+                console.log(
+                    "CLICK WAS NOT ON SHARE"
+                );
+
+                return;
+
+            }
+
+
+            console.log(
+                "🎯 SHARE ZONE CLICKED"
             );
+
+
+            shareSarzamin();
 
         }
 
-    }
+    );
 
 
-    /* =====================================
-       AR READY
-    ===================================== */
+    // ================================
+    // AR READY
+    // ================================
 
     scene.addEventListener(
         "arReady",
@@ -169,46 +231,59 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 
-    /* =====================================
-       TARGET FOUND
-    ===================================== */
+    // ================================
+    // TARGET FOUND
+    // ================================
 
     scene.addEventListener(
         "targetFound",
         async (e) => {
 
-            const target = e.target;
+            const target =
+                e.target;
+
 
             const data =
                 target.getAttribute(
                     "mindar-image-target"
                 );
 
+
             const index =
                 data.targetIndex;
+
 
             console.log(
                 "TARGET FOUND:",
                 index
             );
 
-            activeTarget = target;
+
+            activeTarget =
+                target;
 
 
-            /* توقف ویدیوهای دیگر */
+            // توقف ویدیوهای دیگر
 
             videos.forEach(
                 (video, i) => {
 
-                    if (!video) return;
+                    if (!video) {
+                        return;
+                    }
+
 
                     if (i !== index) {
 
                         video.pause();
 
+
                         try {
+
                             video.currentTime = 0;
-                        } catch (err) {}
+
+                        }
+                        catch (err) {}
 
                     }
 
@@ -216,7 +291,7 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
 
-            /* ویدیوی مربوط به تارگت */
+            // ویدیوی مربوط به Target
 
             const video =
                 videos[index];
@@ -241,14 +316,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             try {
+
                 video.currentTime = 0;
-            } catch (err) {}
+
+            }
+            catch (err) {}
 
 
             video.load();
 
 
             video.muted = false;
+
             video.volume = 1;
 
 
@@ -256,12 +335,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 await video.play();
 
+
                 console.log(
                     "VIDEO PLAYING:",
                     index
                 );
 
-            } catch (err) {
+            }
+            catch (err) {
 
                 console.log(
                     "VIDEO PLAY ERROR:",
@@ -281,7 +362,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         index
                     );
 
-                } catch (err2) {
+                }
+                catch (err2) {
 
                     console.log(
                         "VIDEO PLAY ERROR 2:",
@@ -293,12 +375,13 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
         }
+
     );
 
 
-    /* =====================================
-       TARGET LOST
-    ===================================== */
+    // ================================
+    // TARGET LOST
+    // ================================
 
     scene.addEventListener(
         "targetLost",
@@ -307,10 +390,12 @@ document.addEventListener("DOMContentLoaded", () => {
             const target =
                 e.target;
 
+
             const data =
                 target.getAttribute(
                     "mindar-image-target"
                 );
+
 
             const index =
                 data.targetIndex;
@@ -330,9 +415,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 video.pause();
 
+
                 try {
+
                     video.currentTime = 0;
-                } catch (err) {}
+
+                }
+                catch (err) {}
 
             }
 
@@ -346,6 +435,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
         }
+
     );
 
 });
