@@ -16,6 +16,10 @@ document.addEventListener("DOMContentLoaded", () => {
     let activeTarget = null;
 
 
+    /* =====================================
+       AR READY
+    ===================================== */
+
     scene.addEventListener("arReady", () => {
 
         console.log("AR READY - 30 TARGETS");
@@ -23,11 +27,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 
-    /*
-    ==========================================
-    سیستم اصلی پخش ۳۰ ویدیو
-    ==========================================
-    */
+    /* =====================================
+       TARGET FOUND
+       سیستم اصلی ۳۰ ویدیو
+    ===================================== */
 
     scene.addEventListener(
         "targetFound",
@@ -36,10 +39,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const target = e.target;
 
+
             const data =
                 target.getAttribute(
                     "mindar-image-target"
                 );
+
 
             const index =
                 data.targetIndex;
@@ -54,15 +59,18 @@ document.addEventListener("DOMContentLoaded", () => {
             activeTarget = target;
 
 
-            // توقف همه ویدیوهای دیگر
+            /* توقف همه ویدیوهای دیگر */
+
             videos.forEach(
                 (video, i) => {
 
                     if (!video) return;
 
+
                     if (i !== index) {
 
                         video.pause();
+
 
                         try {
 
@@ -105,11 +113,13 @@ document.addEventListener("DOMContentLoaded", () => {
             } catch (err) {}
 
 
-            // فقط همین ویدیو لود شود
+            /* فقط همین ویدیو لود شود */
+
             video.load();
 
 
             video.muted = false;
+
             video.volume = 1;
 
 
@@ -117,20 +127,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 await video.play();
 
+
                 console.log(
                     "VIDEO PLAYING:",
                     index
                 );
 
-            }
 
-            catch (err) {
+            } catch (err) {
 
                 console.log(
                     "VIDEO PLAY ERROR:",
                     err
                 );
 
+
+                /* اگر صدای خودکار اجازه داده نشد */
 
                 video.muted = true;
 
@@ -139,14 +151,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     await video.play();
 
+
                     console.log(
                         "VIDEO PLAYING MUTED:",
                         index
                     );
 
-                }
 
-                catch (err2) {
+                } catch (err2) {
 
                     console.log(
                         "VIDEO PLAY ERROR 2:",
@@ -162,17 +174,24 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 
+    /* =====================================
+       TARGET LOST
+    ===================================== */
+
     scene.addEventListener(
         "targetLost",
 
         (e) => {
 
-            const target = e.target;
+            const target =
+                e.target;
+
 
             const data =
                 target.getAttribute(
                     "mindar-image-target"
                 );
+
 
             const index =
                 data.targetIndex;
@@ -192,6 +211,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 video.pause();
 
+
                 try {
 
                     video.currentTime = 0;
@@ -201,7 +221,9 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
 
-            if (activeTarget === target) {
+            if (
+                activeTarget === target
+            ) {
 
                 activeTarget = null;
 
@@ -213,11 +235,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-    /*
-    ==========================================
-    SHARE
-    ==========================================
-    */
+    /* =====================================
+       SHARE SYSTEM
+    ===================================== */
 
     const shareOverlay =
         document.getElementById(
@@ -243,16 +263,14 @@ document.addEventListener("DOMContentLoaded", () => {
 🚀 سرزمین شگفت‌انگیز؛ جایی که دفترها زنده میشن!`;
 
 
-    /*
-    ------------------------------------------
-    باز کردن Share گوشی
-    ------------------------------------------
-    */
+    /* =====================================
+       باز کردن Share گوشی
+    ===================================== */
 
     async function shareSarzamin() {
 
         console.log(
-            "SHARE BUTTON CLICKED"
+            "SHARE CLICK"
         );
 
 
@@ -277,9 +295,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     "SHARE SUCCESS"
                 );
 
-            }
 
-            catch (err) {
+            } catch (err) {
 
                 console.log(
                     "SHARE CANCELLED:",
@@ -288,9 +305,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             }
 
-        }
-
-        else {
+        } else {
 
             try {
 
@@ -303,9 +318,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     "متن آماده کپی شد 😊"
                 );
 
-            }
 
-            catch (err) {
+            } catch (err) {
 
                 alert(
                     "امکان اشتراک‌گذاری در این مرورگر وجود ندارد."
@@ -319,15 +333,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-    /*
-    ------------------------------------------
-    کلیک روی متن
-    ------------------------------------------
-    */
+    /* =====================================
+       کلیک روی ناحیه Share
+    ===================================== */
 
-    if (
-        shareOverlay
-    ) {
+    if (shareOverlay) {
 
         shareOverlay.addEventListener(
             "click",
@@ -348,11 +358,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-    /*
-    ==========================================
-    نمایش دکمه روی Target 1
-    ==========================================
-    */
+    /* =====================================
+       دنبال کردن Target 1
+    ===================================== */
 
     let target1Visible = false;
 
@@ -387,9 +395,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 target1Visible = false;
 
 
-                if (
-                    shareOverlay
-                ) {
+                if (shareOverlay) {
 
                     shareOverlay.style.display =
                         "none";
@@ -404,17 +410,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-    /*
-    ------------------------------------------
-    تبدیل مختصات 3D به مختصات صفحه
-    ------------------------------------------
-
-    مختصات دقیق مورد تأیید:
-
-    position="0 -0.60 0.02"
-
-    ------------------------------------------
-    */
+    /* =====================================
+       محاسبه جای Share
+       
+       مختصات دقیق:
+       0 -0.60 0.02
+    ===================================== */
 
     function updateShareOverlay() {
 
@@ -432,9 +433,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
             }
 
+
             requestAnimationFrame(
                 updateShareOverlay
             );
+
 
             return;
 
@@ -458,13 +461,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 updateShareOverlay
             );
 
+
             return;
 
         }
 
 
         /*
-        مختصات Share روی Target
+         مختصات Share روی Target
         */
 
         const position =
@@ -476,8 +480,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         /*
-        تبدیل از فضای Target
-        به فضای جهان
+         تبدیل مختصات Target
+         به مختصات جهان
         */
 
         target1.object3D.localToWorld(
@@ -486,7 +490,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         /*
-        تبدیل به مختصات دوربین
+         تبدیل مختصات جهان
+         به مختصات دوربین
         */
 
         position.project(
@@ -499,7 +504,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         /*
-        مختصات X صفحه
+         مختصات صفحه
         */
 
         const x =
@@ -510,10 +515,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 rect.width
             );
 
-
-        /*
-        مختصات Y صفحه
-        */
 
         const y =
             rect.top +
@@ -544,9 +545,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-    /*
-    شروع دنبال کردن Target
-    */
+    /* =====================================
+       شروع دنبال کردن Target
+    ===================================== */
 
     scene.addEventListener(
         "renderstart",
@@ -560,6 +561,5 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
     );
-
 
 });
