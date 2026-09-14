@@ -5,24 +5,23 @@ document.addEventListener("DOMContentLoaded", () => {
     const videos = [];
 
     for (let i = 0; i < 30; i++) {
-
-        videos.push(
-            document.querySelector("#video" + i)
-        );
-
+        videos.push(document.querySelector("#video" + i));
     }
 
     let activeTarget = null;
 
+    // ==============================
+    // SHARE
+    // ==============================
 
-    // ================================
-    // SHARE TEXT
-    // ================================
+    async function shareSarzamin() {
 
-    const shareText =
-`🎉 دفتر من زنده شددد! 😍📱
+        console.log("SHARE PRESSED");
+
+        const shareURL = window.location.href;
+
+        const shareText = `🎉 دفتر من زنده شددد! 😍📱
 باور نمی‌کنی؟!
-
 دوربین گوشیتو بگیر روی دفتر و ببین چه اتفاقی می‌افته! 🤯✨
 
 🎨 می‌خوای ببینی کدوم طرح‌ها زنده میشن؟
@@ -32,410 +31,255 @@ document.addEventListener("DOMContentLoaded", () => {
 
 🚀 سرزمین شگفت‌انگیز؛ جایی که دفترها زنده میشن!`;
 
-
-    // ================================
-    // SHARE FUNCTION
-    // ================================
-
-    async function shareSarzamin() {
-
-        console.log("🟢 SHARE CLICKED");
-
-
-        const shareURL =
-            window.location.href;
-
-
         if (navigator.share) {
 
             try {
 
                 await navigator.share({
-
-                    title:
-                        "سرزمین شگفت‌انگیز 📚✨",
-
-                    text:
-                        shareText,
-
-                    url:
-                        shareURL
-
+                    title: "سرزمین شگفت‌انگیز",
+                    text: shareText,
+                    url: shareURL
                 });
 
-                console.log(
-                    "✅ SHARE SUCCESS"
-                );
+                console.log("SHARE SUCCESS");
 
-            }
-            catch (err) {
+            } catch (err) {
 
-                console.log(
-                    "SHARE CANCELLED",
-                    err
-                );
+                console.log("SHARE CANCELLED:", err);
 
             }
 
-        }
-
-        else {
+        } else {
 
             try {
 
                 await navigator.clipboard.writeText(
-                    shareText +
-                    "\n\n" +
-                    shareURL
+                    shareText + "\n\n" + shareURL
                 );
 
-                alert(
-                    "متن و لینک کپی شد ❤️"
-                );
+                alert("متن آماده شد و کپی شد؛ حالا می‌تونی برای دوستات بفرستی 😍");
+
+            } catch (err) {
+
+                alert(shareText + "\n\n" + shareURL);
 
             }
-            catch (err) {
-
-                prompt(
-                    "این متن و لینک را برای دوستت بفرست:",
-                    shareText +
-                    "\n\n" +
-                    shareURL
-                );
-
-            }
-
         }
-
     }
 
 
-    // ================================
-    // SHARE CLICK
-    // ================================
+    // ==============================
+    // TOUCH SHARE
+    // ==============================
 
-    scene.addEventListener(
-        "click",
-        (event) => {
+    const canvas = scene ? scene.querySelector("canvas") : null;
 
-            console.log(
-                "CLICK EVENT"
-            );
+    if (scene) {
 
+        scene.addEventListener("touchend", (e) => {
 
-            const clickedObject =
-                event.detail &&
-                event.detail.intersection &&
-                event.detail.intersection.object;
+            if (!activeTarget) return;
 
+            // فقط Target 1
+            const data = activeTarget.getAttribute("mindar-image-target");
 
-            if (!clickedObject) {
-
-                console.log(
-                    "NO INTERSECTION"
-                );
-
+            if (!data || data.targetIndex !== 0) {
                 return;
-
             }
 
-
-            const shareZone =
-                document.querySelector(
-                    ".share-zone"
-                );
-
+            const shareZone = activeTarget.querySelector(".share-zone");
 
             if (!shareZone) {
-
+                console.log("SHARE ZONE NOT FOUND");
                 return;
-
             }
 
-
-            const shareMesh =
-                shareZone.getObject3D(
-                    "mesh"
-                );
-
+            const shareMesh = shareZone.getObject3D("mesh");
 
             if (!shareMesh) {
-
+                console.log("SHARE MESH NOT READY");
                 return;
-
             }
 
+            const touch = e.changedTouches[0];
 
-            let object =
-                clickedObject;
+            if (!touch) return;
 
+            const renderer = scene.renderer;
 
-            let isShare =
-                false;
-
-
-            while (object) {
-
-                if (
-                    object === shareMesh
-                ) {
-
-                    isShare = true;
-
-                    break;
-
-                }
-
-                object =
-                    object.parent;
-
-            }
-
-
-            if (!isShare) {
-
-                console.log(
-                    "CLICK WAS NOT ON SHARE"
-                );
-
+            if (!renderer || !scene.camera) {
                 return;
-
             }
 
+            const domElement = renderer.domElement;
+            const rect = domElement.getBoundingClientRect();
 
-            console.log(
-                "🎯 SHARE ZONE CLICKED"
-            );
+            const mouse = new THREE.Vector2();
+
+            mouse.x =
+                ((touch.clientX - rect.left) / rect.width) * 2 - 1;
+
+            mouse.y =
+                -((touch.clientY - rect.top) / rect.height) * 2 + 1;
+
+            const raycaster = new THREE.Raycaster();
+
+            raycaster.setFromCamera(mouse, scene.camera);
+
+            const hits =
+                raycaster.intersectObject(shareMesh, true);
+
+            if (hits.length > 0) {
+
+                console.log("SHARE ZONE HIT");
+
+                e.preventDefault();
+
+                shareSarzamin();
+            }
+
+        }, {
+            passive: false
+        });
+    }
 
 
-            shareSarzamin();
-
-        }
-
-    );
-
-
-    // ================================
+    // ==============================
     // AR READY
-    // ================================
+    // ==============================
 
-    scene.addEventListener(
-        "arReady",
-        () => {
+    scene.addEventListener("arReady", () => {
 
-            console.log(
-                "AR READY - 30 TARGETS"
-            );
+        console.log("AR READY - 30 TARGETS");
 
-        }
-    );
+    });
 
 
-    // ================================
+    // ==============================
     // TARGET FOUND
-    // ================================
+    // ==============================
 
-    scene.addEventListener(
-        "targetFound",
-        async (e) => {
+    scene.addEventListener("targetFound", async (e) => {
 
-            const target =
-                e.target;
+        const target = e.target;
 
+        const data =
+            target.getAttribute("mindar-image-target");
 
-            const data =
-                target.getAttribute(
-                    "mindar-image-target"
-                );
+        const index = data.targetIndex;
 
+        console.log("TARGET FOUND:", index);
 
-            const index =
-                data.targetIndex;
+        activeTarget = target;
 
 
-            console.log(
-                "TARGET FOUND:",
-                index
-            );
+        // توقف تمام ویدیوهای دیگر
 
+        videos.forEach((video, i) => {
 
-            activeTarget =
-                target;
+            if (!video) return;
 
+            if (i !== index) {
 
-            // توقف ویدیوهای دیگر
+                video.pause();
 
-            videos.forEach(
-                (video, i) => {
-
-                    if (!video) {
-                        return;
-                    }
-
-
-                    if (i !== index) {
-
-                        video.pause();
-
-
-                        try {
-
-                            video.currentTime = 0;
-
-                        }
-                        catch (err) {}
-
-                    }
-
-                }
-            );
-
-
-            // ویدیوی مربوط به Target
-
-            const video =
-                videos[index];
-
-
-            if (!video) {
-
-                console.log(
-                    "VIDEO NOT FOUND:",
-                    index
-                );
-
-                return;
+                try {
+                    video.currentTime = 0;
+                } catch (err) {}
 
             }
 
-
-            console.log(
-                "LOADING VIDEO:",
-                index
-            );
+        });
 
 
-            try {
+        const video = videos[index];
 
-                video.currentTime = 0;
+        if (!video) {
 
-            }
-            catch (err) {}
+            console.log("VIDEO NOT FOUND:", index);
+
+            return;
+        }
 
 
-            video.load();
+        console.log("LOADING VIDEO:", index);
 
 
-            video.muted = false;
+        try {
+            video.currentTime = 0;
+        } catch (err) {}
 
-            video.volume = 1;
 
+        video.load();
+
+
+        video.muted = false;
+        video.volume = 1;
+
+
+        try {
+
+            await video.play();
+
+            console.log("VIDEO PLAYING:", index);
+
+        } catch (err) {
+
+            console.log("VIDEO PLAY ERROR:", err);
+
+            video.muted = true;
 
             try {
 
                 await video.play();
 
+                console.log("VIDEO PLAYING MUTED:", index);
 
-                console.log(
-                    "VIDEO PLAYING:",
-                    index
-                );
+            } catch (err2) {
 
-            }
-            catch (err) {
-
-                console.log(
-                    "VIDEO PLAY ERROR:",
-                    err
-                );
-
-
-                video.muted = true;
-
-
-                try {
-
-                    await video.play();
-
-                    console.log(
-                        "VIDEO PLAYING MUTED:",
-                        index
-                    );
-
-                }
-                catch (err2) {
-
-                    console.log(
-                        "VIDEO PLAY ERROR 2:",
-                        err2
-                    );
-
-                }
+                console.log("VIDEO PLAY ERROR 2:", err2);
 
             }
-
         }
 
-    );
+    });
 
 
-    // ================================
+    // ==============================
     // TARGET LOST
-    // ================================
+    // ==============================
 
-    scene.addEventListener(
-        "targetLost",
-        (e) => {
+    scene.addEventListener("targetLost", (e) => {
 
-            const target =
-                e.target;
+        const target = e.target;
 
+        const data =
+            target.getAttribute("mindar-image-target");
 
-            const data =
-                target.getAttribute(
-                    "mindar-image-target"
-                );
+        const index = data.targetIndex;
+
+        console.log("TARGET LOST:", index);
 
 
-            const index =
-                data.targetIndex;
+        const video = videos[index];
 
+        if (video) {
 
-            console.log(
-                "TARGET LOST:",
-                index
-            );
+            video.pause();
 
-
-            const video =
-                videos[index];
-
-
-            if (video) {
-
-                video.pause();
-
-
-                try {
-
-                    video.currentTime = 0;
-
-                }
-                catch (err) {}
-
-            }
-
-
-            if (
-                activeTarget === target
-            ) {
-
-                activeTarget = null;
-
-            }
+            try {
+                video.currentTime = 0;
+            } catch (err) {}
 
         }
 
-    );
+
+        if (activeTarget === target) {
+
+            activeTarget = null;
+
+        }
+
+    });
 
 });
