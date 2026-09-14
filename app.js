@@ -5,10 +5,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const videos = [];
 
     for (let i = 0; i < 30; i++) {
+
         videos.push(
             document.querySelector("#video" + i)
         );
+
     }
+
 
     let activeTarget = null;
 
@@ -20,8 +23,15 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 
+    /*
+    ==========================================
+    سیستم اصلی پخش ۳۰ ویدیو
+    ==========================================
+    */
+
     scene.addEventListener(
         "targetFound",
+
         async (e) => {
 
             const target = e.target;
@@ -50,11 +60,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     if (!video) return;
 
-
                     if (i !== index) {
 
                         video.pause();
-
 
                         try {
 
@@ -102,7 +110,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             video.muted = false;
-
             video.volume = 1;
 
 
@@ -115,7 +122,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     index
                 );
 
-            } catch (err) {
+            }
+
+            catch (err) {
 
                 console.log(
                     "VIDEO PLAY ERROR:",
@@ -123,7 +132,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
 
 
-                // اگر صدای خودکار اجازه داده نشد
                 video.muted = true;
 
 
@@ -136,7 +144,9 @@ document.addEventListener("DOMContentLoaded", () => {
                         index
                     );
 
-                } catch (err2) {
+                }
+
+                catch (err2) {
 
                     console.log(
                         "VIDEO PLAY ERROR 2:",
@@ -148,22 +158,21 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
         }
+
     );
 
 
     scene.addEventListener(
         "targetLost",
+
         (e) => {
 
-            const target =
-                e.target;
-
+            const target = e.target;
 
             const data =
                 target.getAttribute(
                     "mindar-image-target"
                 );
-
 
             const index =
                 data.targetIndex;
@@ -183,7 +192,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 video.pause();
 
-
                 try {
 
                     video.currentTime = 0;
@@ -193,15 +201,365 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
 
-            if (
-                activeTarget === target
-            ) {
+            if (activeTarget === target) {
 
                 activeTarget = null;
 
             }
 
         }
+
     );
+
+
+
+    /*
+    ==========================================
+    SHARE
+    ==========================================
+    */
+
+    const shareOverlay =
+        document.getElementById(
+            "shareOverlay"
+        );
+
+
+    const target1 =
+        document.querySelector(
+            '[mindar-image-target="targetIndex: 0"]'
+        );
+
+
+    const shareText = `🎉 دفتر من زنده شددد! 😍📱
+باور نمی‌کنی؟!
+دوربین گوشیتو بگیر روی دفتر و ببین چه اتفاقی می‌افته! 🤯✨
+
+🎨 می‌خوای ببینی کدوم طرح‌ها زنده میشن؟
+بیا توی اینستاگرام @SarzaminAr 👀💜
+
+اونجا طرح‌های زنده رو ببین و اگه دوست داری طرح دفتر خودتم زنده کنیم، بهمون بگو! 😍🔥
+
+🚀 سرزمین شگفت‌انگیز؛ جایی که دفترها زنده میشن!`;
+
+
+    /*
+    ------------------------------------------
+    باز کردن Share گوشی
+    ------------------------------------------
+    */
+
+    async function shareSarzamin() {
+
+        console.log(
+            "SHARE BUTTON CLICKED"
+        );
+
+
+        if (
+            navigator.share
+        ) {
+
+            try {
+
+                await navigator.share({
+
+                    title:
+                        "سرزمین شگفت‌انگیز",
+
+                    text:
+                        shareText
+
+                });
+
+
+                console.log(
+                    "SHARE SUCCESS"
+                );
+
+            }
+
+            catch (err) {
+
+                console.log(
+                    "SHARE CANCELLED:",
+                    err
+                );
+
+            }
+
+        }
+
+        else {
+
+            try {
+
+                await navigator.clipboard.writeText(
+                    shareText
+                );
+
+
+                alert(
+                    "متن آماده کپی شد 😊"
+                );
+
+            }
+
+            catch (err) {
+
+                alert(
+                    "امکان اشتراک‌گذاری در این مرورگر وجود ندارد."
+                );
+
+            }
+
+        }
+
+    }
+
+
+
+    /*
+    ------------------------------------------
+    کلیک روی متن
+    ------------------------------------------
+    */
+
+    if (
+        shareOverlay
+    ) {
+
+        shareOverlay.addEventListener(
+            "click",
+
+            (e) => {
+
+                e.preventDefault();
+
+                e.stopPropagation();
+
+                shareSarzamin();
+
+            }
+
+        );
+
+    }
+
+
+
+    /*
+    ==========================================
+    نمایش دکمه روی Target 1
+    ==========================================
+    */
+
+    let target1Visible = false;
+
+
+    scene.addEventListener(
+        "targetFound",
+
+        (e) => {
+
+            if (
+                e.target === target1
+            ) {
+
+                target1Visible = true;
+
+            }
+
+        }
+
+    );
+
+
+    scene.addEventListener(
+        "targetLost",
+
+        (e) => {
+
+            if (
+                e.target === target1
+            ) {
+
+                target1Visible = false;
+
+
+                if (
+                    shareOverlay
+                ) {
+
+                    shareOverlay.style.display =
+                        "none";
+
+                }
+
+            }
+
+        }
+
+    );
+
+
+
+    /*
+    ------------------------------------------
+    تبدیل مختصات 3D به مختصات صفحه
+    ------------------------------------------
+
+    مختصات دقیق مورد تأیید:
+
+    position="0 -0.60 0.02"
+
+    ------------------------------------------
+    */
+
+    function updateShareOverlay() {
+
+        if (
+            !shareOverlay ||
+            !target1 ||
+            !target1Visible ||
+            !target1.object3D.visible
+        ) {
+
+            if (shareOverlay) {
+
+                shareOverlay.style.display =
+                    "none";
+
+            }
+
+            requestAnimationFrame(
+                updateShareOverlay
+            );
+
+            return;
+
+        }
+
+
+        const camera =
+            scene.camera;
+
+
+        const canvas =
+            scene.canvas;
+
+
+        if (
+            !camera ||
+            !canvas
+        ) {
+
+            requestAnimationFrame(
+                updateShareOverlay
+            );
+
+            return;
+
+        }
+
+
+        /*
+        مختصات Share روی Target
+        */
+
+        const position =
+            new THREE.Vector3(
+                0,
+                -0.60,
+                0.02
+            );
+
+
+        /*
+        تبدیل از فضای Target
+        به فضای جهان
+        */
+
+        target1.object3D.localToWorld(
+            position
+        );
+
+
+        /*
+        تبدیل به مختصات دوربین
+        */
+
+        position.project(
+            camera
+        );
+
+
+        const rect =
+            canvas.getBoundingClientRect();
+
+
+        /*
+        مختصات X صفحه
+        */
+
+        const x =
+            rect.left +
+            (
+                (position.x + 1) *
+                0.5 *
+                rect.width
+            );
+
+
+        /*
+        مختصات Y صفحه
+        */
+
+        const y =
+            rect.top +
+            (
+                (1 - position.y) *
+                0.5 *
+                rect.height
+            );
+
+
+        shareOverlay.style.left =
+            `${x}px`;
+
+
+        shareOverlay.style.top =
+            `${y}px`;
+
+
+        shareOverlay.style.display =
+            "block";
+
+
+        requestAnimationFrame(
+            updateShareOverlay
+        );
+
+    }
+
+
+
+    /*
+    شروع دنبال کردن Target
+    */
+
+    scene.addEventListener(
+        "renderstart",
+
+        () => {
+
+            requestAnimationFrame(
+                updateShareOverlay
+            );
+
+        }
+
+    );
+
 
 });
