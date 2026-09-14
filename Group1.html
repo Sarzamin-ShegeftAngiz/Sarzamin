@@ -1,208 +1,647 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="fa">
+
 <head>
+
     <meta charset="UTF-8">
 
     <meta name="viewport"
-          content="width=device-width,
-                   initial-scale=1.0,
-                   maximum-scale=1.0,
-                   user-scalable=no">
+          content="width=device-width, initial-scale=1.0,
+                   maximum-scale=1.0, user-scalable=no">
 
-    <title>انتخاب گروه | سرزمین شگفت‌انگیز</title>
+    <title>Sarzamin AR - Group 1</title>
 
-    <style>
+    <link rel="stylesheet"
+          href="./style.css?v=124">
 
-        * {
-            box-sizing: border-box;
-        }
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
 
-        html,
-        body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            min-height: 100%;
-            font-family: Tahoma, Arial, sans-serif;
-            background: #ffffff;
-        }
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
-        body {
-            overflow-x: hidden;
-        }
-
-        .category-page {
-            width: 100%;
-            min-height: 100vh;
-            padding: 35px 18px;
-            background: #ffffff;
-        }
-
-        .main-title {
-            text-align: center;
-            font-size: 28px;
-            font-weight: bold;
-            margin-top: 25px;
-            margin-bottom: 10px;
-            color: #111111;
-        }
-
-        .main-subtitle {
-            text-align: center;
-            font-size: 16px;
-            line-height: 1.8;
-            margin-bottom: 35px;
-            color: #555555;
-        }
-
-        .group-buttons {
-            width: 100%;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        .group-button {
-            display: block;
-            width: 100%;
-            padding: 18px 15px;
-            margin: 14px 0;
-
-            border: none;
-            border-radius: 18px;
-
-            background: #111111;
-            color: #ffffff;
-
-            font-family: Tahoma, Arial, sans-serif;
-            font-size: 19px;
-            font-weight: bold;
-
-            cursor: pointer;
-
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .group-button:active {
-            transform: scale(0.98);
-        }
-
-        .disabled {
-            background: #d5d5d5;
-            color: #888888;
-            cursor: default;
-        }
-
-        .back-button {
-            display: block;
-            width: 100%;
-            max-width: 500px;
-
-            margin: 35px auto 0;
-            padding: 14px;
-
-            border: 2px solid #111111;
-            border-radius: 16px;
-
-            background: #ffffff;
-            color: #111111;
-
-            font-family: Tahoma, Arial, sans-serif;
-            font-size: 16px;
-            font-weight: bold;
-
-            cursor: pointer;
-
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .back-button:active {
-            transform: scale(0.98);
-        }
-
-    </style>
 </head>
+
 
 <body>
 
-    <div class="category-page">
 
-        <div class="main-title">
-            انتخاب گروه
-        </div>
+<a-scene
 
-        <div class="main-subtitle">
-            گروه دفتر مورد نظرت رو انتخاب کن 👇
-        </div>
+    mindar-image="
+        imageTargetSrc: ./Group1/targets.mind;
+        autoStart: true;
+        uiLoading: no;
+        uiScanning: yes;
+        uiError: no;
+        warmupTolerance: 2;
+        missTolerance: 1;
+        filterMinCF: 0.0001;
+        filterBeta: 0.001;
+    "
 
-        <div class="group-buttons">
+    embedded
 
-            <button
-                class="group-button"
-                onclick="openGroup(1)">
-                📚 دسته یک
-            </button>
+    color-space="sRGB"
 
-            <button
-                class="group-button"
-                onclick="openGroup(2)">
-                🎨 دسته دو
-            </button>
+    renderer="
+        colorManagement: true;
+    "
 
-            <button
-                class="group-button disabled"
-                disabled>
-                🔒 دسته سه
-            </button>
+    vr-mode-ui="
+        enabled: false
+    "
 
-            <button
-                class="group-button disabled"
-                disabled>
-                🔒 دسته چهار
-            </button>
-
-            <button
-                class="group-button disabled"
-                disabled>
-                🔒 دسته پنج
-            </button>
-
-        </div>
-
-        <button
-            class="back-button"
-            onclick="goBack()">
-            ‹ بازگشت
-        </button>
-
-    </div>
+    device-orientation-permission-ui="
+        enabled: false
+    "
+>
 
 
-    <script>
+<a-assets>
 
-        function openGroup(groupNumber) {
+    <video
+        id="video0"
+        src="./Group1/01.mp4"
+        preload="none"
+        loop
+        muted
+        playsinline
+        webkit-playsinline>
+    </video>
 
-            if (groupNumber === 1) {
+    <video
+        id="video1"
+        src="./Group1/02.mp4"
+        preload="none"
+        loop
+        muted
+        playsinline
+        webkit-playsinline>
+    </video>
 
-                window.location.href = "./Group1/index.html";
+    <video
+        id="video2"
+        src="./Group1/03.mp4"
+        preload="none"
+        loop
+        muted
+        playsinline
+        webkit-playsinline>
+    </video>
 
-            }
+    <video
+        id="video3"
+        src="./Group1/04.mp4"
+        preload="none"
+        loop
+        muted
+        playsinline
+        webkit-playsinline>
+    </video>
 
-            if (groupNumber === 2) {
+    <video
+        id="video4"
+        src="./Group1/05.mp4"
+        preload="none"
+        loop
+        muted
+        playsinline
+        webkit-playsinline>
+    </video>
 
-                window.location.href = "./Group2/index.html";
+    <video
+        id="video5"
+        src="./Group1/06.mp4"
+        preload="none"
+        loop
+        muted
+        playsinline
+        webkit-playsinline>
+    </video>
 
-            }
+    <video
+        id="video6"
+        src="./Group1/07.mp4"
+        preload="none"
+        loop
+        muted
+        playsinline
+        webkit-playsinline>
+    </video>
 
-        }
+    <video
+        id="video7"
+        src="./Group1/08.mp4"
+        preload="none"
+        loop
+        muted
+        playsinline
+        webkit-playsinline>
+    </video>
+
+    <video
+        id="video8"
+        src="./Group1/09.mp4"
+        preload="none"
+        loop
+        muted
+        playsinline
+        webkit-playsinline>
+    </video>
+
+    <video
+        id="video9"
+        src="./Group1/10.mp4"
+        preload="none"
+        loop
+        muted
+        playsinline
+        webkit-playsinline>
+    </video>
+
+    <video
+        id="video10"
+        src="./Group1/11.mp4"
+        preload="none"
+        loop
+        muted
+        playsinline
+        webkit-playsinline>
+    </video>
+
+    <video
+        id="video11"
+        src="./Group1/12.mp4"
+        preload="none"
+        loop
+        muted
+        playsinline
+        webkit-playsinline>
+    </video>
+
+    <video
+        id="video12"
+        src="./Group1/13.mp4"
+        preload="none"
+        loop
+        muted
+        playsinline
+        webkit-playsinline>
+    </video>
+
+    <video
+        id="video13"
+        src="./Group1/14.mp4"
+        preload="none"
+        loop
+        muted
+        playsinline
+        webkit-playsinline>
+    </video>
+
+    <video
+        id="video14"
+        src="./Group1/15.mp4"
+        preload="none"
+        loop
+        muted
+        playsinline
+        webkit-playsinline>
+    </video>
+
+    <video
+        id="video15"
+        src="./Group1/16.mp4"
+        preload="none"
+        loop
+        muted
+        playsinline
+        webkit-playsinline>
+    </video>
+
+    <video
+        id="video16"
+        src="./Group1/17.mp4"
+        preload="none"
+        loop
+        muted
+        playsinline
+        webkit-playsinline>
+    </video>
+
+    <video
+        id="video17"
+        src="./Group1/18.mp4"
+        preload="none"
+        loop
+        muted
+        playsinline
+        webkit-playsinline>
+    </video>
+
+    <video
+        id="video18"
+        src="./Group1/19.mp4"
+        preload="none"
+        loop
+        muted
+        playsinline
+        webkit-playsinline>
+    </video>
+
+    <video
+        id="video19"
+        src="./Group1/20.mp4"
+        preload="none"
+        loop
+        muted
+        playsinline
+        webkit-playsinline>
+    </video>
+
+    <video
+        id="video20"
+        src="./Group1/21.mp4"
+        preload="none"
+        loop
+        muted
+        playsinline
+        webkit-playsinline>
+    </video>
+
+    <video
+        id="video21"
+        src="./Group1/22.mp4"
+        preload="none"
+        loop
+        muted
+        playsinline
+        webkit-playsinline>
+    </video>
+
+    <video
+        id="video22"
+        src="./Group1/23.mp4"
+        preload="none"
+        loop
+        muted
+        playsinline
+        webkit-playsinline>
+    </video>
+
+    <video
+        id="video23"
+        src="./Group1/24.mp4"
+        preload="none"
+        loop
+        muted
+        playsinline
+        webkit-playsinline>
+    </video>
+
+    <video
+        id="video24"
+        src="./Group1/25.mp4"
+        preload="none"
+        loop
+        muted
+        playsinline
+        webkit-playsinline>
+    </video>
+
+    <video
+        id="video25"
+        src="./Group1/26.mp4"
+        preload="none"
+        loop
+        muted
+        playsinline
+        webkit-playsinline>
+    </video>
+
+    <video
+        id="video26"
+        src="./Group1/27.mp4"
+        preload="none"
+        loop
+        muted
+        playsinline
+        webkit-playsinline>
+    </video>
+
+    <video
+        id="video27"
+        src="./Group1/28.mp4"
+        preload="none"
+        loop
+        muted
+        playsinline
+        webkit-playsinline>
+    </video>
+
+    <video
+        id="video28"
+        src="./Group1/29.mp4"
+        preload="none"
+        loop
+        muted
+        playsinline
+        webkit-playsinline>
+    </video>
+
+    <video
+        id="video29"
+        src="./Group1/30.mp4"
+        preload="none"
+        loop
+        muted
+        playsinline
+        webkit-playsinline>
+    </video>
+
+</a-assets>
 
 
-        function goBack() {
+<a-entity mindar-image-target="targetIndex: 0">
+    <a-video src="#video0"
+             width="1"
+             height="1.42"
+             position="0 0 0"
+             rotation="0 0 0">
+    </a-video>
+</a-entity>
 
-            window.location.href = "./index.html";
+<a-entity mindar-image-target="targetIndex: 1">
+    <a-video src="#video1"
+             width="1"
+             height="1.42"
+             position="0 0 0"
+             rotation="0 0 0">
+    </a-video>
+</a-entity>
 
-        }
+<a-entity mindar-image-target="targetIndex: 2">
+    <a-video src="#video2"
+             width="1"
+             height="1.42"
+             position="0 0 0"
+             rotation="0 0 0">
+    </a-video>
+</a-entity>
 
-    </script>
+<a-entity mindar-image-target="targetIndex: 3">
+    <a-video src="#video3"
+             width="1"
+             height="1.42"
+             position="0 0 0"
+             rotation="0 0 0">
+    </a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 4">
+    <a-video src="#video4"
+             width="1"
+             height="1.42"
+             position="0 0 0"
+             rotation="0 0 0">
+    </a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 5">
+    <a-video src="#video5"
+             width="1"
+             height="1.42"
+             position="0 0 0"
+             rotation="0 0 0">
+    </a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 6">
+    <a-video src="#video6"
+             width="1"
+             height="1.42"
+             position="0 0 0"
+             rotation="0 0 0">
+    </a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 7">
+    <a-video src="#video7"
+             width="1"
+             height="1.42"
+             position="0 0 0"
+             rotation="0 0 0">
+    </a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 8">
+    <a-video src="#video8"
+             width="1"
+             height="1.42"
+             position="0 0 0"
+             rotation="0 0 0">
+    </a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 9">
+    <a-video src="#video9"
+             width="1"
+             height="1.42"
+             position="0 0 0"
+             rotation="0 0 0">
+    </a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 10">
+    <a-video src="#video10"
+             width="1"
+             height="1.42"
+             position="0 0 0"
+             rotation="0 0 0">
+    </a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 11">
+    <a-video src="#video11"
+             width="1"
+             height="1.42"
+             position="0 0 0"
+             rotation="0 0 0">
+    </a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 12">
+    <a-video src="#video12"
+             width="1"
+             height="1.42"
+             position="0 0 0"
+             rotation="0 0 0">
+    </a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 13">
+    <a-video src="#video13"
+             width="1"
+             height="1.42"
+             position="0 0 0"
+             rotation="0 0 0">
+    </a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 14">
+    <a-video src="#video14"
+             width="1"
+             height="1.42"
+             position="0 0 0"
+             rotation="0 0 0">
+    </a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 15">
+    <a-video src="#video15"
+             width="1"
+             height="1.42"
+             position="0 0 0"
+             rotation="0 0 0">
+    </a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 16">
+    <a-video src="#video16"
+             width="1"
+             height="1.42"
+             position="0 0 0"
+             rotation="0 0 0">
+    </a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 17">
+    <a-video src="#video17"
+             width="1"
+             height="1.42"
+             position="0 0 0"
+             rotation="0 0 0">
+    </a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 18">
+    <a-video src="#video18"
+             width="1"
+             height="1.42"
+             position="0 0 0"
+             rotation="0 0 0">
+    </a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 19">
+    <a-video src="#video19"
+             width="1"
+             height="1.42"
+             position="0 0 0"
+             rotation="0 0 0">
+    </a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 20">
+    <a-video src="#video20"
+             width="1"
+             height="1.42"
+             position="0 0 0"
+             rotation="0 0 0">
+    </a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 21">
+    <a-video src="#video21"
+             width="1"
+             height="1.42"
+             position="0 0 0"
+             rotation="0 0 0">
+    </a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 22">
+    <a-video src="#video22"
+             width="1"
+             height="1.42"
+             position="0 0 0"
+             rotation="0 0 0">
+    </a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 23">
+    <a-video src="#video23"
+             width="1"
+             height="1.42"
+             position="0 0 0"
+             rotation="0 0 0">
+    </a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 24">
+    <a-video src="#video24"
+             width="1"
+             height="1.42"
+             position="0 0 0"
+             rotation="0 0 0">
+    </a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 25">
+    <a-video src="#video25"
+             width="1"
+             height="1.42"
+             position="0 0 0"
+             rotation="0 0 0">
+    </a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 26">
+    <a-video src="#video26"
+             width="1"
+             height="1.42"
+             position="0 0 0"
+             rotation="0 0 0">
+    </a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 27">
+    <a-video src="#video27"
+             width="1"
+             height="1.42"
+             position="0 0 0"
+             rotation="0 0 0">
+    </a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 28">
+    <a-video src="#video28"
+             width="1"
+             height="1.42"
+             position="0 0 0"
+             rotation="0 0 0">
+    </a-video>
+</a-entity>
+
+<a-entity mindar-image-target="targetIndex: 29">
+    <a-video src="#video29"
+             width="1"
+             height="1.42"
+             position="0 0 0"
+             rotation="0 0 0">
+    </a-video>
+</a-entity>
+
+
+<a-camera
+    position="0 0 0"
+    look-controls="enabled: false">
+</a-camera>
+
+
+</a-scene>
+
+
+<script src="./app.js?v=3"></script>
 
 </body>
 </html>
