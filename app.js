@@ -1,29 +1,230 @@
-// ==============================
-// TEST SHARE - TARGET 1
-// ==============================
+document.addEventListener("DOMContentLoaded", () => {
 
-const shareZone = document.querySelector(
-    '[mindar-image-target="targetIndex: 0"] .share-zone'
-);
+    const scene = document.querySelector("a-scene");
 
-if (shareZone) {
+    const videos = [];
 
-    shareZone.addEventListener("click", () => {
+    for (let i = 0; i < 30; i++) {
+        videos.push(
+            document.querySelector("#video" + i)
+        );
+    }
 
-        alert("✅ لمس Share دریافت شد!");
+    let activeTarget = null;
+
+
+    // =========================================
+    // AR READY
+    // =========================================
+
+    scene.addEventListener("arReady", () => {
+
+        console.log(
+            "AR READY - 30 TARGETS"
+        );
 
     });
 
-    shareZone.addEventListener("touchend", () => {
 
-        alert("✅ لمس Share دریافت شد!");
+    // =========================================
+    // TARGET FOUND
+    // =========================================
 
-    });
+    scene.addEventListener(
+        "targetFound",
+        async (e) => {
 
-    console.log("✅ SHARE ZONE CONNECTED");
+            const target = e.target;
 
-} else {
+            const data =
+                target.getAttribute(
+                    "mindar-image-target"
+                );
 
-    console.log("❌ SHARE ZONE NOT FOUND");
+            const index =
+                data.targetIndex;
 
-}
+
+            console.log(
+                "TARGET FOUND:",
+                index
+            );
+
+
+            activeTarget = target;
+
+
+            // =================================
+            // توقف همه ویدیوهای دیگر
+            // =================================
+
+            videos.forEach(
+                (video, i) => {
+
+                    if (!video) return;
+
+                    if (i !== index) {
+
+                        video.pause();
+
+                        try {
+
+                            video.currentTime = 0;
+
+                        } catch (err) {}
+
+                    }
+
+                }
+            );
+
+
+            // =================================
+            // ویدیوی مربوط به Target
+            // =================================
+
+            const video =
+                videos[index];
+
+
+            if (!video) {
+
+                console.log(
+                    "VIDEO NOT FOUND:",
+                    index
+                );
+
+                return;
+
+            }
+
+
+            console.log(
+                "LOADING VIDEO:",
+                index
+            );
+
+
+            // از اول
+            try {
+
+                video.currentTime = 0;
+
+            } catch (err) {}
+
+
+            // فقط همین ویدیو را لود کن
+            video.load();
+
+
+            video.muted = false;
+
+            video.volume = 1;
+
+
+            // =================================
+            // PLAY
+            // =================================
+
+            try {
+
+                await video.play();
+
+                console.log(
+                    "VIDEO PLAYING:",
+                    index
+                );
+
+            } catch (err) {
+
+                console.log(
+                    "VIDEO PLAY ERROR:",
+                    err
+                );
+
+
+                // اگر مرورگر اجازه صدا نداد
+                video.muted = true;
+
+
+                try {
+
+                    await video.play();
+
+                    console.log(
+                        "VIDEO PLAYING MUTED:",
+                        index
+                    );
+
+                } catch (err2) {
+
+                    console.log(
+                        "VIDEO PLAY ERROR 2:",
+                        err2
+                    );
+
+                }
+
+            }
+
+        }
+    );
+
+
+    // =========================================
+    // TARGET LOST
+    // =========================================
+
+    scene.addEventListener(
+        "targetLost",
+        (e) => {
+
+            const target =
+                e.target;
+
+
+            const data =
+                target.getAttribute(
+                    "mindar-image-target"
+                );
+
+
+            const index =
+                data.targetIndex;
+
+
+            console.log(
+                "TARGET LOST:",
+                index
+            );
+
+
+            const video =
+                videos[index];
+
+
+            if (video) {
+
+                video.pause();
+
+                try {
+
+                    video.currentTime = 0;
+
+                } catch (err) {}
+
+            }
+
+
+            if (
+                activeTarget === target
+            ) {
+
+                activeTarget = null;
+
+            }
+
+        }
+    );
+
+});
