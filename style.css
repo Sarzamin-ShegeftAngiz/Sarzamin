@@ -144,3 +144,58 @@ a-scene {
 .share-zone {
     opacity: 0 !important;
 }
+
+/* ==========================================
+   AR SHARE OVERLAY
+   ========================================== */
+
+#shareOverlay {
+
+    position: fixed;
+
+    z-index: 999999;
+
+    display: none;
+
+    transform:
+        translate(-50%, -50%);
+
+    border: none;
+
+    outline: none;
+
+    background: transparent;
+
+    color: white;
+
+    font-family:
+        Tahoma,
+        Arial,
+        sans-serif;
+
+    font-size: 16px;
+
+    font-weight: bold;
+
+    padding: 10px 14px;
+
+    margin: 0;
+
+    text-align: center;
+
+    white-space: nowrap;
+
+    text-shadow:
+        0 2px 4px rgba(0,0,0,0.9);
+
+    touch-action: manipulation;
+
+    -webkit-tap-highlight-color:
+        transparent;
+
+    cursor: pointer;
+
+    user-select: none;
+
+    -webkit-user-select: none;
+}
