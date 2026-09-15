@@ -31,6 +31,41 @@ function setLoadingProgress(percent) {
             percent + "%";
     }
 }
+    // ===============================
+// شروع لودینگ
+// ===============================
+
+setLoadingProgress(5);
+
+let fakeLoading = setInterval(() => {
+
+    if (loadingProgress < 90) {
+
+        setLoadingProgress(
+            loadingProgress + 1
+        );
+
+    }
+
+}, 80);
+
+
+// وقتی MindAR کاملاً آماده شد
+scene.addEventListener("arReady", () => {
+
+    clearInterval(fakeLoading);
+
+    setLoadingProgress(100);
+
+    setTimeout(() => {
+
+        if (arLoading) {
+            arLoading.style.display = "none";
+        }
+
+    }, 400);
+
+});
     const videos = [];
 
     for (let i = 0; i < 30; i++) {
