@@ -57,36 +57,39 @@ a-scene { width: 100%; height: 100%; }
     -webkit-tap-highlight-color: transparent;
 }
 
-.instagram-zone, .share-zone { opacity: 0 !important; }
-
-#shareOverlay {
+#instagramOverlay {
     position: fixed;
-    z-index: 999998;
+    z-index: 999999;
     display: none;
+
     transform: translate(-50%, -50%);
-    width: 160px;
-    height: 45px;
-    padding: 0;
-    margin: 0;
-    border: none;
-    outline: none;
-    background: rgba(0,0,0,0.45);
-    border-radius: 10px;
-    color: white;
-    font-family: Tahoma, Arial, sans-serif;
+
+    color: #ffffff;
+    text-decoration: none;
+
+    font-family: Arial, sans-serif;
     font-size: 16px;
     font-weight: bold;
-    text-align: center;
-    line-height: 45px;
-    opacity: 1;
-    touch-action: manipulation;
-    -webkit-tap-highlight-color: transparent;
+
+    padding: 6px 10px;
+
+    width: max-content;
+    height: 32px;
+    line-height: 32px;
+
+    white-space: nowrap;
+
+    box-sizing: border-box;
+
     cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+
     user-select: none;
     -webkit-user-select: none;
-}
 
-#redTestMarker { pointer-events: none; }
+    /* اندازه ثابت */
+    zoom: 1;
+}
 
 #instagramOverlay {
     position: fixed;
@@ -103,4 +106,21 @@ a-scene { width: 100%; height: 100%; }
     -webkit-tap-highlight-color: transparent;
     user-select: none;
     -webkit-user-select: none;
+}
+
+#shareOverlay {
+    /* بقیه کدهای قبلی حفظ شود */
+
+    width: 160px;
+    height: 45px;
+
+    min-width: 160px;
+    max-width: 160px;
+
+    min-height: 45px;
+    max-height: 45px;
+
+    box-sizing: border-box;
+
+    white-space: nowrap;
 }
