@@ -473,7 +473,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const position =
             new THREE.Vector3(
-                0.2
+                0.0
                 -0.20,
                 0.05
             );
