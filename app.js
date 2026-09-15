@@ -147,53 +147,153 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* INSTAGRAM - کاملاً مستقل از Share */
     const instagramOverlay = document.getElementById("instagramOverlay");
-    const instagramTarget = document.querySelector('[mindar-image-target="targetIndex: 0"]');
-    let instagramTargetVisible = false;
+const instagramTarget = document.querySelector(
+    '[mindar-image-target="targetIndex: 0"]'
+);
 
-    scene.addEventListener("targetFound", (e) => {
-        if (e.target === instagramTarget) instagramTargetVisible = true;
+let instagramTargetVisible = false;
+
+
+// ===============================
+// باز کردن اپلیکیشن Instagram
+// ===============================
+
+if (instagramOverlay) {
+
+    instagramOverlay.addEventListener("click", (e) => {
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        const username = "SarzaminAr";
+
+        const appUrl =
+            `instagram://user?username=${username}`;
+
+        const webUrl =
+            `https://www.instagram.com/${username}/`;
+
+        const startTime = Date.now();
+
+        // اول تلاش برای باز کردن اپلیکیشن
+        window.location.href = appUrl;
+
+        // اگر اپ باز نشد → سایت
+        setTimeout(() => {
+
+            if (Date.now() - startTime < 2000) {
+                window.location.href = webUrl;
+            }
+
+        }, 1500);
     });
+}
 
-    scene.addEventListener("targetLost", (e) => {
-        if (e.target === instagramTarget) {
-            instagramTargetVisible = false;
-            if (instagramOverlay) instagramOverlay.style.display = "none";
-        }
-    });
 
-    function updateInstagramOverlay() {
-        if (!instagramOverlay || !instagramTarget || !instagramTargetVisible || !instagramTarget.object3D.visible) {
-            if (instagramOverlay) instagramOverlay.style.display = "none";
-            requestAnimationFrame(updateInstagramOverlay);
-            return;
-        }
+// ===============================
+// نمایش لینک روی دفتر
+// ===============================
 
-        const camera = scene.camera;
-        const canvas = scene.canvas;
+scene.addEventListener("targetFound", (e) => {
 
-        if (!camera || !canvas) {
-            requestAnimationFrame(updateInstagramOverlay);
-            return;
-        }
-
-        const position = new THREE.Vector3(0.1, 0.7, 0.02);
-        instagramTarget.object3D.localToWorld(position);
-        position.project(camera);
-
-        const rect = canvas.getBoundingClientRect();
-        const x = rect.left + ((position.x + 1) * 0.5 * rect.width);
-        const y = rect.top + ((1 - position.y) * 0.5 * rect.height);
-
-        instagramOverlay.style.left = `${x}px`;
-        instagramOverlay.style.top = `${y}px`;
-        instagramOverlay.style.display = "block";
-
-        requestAnimationFrame(updateInstagramOverlay);
+    if (e.target === instagramTarget) {
+        instagramTargetVisible = true;
     }
 
-    scene.addEventListener("renderstart", () => {
-        requestAnimationFrame(updateShareOverlay);
+});
+
+
+scene.addEventListener("targetLost", (e) => {
+
+    if (e.target === instagramTarget) {
+
+        instagramTargetVisible = false;
+
+        if (instagramOverlay) {
+            instagramOverlay.style.display = "none";
+        }
+    }
+
+});
+
+
+function updateInstagramOverlay() {
+
+    if (
+        !instagramOverlay ||
+        !instagramTarget ||
+        !instagramTargetVisible ||
+        !instagramTarget.object3D.visible
+    ) {
+
+        if (instagramOverlay) {
+            instagramOverlay.style.display = "none";
+        }
+
         requestAnimationFrame(updateInstagramOverlay);
-    });
+        return;
+    }
+
+
+    const camera = scene.camera;
+    const canvas = scene.canvas;
+
+    if (!camera || !canvas) {
+        requestAnimationFrame(updateInstagramOverlay);
+        return;
+    }
+
+
+    const position = new THREE.Vector3(
+        0.1,
+        0.7,
+        0.02
+    );
+
+
+    instagramTarget.object3D.localToWorld(position);
+
+    position.project(camera);
+
+
+    const rect =
+        canvas.getBoundingClientRect();
+
+
+    const x =
+        rect.left +
+        ((position.x + 1) * 0.5 * rect.width);
+
+
+    const y =
+        rect.top +
+        ((1 - position.y) * 0.5 * rect.height);
+
+
+    instagramOverlay.style.left =
+        `${x}px`;
+
+    instagramOverlay.style.top =
+        `${y}px`;
+
+    instagramOverlay.style.display =
+        "block";
+
+
+    requestAnimationFrame(updateInstagramOverlay);
+}
+
+
+// ===============================
+// شروع Overlay
+// ===============================
+
+scene.addEventListener("renderstart", () => {
+
+    requestAnimationFrame(updateShareOverlay);
+
+    requestAnimationFrame(updateInstagramOverlay);
+
+});
 
 });
