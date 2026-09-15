@@ -1,6 +1,36 @@
 document.addEventListener("DOMContentLoaded", () => {
 
     const scene = document.querySelector("a-scene");
+    const arLoading =
+    document.getElementById("arLoading");
+
+const loadingPercent =
+    document.getElementById("loadingPercent");
+
+const loadingBarFill =
+    document.getElementById("loadingBarFill");
+
+let loadingProgress = 0;
+
+function setLoadingProgress(percent) {
+
+    percent = Math.max(
+        0,
+        Math.min(100, Math.round(percent))
+    );
+
+    loadingProgress = percent;
+
+    if (loadingPercent) {
+        loadingPercent.textContent =
+            percent + "%";
+    }
+
+    if (loadingBarFill) {
+        loadingBarFill.style.width =
+            percent + "%";
+    }
+}
     const videos = [];
 
     for (let i = 0; i < 30; i++) {
