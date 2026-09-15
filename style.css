@@ -1,0 +1,106 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+}
+
+#mainApp { width: 100%; height: 100%; }
+
+.category-page {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 30px 15px;
+    background: #ffffff;
+    overflow-y: auto;
+}
+
+.main-title { text-align: center; font-size: 28px; font-weight: bold; margin-top: 30px; margin-bottom: 10px; }
+.main-subtitle { text-align: center; font-size: 16px; margin-bottom: 30px; }
+
+.group-buttons { width: 100%; max-width: 500px; margin: 0 auto; }
+
+.group-button {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 18px;
+    margin: 12px 0;
+    border: none;
+    border-radius: 18px;
+    background: #111111;
+    color: #ffffff;
+    font-size: 19px;
+    font-weight: bold;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+a-scene { width: 100%; height: 100%; }
+
+#changeGroup {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    z-index: 999999;
+    border: none;
+    border-radius: 14px;
+    padding: 11px 15px;
+    background: rgba(0,0,0,0.72);
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.instagram-zone, .share-zone { opacity: 0 !important; }
+
+#shareOverlay {
+    position: fixed;
+    z-index: 999998;
+    display: none;
+    transform: translate(-50%, -50%);
+    width: 160px;
+    height: 45px;
+    padding: 0;
+    margin: 0;
+    border: none;
+    outline: none;
+    background: rgba(0,0,0,0.45);
+    border-radius: 10px;
+    color: white;
+    font-family: Tahoma, Arial, sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 45px;
+    opacity: 1;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+#redTestMarker { pointer-events: none; }
+
+#instagramOverlay {
+    position: fixed;
+    z-index: 999999;
+    display: none;
+    transform: translate(-50%, -50%);
+    color: #ffffff;
+    text-decoration: none;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 6px 10px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
+}
