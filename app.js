@@ -640,7 +640,7 @@ function updateInstagramOverlay() {
     */
 
     const position = new THREE.Vector3(
-        0.4,
+        1.0,
         0.6,
         0.02
     );
