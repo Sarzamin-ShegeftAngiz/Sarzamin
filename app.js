@@ -689,3 +689,132 @@ scene.addEventListener("renderstart", () => {
     );
 
 });
+
+/* =====================================
+   Instagram Link
+===================================== */
+
+const instagramOverlay =
+    document.getElementById("instagramOverlay");
+
+const instagramTarget =
+    document.querySelector(
+        '[mindar-image-target="targetIndex: 0"]'
+    );
+
+let instagramTargetVisible = false;
+
+
+/* Target پیدا شد */
+scene.addEventListener("targetFound", (e) => {
+
+    if (e.target === instagramTarget) {
+        instagramTargetVisible = true;
+    }
+
+});
+
+
+/* Target گم شد */
+scene.addEventListener("targetLost", (e) => {
+
+    if (e.target === instagramTarget) {
+
+        instagramTargetVisible = false;
+
+        if (instagramOverlay) {
+            instagramOverlay.style.display = "none";
+        }
+
+    }
+
+});
+
+
+/* موقعیت مستقل لینک اینستاگرام */
+function updateInstagramOverlay() {
+
+    if (
+        !instagramOverlay ||
+        !instagramTarget ||
+        !instagramTargetVisible ||
+        !instagramTarget.object3D.visible
+    ) {
+
+        if (instagramOverlay) {
+            instagramOverlay.style.display = "none";
+        }
+
+        requestAnimationFrame(updateInstagramOverlay);
+
+        return;
+    }
+
+
+    const camera = scene.camera;
+    const canvas = scene.canvas;
+
+    if (!camera || !canvas) {
+
+        requestAnimationFrame(updateInstagramOverlay);
+
+        return;
+    }
+
+
+    /*
+       فقط مختصات @SarzaminAr
+       این مختصات مستقل از نوشته
+       «سرزمین شگفت انگیز» است.
+    */
+
+    const position = new THREE.Vector3(
+        0.2,
+        0.6,
+        0.02
+    );
+
+
+    instagramTarget.object3D.localToWorld(position);
+
+    position.project(camera);
+
+
+    const rect =
+        canvas.getBoundingClientRect();
+
+
+    const x =
+        rect.left +
+        ((position.x + 1) * 0.5 * rect.width);
+
+
+    const y =
+        rect.top +
+        ((1 - position.y) * 0.5 * rect.height);
+
+
+    instagramOverlay.style.left =
+        `${x}px`;
+
+    instagramOverlay.style.top =
+        `${y}px`;
+
+    instagramOverlay.style.display =
+        "block";
+
+
+    requestAnimationFrame(
+        updateInstagramOverlay
+    );
+}
+
+
+/* شروع دنبال کردن */
+scene.addEventListener("renderstart", () => {
+
+    requestAnimationFrame(
+        updateInstagramOverlay
+    );
+
+});
