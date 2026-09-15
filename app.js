@@ -472,11 +472,11 @@ document.addEventListener("DOMContentLoaded", () => {
         */
 
         const position =
-            new THREE.Vector3(
-                0.5
-                0.3,
-                0.07
-            );
+    new THREE.Vector3(
+        0.5,
+        -2.00,
+        0.02
+    );
 
 
         /*
