@@ -1,180 +1,420 @@
-html, body {
+html,
+body {
     margin: 0;
     padding: 0;
+
     width: 100%;
     height: 100%;
+
     overflow: hidden;
+
     font-family: Arial, sans-serif;
 }
 
-#mainApp { width: 100%; height: 100%; }
+
+/* =====================================
+   صفحه انتخاب گروه
+===================================== */
+
+#mainApp {
+    width: 100%;
+    height: 100%;
+}
+
 
 .category-page {
     width: 100%;
     height: 100%;
+
     box-sizing: border-box;
+
     padding: 30px 15px;
+
     background: #ffffff;
+
     overflow-y: auto;
 }
 
-.main-title { text-align: center; font-size: 28px; font-weight: bold; margin-top: 30px; margin-bottom: 10px; }
-.main-subtitle { text-align: center; font-size: 16px; margin-bottom: 30px; }
 
-.group-buttons { width: 100%; max-width: 500px; margin: 0 auto; }
+.main-title {
+    text-align: center;
+
+    font-size: 28px;
+    font-weight: bold;
+
+    margin-top: 30px;
+    margin-bottom: 10px;
+}
+
+
+.main-subtitle {
+    text-align: center;
+
+    font-size: 16px;
+
+    margin-bottom: 30px;
+}
+
+
+.group-buttons {
+    width: 100%;
+    max-width: 500px;
+
+    margin: 0 auto;
+}
+
 
 .group-button {
     display: block;
+
     width: 100%;
+
     box-sizing: border-box;
+
     padding: 18px;
+
     margin: 12px 0;
+
     border: none;
+
     border-radius: 18px;
+
     background: #111111;
+
     color: #ffffff;
+
     font-size: 19px;
+
     font-weight: bold;
+
     cursor: pointer;
+
     -webkit-tap-highlight-color: transparent;
 }
 
-a-scene { width: 100%; height: 100%; }
+
+/* =====================================
+   A-FRAME
+===================================== */
+
+a-scene {
+    width: 100%;
+    height: 100%;
+}
+
+
+/* =====================================
+   دکمه تغییر گروه
+===================================== */
 
 #changeGroup {
     position: fixed;
+
     top: 15px;
     right: 15px;
+
     z-index: 999999;
+
     border: none;
+
     border-radius: 14px;
+
     padding: 11px 15px;
-    background: rgba(0,0,0,0.72);
+
+    background: rgba(0, 0, 0, 0.72);
+
     color: #ffffff;
+
     font-size: 15px;
+
     font-weight: bold;
+
     cursor: pointer;
+
     -webkit-tap-highlight-color: transparent;
 }
 
-.instagram-zone, .share-zone { opacity: 0 !important; }
+
+/* =====================================
+   نواحی لمس AR
+===================================== */
+
+.instagram-zone,
+.share-zone {
+    opacity: 0 !important;
+}
+
+
+/* =====================================
+   SHARE OVERLAY
+   نامرئی ولی قابل لمس
+===================================== */
 
 #shareOverlay {
     position: fixed;
+
     z-index: 999998;
+
     display: none;
+
     transform: translate(-50%, -50%);
+
     width: 160px;
     height: 45px;
+
+    min-width: 160px;
+    max-width: 160px;
+
+    min-height: 45px;
+    max-height: 45px;
+
     padding: 0;
     margin: 0;
+
     border: none;
     outline: none;
-    background: rgba(0,0,0,0.45);
+
+    background: transparent !important;
+
     border-radius: 10px;
-    color: white;
+
+    color: transparent !important;
+
     font-family: Tahoma, Arial, sans-serif;
+
     font-size: 16px;
+
     font-weight: bold;
+
     text-align: center;
+
     line-height: 45px;
+
     opacity: 1;
+
+    box-sizing: border-box;
+
+    white-space: nowrap;
+
     touch-action: manipulation;
+
     -webkit-tap-highlight-color: transparent;
+
     cursor: pointer;
+
     user-select: none;
     -webkit-user-select: none;
+
+    zoom: 1;
 }
 
-#redTestMarker { pointer-events: none; }
+
+/* =====================================
+   علامت قرمز تست
+===================================== */
+
+#redTestMarker {
+    pointer-events: none;
+}
+
+
+/* =====================================
+   INSTAGRAM OVERLAY
+   نامرئی ولی قابل لمس
+===================================== */
 
 #instagramOverlay {
     position: fixed;
+
     z-index: 999999;
+
     display: none;
+
     transform: translate(-50%, -50%);
-    color: #ffffff;
+
+    color: transparent !important;
+
+    background: transparent !important;
+
     text-decoration: none;
+
+    text-shadow: none !important;
+
     font-family: Arial, sans-serif;
+
     font-size: 16px;
+
     font-weight: bold;
+
     padding: 6px 10px;
+
+    width: max-content;
+
+    height: 32px;
+
+    line-height: 32px;
+
+    white-space: nowrap;
+
+    box-sizing: border-box;
+
     cursor: pointer;
+
     -webkit-tap-highlight-color: transparent;
+
     user-select: none;
     -webkit-user-select: none;
+
+    zoom: 1;
 }
 
-#instagramOverlay {
-    color: transparent !important;
-    background: transparent !important;
-    text-shadow: none !important;
-}
 
-#shareOverlay {
-    color: transparent !important;
-    background: transparent !important;
-}
+/* =====================================
+   AR LOADING
+===================================== */
 
 #arLoading {
     position: fixed;
+
     inset: 0;
 
     z-index: 9999999;
 
     display: flex;
+
     flex-direction: column;
 
     align-items: center;
-    justify-content: center;
 
+    justify-content: flex-end;
+
+    padding-bottom: 7%;
+
+    box-sizing: border-box;
+
+    /* عکس پس‌زمینه */
     background-image: url("./loading.png");
-background-size: cover;
-background-position: center;
-background-repeat: no-repeat;
+
+    /*
+       کل عکس نمایش داده شود
+       بدون زوم و برش
+    */
+    background-size: 100% 100%;
+
+    background-position: center;
+
+    background-repeat: no-repeat;
 
     font-family: Tahoma, Arial, sans-serif;
 
     direction: rtl;
 }
 
+
+/* =====================================
+   درصد داخل نوار
+===================================== */
+
 #loadingPercent {
-    font-size: 42px;
+    position: absolute;
+
+    left: 50%;
+
+    top: 50%;
+
+    transform: translate(-50%, -50%);
+
+    font-size: 15px;
+
     font-weight: bold;
 
-    color: #111111;
+    color: #ffffff;
 
-    margin-bottom: 20px;
+    z-index: 2;
+
+    margin: 0;
+
+    text-shadow:
+        0 1px 3px rgba(0, 0, 0, 0.5);
+
+    pointer-events: none;
 }
+
+
+/* =====================================
+   نوار پیشرفت
+===================================== */
 
 #loadingBar {
-    width: 70%;
-    max-width: 320px;
+    position: relative;
 
-    height: 10px;
+    width: 62%;
 
-    background: #e5e5e5;
+    max-width: 300px;
 
-    border-radius: 20px;
+    height: 14px;
+
+    margin: 0;
+
+    background:
+        rgba(255, 255, 255, 0.35);
+
+    border:
+        2px solid rgba(255, 255, 255, 0.9);
+
+    border-radius: 30px;
 
     overflow: hidden;
+
+    box-sizing: border-box;
+
+    box-shadow:
+        0 3px 12px rgba(0, 0, 0, 0.3);
 }
+
+
+/* =====================================
+   قسمت پرشده نوار
+===================================== */
 
 #loadingBarFill {
     width: 0%;
+
     height: 100%;
 
-    background: #111111;
+    border-radius: 30px;
 
-    border-radius: 20px;
+    background:
+        linear-gradient(
+            90deg,
+            #00d4ff,
+            #007bff,
+            #7b2cff,
+            #ff35c9,
+            #ffcc00
+        );
 
-    transition: width 0.2s ease;
+    box-shadow:
+        0 0 10px rgba(0, 200, 255, 0.8);
+
+    transition:
+        width 0.2s ease;
 }
 
+
+/* =====================================
+   لطفاً صبر کنید
+===================================== */
+
 #loadingText {
-    margin-top: 18px;
+    margin-top: 10px;
 
-    font-size: 17px;
+    font-size: 15px;
 
-    color: #333333;
+    font-weight: bold;
+
+    color: #ffffff;
+
+    text-shadow:
+        0 2px 6px rgba(0, 0, 0, 0.6);
 }
