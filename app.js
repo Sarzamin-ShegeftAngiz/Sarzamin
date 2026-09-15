@@ -176,7 +176,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        const position = new THREE.Vector3(0.2, 0.6, 0.02);
+        const position = new THREE.Vector3(0.1, 0.7, 0.02);
         instagramTarget.object3D.localToWorld(position);
         position.project(camera);
 
