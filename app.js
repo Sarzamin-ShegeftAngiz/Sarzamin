@@ -13,243 +13,335 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================================
-       LOADING SCREEN
-    ===================================================== */
+   LOADING SCREEN
+===================================================== */
 
-    const arLoading =
-        document.getElementById("arLoading");
+const arLoading =
+    document.getElementById("arLoading");
 
-    const loadingPercent =
-        document.getElementById("loadingPercent");
+const loadingPercent =
+    document.getElementById("loadingPercent");
 
-    const loadingBarFill =
-        document.getElementById("loadingBarFill");
+const loadingBarFill =
+    document.getElementById("loadingBarFill");
 
-    let loadingProgress = 0;
-
-
-    function setLoadingProgress(percent) {
-
-        percent = Math.max(
-            0,
-            Math.min(100, Math.round(percent))
-        );
-
-        loadingProgress = percent;
+let loadingProgress = 0;
+let loadingFinished = false;
 
 
-        if (loadingPercent) {
-            loadingPercent.textContent =
-                percent + "%";
-        }
+/* =========================
+   درصد
+========================= */
 
+function setLoadingProgress(percent) {
 
-        if (loadingBarFill) {
-            loadingBarFill.style.width =
-                percent + "%";
-        }
-    }
+    percent = Math.max(
+        0,
+        Math.min(100, Math.round(percent))
+    );
 
-
-    /*
-       تنظیم مستقیم صفحه لودینگ
-       تا نوار همیشه داخل صفحه باشد
-    */
-
-    if (arLoading) {
-
-        arLoading.style.position = "fixed";
-        arLoading.style.top = "0";
-        arLoading.style.left = "0";
-        arLoading.style.width = "100vw";
-
-        /*
-           ارتفاع را یک بار هنگام شروع ثبت می‌کنیم
-           تا با باز شدن دوربین، تصویر زوم نشود
-        */
-
-        const loadingHeight =
-            window.innerHeight;
-
-        arLoading.style.height =
-            loadingHeight + "px";
-
-        arLoading.style.overflow =
-            "hidden";
-
-        arLoading.style.backgroundImage =
-            'url("./loading.png")';
-
-        /*
-           هیچ قسمتی از تصویر Crop نمی‌شود
-        */
-
-        arLoading.style.backgroundSize =
-            "100% 100%";
-
-        arLoading.style.backgroundPosition =
-            "center center";
-
-        arLoading.style.backgroundRepeat =
-            "no-repeat";
-
-        arLoading.style.zIndex =
-            "9999999";
-    }
-
-
-    /*
-       نوار پیشرفت
-    */
-
-    if (document.getElementById("loadingBar")) {
-
-        const bar =
-            document.getElementById("loadingBar");
-
-        bar.style.position = "absolute";
-        bar.style.left = "50%";
-        bar.style.bottom = "75px";
-        bar.style.transform =
-            "translateX(-50%)";
-
-        bar.style.width = "62%";
-        bar.style.maxWidth = "300px";
-        bar.style.minWidth = "180px";
-
-        bar.style.height = "15px";
-
-        bar.style.boxSizing =
-            "border-box";
-
-        bar.style.zIndex = "10";
-    }
-
-
-    /*
-       درصد
-    */
+    loadingProgress = percent;
 
     if (loadingPercent) {
-
-        loadingPercent.style.position =
-            "absolute";
-
-        loadingPercent.style.left =
-            "50%";
-
-        loadingPercent.style.bottom =
-            "95px";
-
-        loadingPercent.style.transform =
-            "translateX(-50%)";
-
-        loadingPercent.style.zIndex =
-            "20";
-
-        loadingPercent.style.pointerEvents =
-            "none";
-
-        loadingPercent.style.whiteSpace =
-            "nowrap";
+        loadingPercent.textContent =
+            percent + "%";
     }
 
-
-    /*
-       متن لطفاً صبر کنید
-    */
-
-    const loadingText =
-        document.getElementById("loadingText");
-
-    if (loadingText) {
-
-        loadingText.style.position =
-            "absolute";
-
-        loadingText.style.left =
-            "50%";
-
-        loadingText.style.bottom =
-            "43px";
-
-        loadingText.style.transform =
-            "translateX(-50%)";
-
-        loadingText.style.zIndex =
-            "20";
-
-        loadingText.style.pointerEvents =
-            "none";
-
-        loadingText.style.whiteSpace =
-            "nowrap";
+    if (loadingBarFill) {
+        loadingBarFill.style.width =
+            percent + "%";
     }
+}
 
 
-    /*
-       شروع درصد
-    */
+/* =========================
+   تنظیم لودینگ
+========================= */
 
-    setLoadingProgress(5);
+if (arLoading) {
 
+    arLoading.style.position = "fixed";
+    arLoading.style.top = "0";
+    arLoading.style.left = "0";
 
-    /*
-       Fake Progress
+    arLoading.style.width = "100vw";
+    arLoading.style.height =
+        window.innerHeight + "px";
 
-       تا وقتی AR آماده نشده،
-       درصد حداکثر به 95 می‌رسد.
+    arLoading.style.overflow = "hidden";
 
-       دیگر روی 90 متوقف نمی‌شود.
-    */
+    arLoading.style.zIndex =
+        "9999999";
 
-    let fakeLoading =
-        setInterval(() => {
-
-            if (loadingProgress < 95) {
-
-                setLoadingProgress(
-                    loadingProgress + 1
-                );
-            }
-
-        }, 70);
-
+    arLoading.style.backgroundImage =
+        'url("./loading.png")';
 
     /*
-       مهم‌ترین قسمت:
-
-       لودینگ فقط زمانی حذف می‌شود
-       که MindAR واقعاً آماده شده باشد.
+       تصویر کامل نمایش داده می‌شود
+       و از طرفین Crop نمی‌شود
     */
+    arLoading.style.backgroundSize =
+        "100% 100%";
 
-    scene.addEventListener(
-        "arReady",
-        () => {
+    arLoading.style.backgroundPosition =
+        "center center";
 
-            console.log(
-                "AR READY - LOADING FINISHED"
+    arLoading.style.backgroundRepeat =
+        "no-repeat";
+}
+
+
+/* =========================
+   نوار پیشرفت
+========================= */
+
+const loadingBar =
+    document.getElementById("loadingBar");
+
+if (loadingBar) {
+
+    loadingBar.style.position =
+        "absolute";
+
+    loadingBar.style.left =
+        "50%";
+
+    loadingBar.style.bottom =
+        "70px";
+
+    loadingBar.style.transform =
+        "translateX(-50%)";
+
+    loadingBar.style.width =
+        "62%";
+
+    loadingBar.style.maxWidth =
+        "300px";
+
+    loadingBar.style.minWidth =
+        "180px";
+
+    loadingBar.style.height =
+        "15px";
+
+    loadingBar.style.boxSizing =
+        "border-box";
+
+    loadingBar.style.zIndex =
+        "20";
+}
+
+
+/* =========================
+   درصد
+========================= */
+
+if (loadingPercent) {
+
+    loadingPercent.style.position =
+        "absolute";
+
+    loadingPercent.style.left =
+        "50%";
+
+    loadingPercent.style.bottom =
+        "90px";
+
+    loadingPercent.style.transform =
+        "translateX(-50%)";
+
+    loadingPercent.style.zIndex =
+        "30";
+
+    loadingPercent.style.pointerEvents =
+        "none";
+}
+
+
+/* =========================
+   متن
+========================= */
+
+const loadingText =
+    document.getElementById("loadingText");
+
+if (loadingText) {
+
+    loadingText.style.position =
+        "absolute";
+
+    loadingText.style.left =
+        "50%";
+
+    loadingText.style.bottom =
+        "38px";
+
+    loadingText.style.transform =
+        "translateX(-50%)";
+
+    loadingText.style.zIndex =
+        "30";
+
+    loadingText.style.pointerEvents =
+        "none";
+
+    loadingText.style.whiteSpace =
+        "nowrap";
+}
+
+
+/* =========================
+   شروع
+========================= */
+
+setLoadingProgress(5);
+
+
+/* =========================
+   Fake Progress
+========================= */
+
+const fakeLoading =
+    setInterval(() => {
+
+        if (
+            !loadingFinished &&
+            loadingProgress < 95
+        ) {
+
+            setLoadingProgress(
+                loadingProgress + 1
             );
 
+        }
 
-            clearInterval(fakeLoading);
-
-
-            setLoadingProgress(100);
+    }, 70);
 
 
-            setTimeout(() => {
+/* =====================================================
+   بستن لودینگ
+   فقط وقتی دوربین واقعاً فعال شد
+===================================================== */
 
-                if (arLoading) {
+function finishLoading() {
 
-                    arLoading.style.display =
-                        "none";
-                }
+    if (loadingFinished) {
+        return;
+    }
 
-            }, 300);
+    loadingFinished = true;
+
+    clearInterval(fakeLoading);
+
+    setLoadingProgress(100);
+
+    console.log(
+        "CAMERA / AR READY - LOADING FINISHED"
+    );
+
+    setTimeout(() => {
+
+        if (arLoading) {
+
+            arLoading.style.display =
+                "none";
 
         }
+
+    }, 250);
+}
+
+
+/* =====================================================
+   روش اول:
+   رویداد رسمی MindAR
+===================================================== */
+
+scene.addEventListener(
+    "arReady",
+    () => {
+
+        finishLoading();
+
+    }
+);
+
+
+/* =====================================================
+   روش دوم:
+   تشخیص مستقیم دوربین
+
+   اگر MindAR رویداد arReady را درست ارسال نکرد،
+   از روی stream واقعی دوربین تشخیص می‌دهیم.
+===================================================== */
+
+function checkCameraReady() {
+
+    if (loadingFinished) {
+        return;
+    }
+
+
+    const allVideos =
+        document.querySelectorAll(
+            "video"
+        );
+
+
+    for (
+        let i = 0;
+        i < allVideos.length;
+        i++
+    ) {
+
+        const v =
+            allVideos[i];
+
+
+        /*
+           ویدیوی دوربین دارای srcObject
+           و حداقل یک Track فعال است.
+        */
+
+        if (
+            v.srcObject &&
+            v.srcObject.getVideoTracks &&
+            v.srcObject.getVideoTracks().length > 0
+        ) {
+
+            const tracks =
+                v.srcObject.getVideoTracks();
+
+
+            const activeTrack =
+                tracks.some(
+                    track =>
+                        track.readyState ===
+                        "live"
+                );
+
+
+            if (activeTrack) {
+
+                finishLoading();
+
+                return;
+            }
+        }
+    }
+
+
+    requestAnimationFrame(
+        checkCameraReady
     );
+}
+
+
+/* شروع بررسی دوربین */
+
+requestAnimationFrame(
+    checkCameraReady
+);
 
 
     /* =====================================================
