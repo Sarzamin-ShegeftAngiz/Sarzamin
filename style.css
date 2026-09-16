@@ -63,6 +63,7 @@ a-scene {
     height: 100%;
 }
 
+
 /* =========================
    دکمه تغییر گروه
 ========================= */
@@ -87,6 +88,7 @@ a-scene {
     -webkit-tap-highlight-color: transparent;
 }
 
+
 /* =========================
    متن‌های داخل AR
 ========================= */
@@ -95,6 +97,7 @@ a-scene {
 .share-zone {
     opacity: 0 !important;
 }
+
 
 /* =========================
    دکمه اشتراک‌گذاری
@@ -154,6 +157,7 @@ a-scene {
     zoom: 1;
 }
 
+
 /* =========================
    مارکر تست
 ========================= */
@@ -161,6 +165,7 @@ a-scene {
 #redTestMarker {
     pointer-events: none;
 }
+
 
 /* =========================
    اینستاگرام
@@ -207,40 +212,85 @@ a-scene {
     zoom: 1;
 }
 
+
 /* ==================================================
    صفحه لودینگ AR
 ================================================== */
 
 #arLoading {
     position: fixed;
+
     top: 0;
     left: 0;
+
     width: 100vw;
     height: 100vh;
 
-    z-index: 9999999;
+    z-index: 99999999;
+
+    display: block;
+
     overflow: hidden;
 
-    background-image: url("./loading.png");
-    background-size: 100% 100%;
-    background-position: center center;
-    background-repeat: no-repeat;
-}
-
-    /*
-       مهم:
-       cover حذف شده تا عکس از طرفین بریده نشود
-    */
-    background-size: 100% 100%;
-    background-position: center center;
-    background-repeat: no-repeat;
-
-    font-family: Tahoma, Arial, sans-serif;
+    background: #000;
 
     direction: rtl;
 
     pointer-events: auto;
 }
+
+
+/* =========================
+   تصویر پس‌زمینه لودینگ
+========================= */
+
+#loadingBg {
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    display: block;
+
+    /*
+       مهم:
+       تصویر دقیقاً کل صفحه را پر می‌کند
+       و از طرفین بریده نمی‌شود
+    */
+    object-fit: fill;
+
+    object-position: center center;
+
+    pointer-events: none;
+
+    user-select: none;
+
+    -webkit-user-drag: none;
+}
+
+
+/* =========================
+   محتوای پایین لودینگ
+========================= */
+
+#loadingContent {
+    position: absolute;
+
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    width: 100%;
+    height: 150px;
+
+    z-index: 2;
+
+    pointer-events: none;
+}
+
 
 /* =========================
    نوار پیشرفت
@@ -250,11 +300,12 @@ a-scene {
     position: absolute;
 
     left: 50%;
-    bottom: 70px;
+    bottom: 65px;
 
     transform: translateX(-50%);
 
     width: 62%;
+
     max-width: 300px;
     min-width: 180px;
 
@@ -273,13 +324,21 @@ a-scene {
     box-shadow:
         0 3px 12px rgba(0, 0, 0, 0.35),
         0 0 8px rgba(255, 255, 255, 0.5);
+
+    pointer-events: none;
 }
+
 
 /* =========================
    قسمت پر شده نوار
 ========================= */
 
 #loadingBarFill {
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
     width: 0%;
     height: 100%;
 
@@ -300,27 +359,30 @@ a-scene {
     transition: width 0.15s linear;
 }
 
+
 /* =========================
-   درصد
+   درصد داخل نوار
 ========================= */
 
 #loadingPercent {
     position: absolute;
 
     left: 50%;
-    bottom: 89px;
+    top: 50%;
 
-    transform: translateX(-50%);
+    transform: translate(-50%, -50%);
 
-    font-size: 12px;
+    margin: 0;
+
+    font-size: 10px;
 
     font-weight: bold;
 
+    line-height: 1;
+
     color: #fff;
 
-    z-index: 3;
-
-    margin: 0;
+    z-index: 5;
 
     text-shadow:
         0 1px 3px rgba(0, 0, 0, 0.8);
@@ -330,6 +392,7 @@ a-scene {
     white-space: nowrap;
 }
 
+
 /* =========================
    متن لطفاً صبر کنید
 ========================= */
@@ -338,7 +401,7 @@ a-scene {
     position: absolute;
 
     left: 50%;
-    bottom: 42px;
+    bottom: 25px;
 
     transform: translateX(-50%);
 
@@ -358,25 +421,48 @@ a-scene {
     pointer-events: none;
 }
 
+
 /* =========================
    موبایل‌های کوچک
 ========================= */
 
 @media (max-width: 380px) {
 
+    #loadingContent {
+        height: 140px;
+    }
+
     #loadingBar {
         width: 65%;
+
         height: 13px;
-        bottom: 65px;
+
+        bottom: 60px;
     }
 
     #loadingPercent {
-        bottom: 82px;
-        font-size: 11px;
+        font-size: 9px;
     }
 
     #loadingText {
-        bottom: 38px;
+        bottom: 23px;
+
         font-size: 13px;
+    }
+}
+
+
+/* =========================
+   موبایل‌های خیلی بلند
+========================= */
+
+@media (min-height: 800px) {
+
+    #loadingBar {
+        bottom: 75px;
+    }
+
+    #loadingText {
+        bottom: 32px;
     }
 }
