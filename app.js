@@ -25,12 +25,18 @@ const loadingPercent =
 const loadingBarFill =
     document.getElementById("loadingBarFill");
 
+const loadingBar =
+    document.getElementById("loadingBar");
+
+const loadingText =
+    document.getElementById("loadingText");
+
 let loadingProgress = 0;
 let loadingFinished = false;
 
 
 /* =========================
-   درصد
+   درصد و نوار
 ========================= */
 
 function setLoadingProgress(percent) {
@@ -55,18 +61,16 @@ function setLoadingProgress(percent) {
 
 
 /* =========================
-   تنظیم لودینگ
+   تنظیم صفحه لودینگ
 ========================= */
 
 if (arLoading) {
 
     arLoading.style.position = "fixed";
-    arLoading.style.top = "0";
-    arLoading.style.left = "0";
+    arLoading.style.inset = "0";
 
     arLoading.style.width = "100vw";
-    arLoading.style.height =
-        window.innerHeight + "px";
+    arLoading.style.height = "100vh";
 
     arLoading.style.overflow = "hidden";
 
@@ -77,9 +81,10 @@ if (arLoading) {
         'url("./loading.png")';
 
     /*
-       تصویر کامل نمایش داده می‌شود
-       و از طرفین Crop نمی‌شود
+       کل عکس داخل صفحه
+       بدون Crop از چپ و راست
     */
+
     arLoading.style.backgroundSize =
         "100% 100%";
 
@@ -95,9 +100,6 @@ if (arLoading) {
    نوار پیشرفت
 ========================= */
 
-const loadingBar =
-    document.getElementById("loadingBar");
-
 if (loadingBar) {
 
     loadingBar.style.position =
@@ -107,28 +109,28 @@ if (loadingBar) {
         "50%";
 
     loadingBar.style.bottom =
-        "70px";
+        "65px";
 
     loadingBar.style.transform =
         "translateX(-50%)";
 
     loadingBar.style.width =
-        "62%";
+        "60vw";
 
     loadingBar.style.maxWidth =
-        "300px";
+        "280px";
 
     loadingBar.style.minWidth =
-        "180px";
+        "170px";
 
     loadingBar.style.height =
-        "15px";
-
-    loadingBar.style.boxSizing =
-        "border-box";
+        "14px";
 
     loadingBar.style.zIndex =
         "20";
+
+    loadingBar.style.boxSizing =
+        "border-box";
 }
 
 
@@ -145,10 +147,10 @@ if (loadingPercent) {
         "50%";
 
     loadingPercent.style.bottom =
-        "90px";
+        "68px";
 
     loadingPercent.style.transform =
-        "translateX(-50%)";
+        "translate(-50%, -50%)";
 
     loadingPercent.style.zIndex =
         "30";
@@ -162,9 +164,6 @@ if (loadingPercent) {
    متن
 ========================= */
 
-const loadingText =
-    document.getElementById("loadingText");
-
 if (loadingText) {
 
     loadingText.style.position =
@@ -174,7 +173,7 @@ if (loadingText) {
         "50%";
 
     loadingText.style.bottom =
-        "38px";
+        "30px";
 
     loadingText.style.transform =
         "translateX(-50%)";
@@ -219,57 +218,35 @@ const fakeLoading =
 
 
 /* =====================================================
-   بستن لودینگ
-   فقط وقتی دوربین واقعاً فعال شد
-===================================================== */
-
-function finishLoading() {
-
-    if (loadingFinished) {
-        return;
-    }
-
-    loadingFinished = true;
-
-    clearInterval(fakeLoading);
-
-    setLoadingProgress(100);
-
-    console.log(
-        "CAMERA / AR READY - LOADING FINISHED"
-    );
-
-    setTimeout(() => {
-
-        if (arLoading) {
-
-            arLoading.style.display =
-                "none";
-
-        }
-
-    }, 250);
-}
-
-
-/* =====================================================
-   روش اول:
-   رویداد رسمی MindAR
+   فقط AR READY لودینگ را می‌بندد
 ===================================================== */
 
 scene.addEventListener(
     "arReady",
     () => {
 
-        finishLoading();
+        console.log(
+            "MINDAR AR READY"
+        );
+
+        loadingFinished = true;
+
+        clearInterval(fakeLoading);
+
+        setLoadingProgress(100);
+
+        setTimeout(() => {
+
+            if (arLoading) {
+
+                arLoading.style.display =
+                    "none";
+
+            }
+
+        }, 300);
 
     }
-
-
-/* شروع بررسی دوربین */
-
-requestAnimationFrame(
-    checkCameraReady
 );
 
 
