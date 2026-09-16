@@ -213,20 +213,19 @@ a-scene {
 
 #arLoading {
     position: fixed;
-
     top: 0;
     left: 0;
-
     width: 100vw;
     height: 100vh;
 
     z-index: 9999999;
-
     overflow: hidden;
 
-    box-sizing: border-box;
-
     background-image: url("./loading.png");
+    background-size: 100% 100%;
+    background-position: center center;
+    background-repeat: no-repeat;
+}
 
     /*
        مهم:
