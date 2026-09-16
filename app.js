@@ -31,15 +31,13 @@ function setLoadingProgress(percent) {
             percent + "%";
     }
 }
-    // ===============================
-// شروع لودینگ
-// ===============================
-
-setLoadingProgress(5);
+    /* =========================
+   LOADING PROGRESS
+========================= */
 
 let fakeLoading = setInterval(() => {
 
-    if (loadingProgress < 90) {
+    if (loadingProgress < 95) {
 
         setLoadingProgress(
             loadingProgress + 1
@@ -47,10 +45,12 @@ let fakeLoading = setInterval(() => {
 
     }
 
-}, 80);
+}, 70);
 
 
-// وقتی MindAR کاملاً آماده شد
+/*
+   وقتی AR واقعاً آماده شد
+*/
 scene.addEventListener("arReady", () => {
 
     clearInterval(fakeLoading);
@@ -63,9 +63,34 @@ scene.addEventListener("arReady", () => {
             arLoading.style.display = "none";
         }
 
-    }, 400);
+    }, 300);
 
 });
+
+
+/*
+   اگر arReady دیر رسید یا مشکل داشت،
+   لودینگ برای همیشه روی 95% نمی‌ماند.
+*/
+setTimeout(() => {
+
+    if (loadingProgress < 100) {
+
+        clearInterval(fakeLoading);
+
+        setLoadingProgress(100);
+
+        setTimeout(() => {
+
+            if (arLoading) {
+                arLoading.style.display = "none";
+            }
+
+        }, 300);
+
+    }
+
+}, 8000);
     const videos = [];
 
     for (let i = 0; i < 30; i++) {
